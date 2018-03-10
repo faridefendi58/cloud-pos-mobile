@@ -39,7 +39,7 @@ public class Login extends AppCompatActivity {
     int success;
     ConnectivityManager conMgr;
 
-    private String url = Server.URL + "user/login";
+    private String url = Server.URL + "user/login?api-key=" + Server.API_KEY;
 
     private static final String TAG = Login.class.getSimpleName();
 

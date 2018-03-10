@@ -34,7 +34,7 @@ public class Register extends AppCompatActivity {
     int success;
     ConnectivityManager conMgr;
 
-    private String url = Server.URL + "register.php";
+    private String url = Server.URL + "user/register?api-key=" + Server.API_KEY;
 
     private static final String TAG = Register.class.getSimpleName();
 
