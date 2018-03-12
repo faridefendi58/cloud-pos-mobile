@@ -22,12 +22,13 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Button btn_logout;
-    TextView txt_id, txt_username;
-    String id, username;
+    TextView txt_id, txt_username, txt_full_name;
+    String id, username, full_name;
     SharedPreferences sharedpreferences;
 
     public static final String TAG_ID = "id";
     public static final String TAG_USERNAME = "username";
+    public static final String TAG_NAME = "name";
 
     /*@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +90,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View v = navigationView.getHeaderView(0);
+        TextView txt_full_name = (TextView) v.findViewById(R.id.txt_full_name);
+        full_name = getIntent().getStringExtra(TAG_NAME);
+        txt_full_name.setText(full_name);
     }
 
     @Override

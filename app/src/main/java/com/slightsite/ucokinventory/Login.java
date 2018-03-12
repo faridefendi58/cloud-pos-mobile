@@ -48,12 +48,13 @@ public class Login extends AppCompatActivity {
 
     public final static String TAG_USERNAME = "username";
     public final static String TAG_ID = "id";
+    public final static String TAG_NAME = "name";
 
     String tag_json_obj = "json_obj_req";
 
     SharedPreferences sharedpreferences;
     Boolean session = false;
-    String id, username;
+    String id, username, full_name;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
 
@@ -83,11 +84,13 @@ public class Login extends AppCompatActivity {
         session = sharedpreferences.getBoolean(session_status, false);
         id = sharedpreferences.getString(TAG_ID, null);
         username = sharedpreferences.getString(TAG_USERNAME, null);
+        full_name = sharedpreferences.getString(TAG_NAME, null);
 
         if (session) {
             Intent intent = new Intent(Login.this, MainActivity.class);
             intent.putExtra(TAG_ID, id);
             intent.putExtra(TAG_USERNAME, username);
+            intent.putExtra(TAG_NAME, full_name);
             finish();
             startActivity(intent);
         }
@@ -151,6 +154,7 @@ public class Login extends AppCompatActivity {
                     if (success == 1) {
                         String username = jObj.getString(TAG_USERNAME);
                         String id = jObj.getString(TAG_ID);
+                        String name = jObj.getString(TAG_NAME);
 
                         Log.e("Successfully Login!", jObj.toString());
 
@@ -161,12 +165,14 @@ public class Login extends AppCompatActivity {
                         editor.putBoolean(session_status, true);
                         editor.putString(TAG_ID, id);
                         editor.putString(TAG_USERNAME, username);
+                        editor.putString(TAG_NAME, name);
                         editor.commit();
 
                         // Memanggil main activity
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         intent.putExtra(TAG_ID, id);
                         intent.putExtra(TAG_USERNAME, username);
+                        intent.putExtra(TAG_NAME, name);
                         finish();
                         startActivity(intent);
                     } else {
