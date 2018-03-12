@@ -89,31 +89,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        btn_logout = (Button) findViewById(R.id.btn_logout);
-
-        sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
-
-        id = getIntent().getStringExtra(TAG_ID);
-        username = getIntent().getStringExtra(TAG_USERNAME);
-
-        btn_logout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                // update login session ke FALSE dan mengosongkan nilai id dan username
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putBoolean(Login.session_status, false);
-                editor.putString(TAG_ID, null);
-                editor.putString(TAG_USERNAME, null);
-                editor.commit();
-
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                finish();
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -164,8 +139,18 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout) {
+            sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
 
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(Login.session_status, false);
+            editor.putString(TAG_ID, null);
+            editor.putString(TAG_USERNAME, null);
+            editor.commit();
+
+            Intent intent = new Intent(MainActivity.this, Login.class);
+            finish();
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
