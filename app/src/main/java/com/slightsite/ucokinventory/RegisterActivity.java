@@ -3,7 +3,6 @@ package com.slightsite.ucokinventory;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,43 +24,29 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by mrsvette on 09/03/18.
- */
-public class Login extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     ProgressDialog pDialog;
     Button btn_register, btn_login;
-    EditText txt_username, txt_password;
+    EditText txt_username, txt_password, txt_confirm_password;
     Intent intent;
 
     int success;
     ConnectivityManager conMgr;
 
-    private String url = Server.URL + "user/login?api-key=" + Server.API_KEY;
+    private String url = Server.URL + "user/register?api-key=" + Server.API_KEY;
 
-    private static final String TAG = Login.class.getSimpleName();
+    private static final String TAG = RegisterActivity.class.getSimpleName();
 
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
-    public final static String TAG_USERNAME = "username";
-    public final static String TAG_ID = "id";
-    public final static String TAG_NAME = "name";
-
     String tag_json_obj = "json_obj_req";
-
-    SharedPreferences sharedpreferences;
-    Boolean session = false;
-    String id, username, full_name;
-    public static final String my_shared_preferences = "my_shared_preferences";
-    public static final String session_status = "session_status";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.register);
 
         conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -78,45 +63,16 @@ public class Login extends AppCompatActivity {
         btn_register = (Button) findViewById(R.id.btn_register);
         txt_username = (EditText) findViewById(R.id.txt_username);
         txt_password = (EditText) findViewById(R.id.txt_password);
-
-        // Cek session login jika TRUE maka langsung buka MainActivity
-        sharedpreferences = getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
-        session = sharedpreferences.getBoolean(session_status, false);
-        id = sharedpreferences.getString(TAG_ID, null);
-        username = sharedpreferences.getString(TAG_USERNAME, null);
-        full_name = sharedpreferences.getString(TAG_NAME, null);
-
-        if (session) {
-            Intent intent = new Intent(Login.this, MainActivity.class);
-            intent.putExtra(TAG_ID, id);
-            intent.putExtra(TAG_USERNAME, username);
-            intent.putExtra(TAG_NAME, full_name);
-            finish();
-            startActivity(intent);
-        }
-
+        txt_confirm_password = (EditText) findViewById(R.id.txt_confirm_password);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                String username = txt_username.getText().toString();
-                String password = txt_password.getText().toString();
-
-                // mengecek kolom yang kosong
-                if (username.trim().length() > 0 && password.trim().length() > 0) {
-                    if (conMgr.getActiveNetworkInfo() != null
-                            && conMgr.getActiveNetworkInfo().isAvailable()
-                            && conMgr.getActiveNetworkInfo().isConnected()) {
-                        checkLogin(username, password);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    // Prompt user to enter credentials
-                    Toast.makeText(getApplicationContext(), "Kolom tidak boleh kosong", Toast.LENGTH_LONG).show();
-                }
+                intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                finish();
+                startActivity(intent);
             }
         });
 
@@ -125,25 +81,33 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                intent = new Intent(Login.this, Register.class);
-                finish();
-                startActivity(intent);
+                String username = txt_username.getText().toString();
+                String password = txt_password.getText().toString();
+                String confirm_password = txt_confirm_password.getText().toString();
+
+                if (conMgr.getActiveNetworkInfo() != null
+                        && conMgr.getActiveNetworkInfo().isAvailable()
+                        && conMgr.getActiveNetworkInfo().isConnected()) {
+                    checkRegister(username, password, confirm_password);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
 
-    private void checkLogin(final String username, final String password) {
+    private void checkRegister(final String username, final String password, final String confirm_password) {
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-        pDialog.setMessage("Logging in ...");
+        pDialog.setMessage("Register ...");
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.e(TAG, "Login Response: " + response.toString());
+                Log.e(TAG, "Register Response: " + response.toString());
                 hideDialog();
 
                 try {
@@ -152,29 +116,16 @@ public class Login extends AppCompatActivity {
 
                     // Check for error node in json
                     if (success == 1) {
-                        String username = jObj.getString(TAG_USERNAME);
-                        String id = jObj.getString(TAG_ID);
-                        String name = jObj.getString(TAG_NAME);
 
-                        Log.e("Successfully Login!", jObj.toString());
+                        Log.e("Successfully Register!", jObj.toString());
 
-                        Toast.makeText(getApplicationContext(), jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
-                        // menyimpan login ke session
-                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                        editor.putBoolean(session_status, true);
-                        editor.putString(TAG_ID, id);
-                        editor.putString(TAG_USERNAME, username);
-                        editor.putString(TAG_NAME, name);
-                        editor.commit();
+                        txt_username.setText("");
+                        txt_password.setText("");
+                        txt_confirm_password.setText("");
 
-                        // Memanggil main activity
-                        Intent intent = new Intent(Login.this, MainActivity.class);
-                        intent.putExtra(TAG_ID, id);
-                        intent.putExtra(TAG_USERNAME, username);
-                        intent.putExtra(TAG_NAME, name);
-                        finish();
-                        startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
@@ -205,6 +156,7 @@ public class Login extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("username", username);
                 params.put("password", password);
+                params.put("confirm_password", confirm_password);
 
                 return params;
             }
@@ -224,4 +176,12 @@ public class Login extends AppCompatActivity {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+
+    @Override
+    public void onBackPressed() {
+        intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        finish();
+        startActivity(intent);
+    }
+
 }

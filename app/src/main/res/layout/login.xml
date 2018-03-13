@@ -25,7 +25,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:text="www.ucokdurian.id"
+            android:text="@string/app_website"
             android:textSize="18dip"
             android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:layout_gravity="center"
-            android:background="#448AFF" />
+            android:background="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/TextView2"
@@ -72,7 +72,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="15dp"
             android:text="Login"
-            android:background="#448AFF"
+            android:background="@color/colorPrimary"
             android:textColor="#fff"
             android:textStyle="bold" />
 
