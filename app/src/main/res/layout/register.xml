@@ -11,39 +11,35 @@
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:background="@mipmap/ic_launcher" />
-
-        <TextView
-            android:id="@+id/TextView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:text="@string/app_website"
-            android:textSize="18dip"
-            android:textStyle="bold" />
-
-        <View
-            android:id="@+id/View1"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="center"
-            android:background="@color/colorPrimary" />
-
         <TextView
             android:id="@+id/TextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="30dip"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:text="MENDAFTAR DI SINI"
             android:textSize="16dip" />
+
+        <EditText
+            android:id="@+id/txt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:hint="Nama Lengkap"
+            android:inputType="textPersonName"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/txt_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/txt_username"
@@ -52,7 +48,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:hint="Username"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
             android:singleLine="true" />
 
         <EditText
@@ -71,8 +67,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:hint="Comfirmation Password"
-            android:password="true" />
+            android:hint="Konfirmasi Password"
+            android:password="true"
+            android:singleLine="true" />
 
         <Button
             android:id="@+id/btn_register"

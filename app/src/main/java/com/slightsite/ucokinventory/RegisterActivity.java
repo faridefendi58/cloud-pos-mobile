@@ -28,7 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     ProgressDialog pDialog;
     Button btn_register, btn_login;
-    EditText txt_username, txt_password, txt_confirm_password;
+    EditText txt_username, txt_password, txt_confirm_password, txt_name, txt_email;
     Intent intent;
 
     int success;
@@ -64,6 +64,8 @@ public class RegisterActivity extends AppCompatActivity {
         txt_username = (EditText) findViewById(R.id.txt_username);
         txt_password = (EditText) findViewById(R.id.txt_password);
         txt_confirm_password = (EditText) findViewById(R.id.txt_confirm_password);
+        txt_name = (EditText) findViewById(R.id.txt_name);
+        txt_email = (EditText) findViewById(R.id.txt_email);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
 
@@ -84,20 +86,31 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = txt_username.getText().toString();
                 String password = txt_password.getText().toString();
                 String confirm_password = txt_confirm_password.getText().toString();
+                String name = txt_name.getText().toString();
+                String email = txt_email.getText().toString();
 
-                if (conMgr.getActiveNetworkInfo() != null
-                        && conMgr.getActiveNetworkInfo().isAvailable()
-                        && conMgr.getActiveNetworkInfo().isConnected()) {
-                    checkRegister(username, password, confirm_password);
+                if (username.trim().length() <= 0 && password.trim().length() <= 0 && confirm_password.trim().length() <= 0
+                        && name.trim().length() <= 0 && email.trim().length() <= 0) {
+                    Toast.makeText(getApplicationContext(), "Semua kolom tidak boleh kosong", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    if (conMgr.getActiveNetworkInfo() != null
+                            && conMgr.getActiveNetworkInfo().isAvailable()
+                            && conMgr.getActiveNetworkInfo().isConnected()) {
+                        if (password.equals(confirm_password)) {
+                            checkRegister(username, password, confirm_password, email, name);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Konfirmasi password harus sama dengan password.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
 
     }
 
-    private void checkRegister(final String username, final String password, final String confirm_password) {
+    private void checkRegister(final String username, final String password, final String confirm_password, final String email, final String name) {
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
         pDialog.setMessage("Register ...");
@@ -125,6 +138,8 @@ public class RegisterActivity extends AppCompatActivity {
                         txt_username.setText("");
                         txt_password.setText("");
                         txt_confirm_password.setText("");
+                        txt_name.setText("");
+                        txt_email.setText("");
 
                     } else {
                         Toast.makeText(getApplicationContext(),
@@ -157,6 +172,8 @@ public class RegisterActivity extends AppCompatActivity {
                 params.put("username", username);
                 params.put("password", password);
                 params.put("confirm_password", confirm_password);
+                params.put("name", name);
+                params.put("email", email);
 
                 return params;
             }
