@@ -7,33 +7,110 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     app:orientation="horizontal"
     tools:context="com.slightsite.ucokinventory.ReceiptActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_receipt">
 
-    <FrameLayout
-        app:layout_columnWeight="1"
-        app:layout_rowWeight="1"
-        android:background="#EBEBEB"
-        >
-        <RelativeLayout
+    <LinearLayout
+        android:id="@+id/step1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:id="@+id/TextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="PENERIMAAN BARANG"
+            android:textSize="18dip"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/txt_issue_no"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:hint="Nomor Pengadaan Barang"
+            android:inputType="text"
+            android:singleLine="true" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:id="@+id/dashboard_stock_in"
-                android:src="@drawable/ic_menu_move_in"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:textColor="#000"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/dashboard_stock_in"
-                android:layout_centerHorizontal="true"
-                android:text="Terima Barang"/>
-        </RelativeLayout>
-    </FrameLayout>
+        <!--<Spinner
+            android:id="@+id/ReceiptType"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="fill_parent"
+            android:entries="@array/receipttype">
+        </Spinner>-->
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimary"
+            android:text="Pencarian"
+            android:textColor="#fff"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/step2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/TextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="PENERIMAAN BARANG"
+            android:textSize="18dip"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/WarehouseId"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="fill_parent"
+            android:entries="@array/warehouselist">
+        </Spinner>
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="15dp"
+            android:textSize="23sp"
+            android:fontFamily="sans-serif"
+            />
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimary"
+            android:text="Selanjutnya"
+            android:textColor="#fff"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </android.support.v7.widget.GridLayout>

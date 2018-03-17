@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -111,8 +113,8 @@ public class MainActivity extends AppCompatActivity
 
         View v = navigationView.getHeaderView(0);
         TextView txt_full_name = (TextView) v.findViewById(R.id.txt_full_name);
-        full_name = getIntent().getStringExtra(TAG_NAME);
-        txt_full_name.setText(full_name);
+        sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        txt_full_name.setText( sharedpreferences.getString(TAG_NAME, null) );
     }
 
     @Override
@@ -158,8 +160,6 @@ public class MainActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_stock_in) {
-            /*Intent intent = new Intent(this, StockIn.class);
-            startActivity(intent);*/
             Intent intent = new Intent(getApplicationContext(), ReceiptActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_transfer_out) {
