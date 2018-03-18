@@ -76,6 +76,108 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
+            android:text="PENERIMAAN BARANG"
+            android:textSize="18dip"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txt_step2_label0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textSize="16dip"
+            android:text="Nomor Pengadaan :"
+            />
+
+        <!--<EditText
+            android:id="@+id/txt_step2_issue_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="0dp"
+            android:hint="Nomor issue"
+            android:inputType="text"
+            android:singleLine="true" />-->
+
+
+        <TextView
+            android:id="@+id/txt_step2_issue_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="16dip"
+            android:text=""
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/txt_step2_label2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textSize="16dip"
+            android:text="Pengadaan Dari :"
+            />
+        <TextView
+            android:id="@+id/txt_step2_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="16dip"
+            android:text=""
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/txt_step2_label1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textSize="16dip"
+            android:text="Jumlah barang"
+            />
+
+        <EditText
+            android:id="@+id/txt_receipt_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="0dp"
+            android:hint="Rincian barang"
+            android:text=""
+            android:inputType="textMultiLine"/>
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimary"
+            android:text="Konfirmasi"
+            android:textColor="#fff"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/step3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/TextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="PENERIMAAN BARANG"
             android:textSize="18dip"
@@ -89,16 +191,6 @@
             android:layout_width="fill_parent"
             android:entries="@array/warehouselist">
         </Spinner>
-
-        <TextView
-            android:id="@+id/tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_margin="15dp"
-            android:textSize="23sp"
-            android:fontFamily="sans-serif"
-            />
 
         <Button
             android:id="@+id/btn_next"
