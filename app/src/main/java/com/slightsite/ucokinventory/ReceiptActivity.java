@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,9 +24,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,12 +38,14 @@ public class ReceiptActivity extends MainActivity {
     ProgressDialog pDialog;
     int success, req;
 
-    private String issue_list_url = Server.URL + "receipt/list-issue?api-key=" + Server.API_KEY;
+    private String issue_list_url = Server.URL + "receipt/list-issue-number?api-key=" + Server.API_KEY;
     private String get_issue_url = Server.URL + "receipt/get-issue?api-key=" + Server.API_KEY;
 
     private static final String TAG = ReceiptActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
+    String[] languages={};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,15 @@ public class ReceiptActivity extends MainActivity {
 
         setDinamicContent(R.layout.app_bar_receipt);
         buildMenu();
+
+        //autocomplete
+        ArrayList items = set_auto_complete();
+        AutoCompleteTextView text=(AutoCompleteTextView)findViewById(R.id.autoCompleteTextView1);
+        ArrayAdapter adapter = new
+                ArrayAdapter(this,android.R.layout.simple_list_item_1,items);
+
+        text.setAdapter(adapter);
+        text.setThreshold(1);
 
         Button btn_login = (Button) findViewById(R.id.btn_next);
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +119,7 @@ public class ReceiptActivity extends MainActivity {
                                             TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
                                             txt_step2_from.setText(fin_from);
                                             //build the notes
-                                            String notes = "Telah diterima oleh "+sharedpreferences.getString("name", null);
+                                            String notes = "Akan diterima oleh "+sharedpreferences.getString("name", null);
                                             notes += " dengan rincian :";
                                             TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
                                             txt_step2_label1.setText(notes);
@@ -128,6 +143,40 @@ public class ReceiptActivity extends MainActivity {
                         });
             }
         });
+    }
+
+    public ArrayList set_auto_complete() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("status", "onprocess");
+
+        final ArrayList<String> items = new ArrayList<String>();
+        items.add("Jancuk"); //this adds an element to the list.
+
+        _string_request(Request.Method.GET, issue_list_url, params,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response: " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    items.add(data.getString(n));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        return items;
     }
 
     @Override

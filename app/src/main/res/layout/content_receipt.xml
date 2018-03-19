@@ -47,6 +47,18 @@
             android:layout_width="fill_parent"
             android:entries="@array/receipttype">
         </Spinner>-->
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_below="@+id/imageView"
+            android:layout_alignLeft="@+id/imageView"
+            android:layout_alignStart="@+id/imageView"
+            android:layout_margin="10dp"
+            android:hint="AutoComplete TextView">
+            <requestFocus />
+        </AutoCompleteTextView>
 
         <Button
             android:id="@+id/btn_next"
@@ -117,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:textSize="16dip"
-            android:text="Pengadaan Dari :"
+            android:text="Dikirim Dari :"
             />
         <TextView
             android:id="@+id/txt_step2_from"
