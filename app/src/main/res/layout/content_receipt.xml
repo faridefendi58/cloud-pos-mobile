@@ -29,16 +29,6 @@
             android:textSize="18dip"
             android:textStyle="bold"/>
 
-        <EditText
-            android:id="@+id/txt_issue_no"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:hint="Nomor Pengadaan Barang"
-            android:inputType="text"
-            android:singleLine="true" />
-
         <!--<Spinner
             android:id="@+id/ReceiptType"
             android:layout_height="wrap_content"
@@ -47,16 +37,14 @@
             android:layout_width="fill_parent"
             android:entries="@array/receipttype">
         </Spinner>-->
+
         <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextView1"
-            android:layout_width="wrap_content"
+            android:id="@+id/txt_issue_no"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:layout_below="@+id/imageView"
-            android:layout_alignLeft="@+id/imageView"
-            android:layout_alignStart="@+id/imageView"
             android:layout_margin="10dp"
-            android:hint="AutoComplete TextView">
+            android:hint="Nomor Pengadaan Barang">
             <requestFocus />
         </AutoCompleteTextView>
 
@@ -101,17 +89,6 @@
             android:textSize="16dip"
             android:text="Nomor Pengadaan :"
             />
-
-        <!--<EditText
-            android:id="@+id/txt_step2_issue_no"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="0dp"
-            android:hint="Nomor issue"
-            android:inputType="text"
-            android:singleLine="true" />-->
-
 
         <TextView
             android:id="@+id/txt_step2_issue_no"
@@ -163,7 +140,7 @@
             android:inputType="textMultiLine"/>
 
         <Button
-            android:id="@+id/btn_next"
+            android:id="@+id/btn_confirm"
             android:layout_width="126dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -172,6 +149,29 @@
             android:text="Konfirmasi"
             android:textColor="#fff"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:id="@+id/txt_step2_type"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:id="@+id/txt_step2_label0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16dip"
+            android:text="Detail Barang :"
+            />
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+        </ListView>
 
     </LinearLayout>
     <LinearLayout
@@ -185,35 +185,14 @@
         android:visibility="invisible">
 
         <TextView
-            android:id="@+id/TextView3"
+            android:id="@+id/txt_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="PENERIMAAN BARANG"
-            android:textSize="18dip"
-            android:textStyle="bold"/>
-
-        <Spinner
-            android:id="@+id/WarehouseId"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_width="fill_parent"
-            android:entries="@array/warehouselist">
-        </Spinner>
-
-        <Button
-            android:id="@+id/btn_next"
-            android:layout_width="126dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:background="@color/colorPrimary"
-            android:text="Selanjutnya"
-            android:textColor="#fff"
-            android:textStyle="bold" />
+            android:textSize="16dip"
+            android:text="Success Message"
+            />
 
     </LinearLayout>
 
