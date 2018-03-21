@@ -142,8 +142,7 @@ public class ReceiptActivity extends MainActivity {
                                             ListView listView = (ListView) findViewById(R.id.list);
                                             listView.setAdapter(adapter2);
                                         } else {
-                                            LinearLayout step3 = (LinearLayout) findViewById(R.id.step3);
-                                            step3.setVisibility(View.VISIBLE);
+
                                         }
                                     } else {
                                         Toast.makeText(getApplicationContext(),
@@ -160,6 +159,15 @@ public class ReceiptActivity extends MainActivity {
         // second button action
         Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
         btn_confirm_trigger(btn_confirm, ini);
+        Button btn_copy = (Button) findViewById(R.id.btn_copy);
+        btn_copy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView txt_step3_message = (TextView) findViewById(R.id.txt_step3_message);
+                setClipboard(ini, txt_step3_message.getText().toString());
+                Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void btn_confirm_trigger(Button btn, Context ini) {
@@ -167,12 +175,16 @@ public class ReceiptActivity extends MainActivity {
             @Override
             public void onClick(View view) {
                 EditText notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                if (notes.getText().toString().trim().length() <= 0 ) {
+                    Toast.makeText(getApplicationContext(), "Kolom rincian barang masih kosong", Toast.LENGTH_LONG).show();
+                }
                 TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
                 TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("notes", notes.getText().toString());
                 params.put("issue_number", txt_step2_issue_no.getText().toString());
                 params.put("type", txt_step2_type.getText().toString());
+                params.put("admin_id", sharedpreferences.getString("id", null));
                 String confirm_url = Server.URL + "receipt/confirm?api-key=" + Server.API_KEY;
                 _string_request(
                         Request.Method.POST,
@@ -187,13 +199,23 @@ public class ReceiptActivity extends MainActivity {
                                     JSONObject jObj = new JSONObject(result);
                                     success = jObj.getInt(TAG_SUCCESS);
                                     if (success == 1) {
-                                        TextView msg = (TextView) findViewById(R.id.txt_message);
-                                        String success_msg = jObj.getString(TAG_MESSAGE);
+                                        TextView msg = (TextView) findViewById(R.id.txt_step3_message);
+                                        TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
+                                        EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                                        TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
+                                        String success_msg = "Nomor pengadaan "+ txt_step2_issue_no.getText().toString()
+                                                +" dari "+ txt_step2_from.getText().toString()
+                                                +" telah diterima oleh "+ sharedpreferences.getString("name", null)
+                                                + " dengan rincian : "+txt_receipt_notes.getText().toString();
                                         msg.setText(success_msg);
-                                        LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
-                                        step2.setVisibility(View.INVISIBLE);
+
                                         LinearLayout step3 = (LinearLayout) findViewById(R.id.step3);
                                         step3.setVisibility(View.VISIBLE);
+                                        LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                        step2.setVisibility(View.GONE);
+                                        LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
+                                        step1.setVisibility(View.GONE);
+
                                         Toast.makeText(getApplicationContext(),
                                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                                     } else {
@@ -375,5 +397,11 @@ public class ReceiptActivity extends MainActivity {
 
     public interface VolleyCallback{
         void onSuccess(String result);
+    }
+
+    private void setClipboard(Context context, String text) {
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
+        clipboard.setPrimaryClip(clip);
     }
 }

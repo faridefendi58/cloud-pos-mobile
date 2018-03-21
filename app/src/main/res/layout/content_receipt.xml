@@ -19,7 +19,7 @@
         android:padding="@dimen/activity_vertical_margin">
 
         <TextView
-            android:id="@+id/TextView2"
+            android:id="@+id/step1_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -68,7 +68,8 @@
         android:layout_centerVertical="true"
         android:orientation="vertical"
         android:padding="@dimen/activity_vertical_margin"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        android:scrollbars="vertical">
 
         <TextView
             android:id="@+id/TextView2"
@@ -82,7 +83,7 @@
             android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/txt_step2_label0"
+            android:id="@+id/txt_step2_label_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -173,6 +174,16 @@
             android:layout_width="match_parent">
         </ListView>
 
+        <TextView
+            android:id="@+id/txt_step2_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16dip"
+            android:visibility="invisible"
+            />
+
     </LinearLayout>
     <LinearLayout
         android:id="@+id/step3"
@@ -182,18 +193,27 @@
         android:layout_centerVertical="true"
         android:orientation="vertical"
         android:padding="@dimen/activity_vertical_margin"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        android:scrollbars="vertical">
 
         <TextView
-            android:id="@+id/txt_message"
+            android:id="@+id/txt_step3_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:textSize="16dip"
-            android:text="Success Message"
             />
-
+        <Button
+            android:id="@+id/btn_copy"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimary"
+            android:text="Salin Pesan"
+            android:textColor="#fff"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </android.support.v7.widget.GridLayout>
