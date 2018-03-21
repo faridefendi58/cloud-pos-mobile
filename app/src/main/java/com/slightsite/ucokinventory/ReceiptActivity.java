@@ -4,12 +4,14 @@ package com.slightsite.ucokinventory;
  * Created by mrsvette on 13/03/18.
  */
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -67,6 +69,7 @@ public class ReceiptActivity extends MainActivity {
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboardFrom(ini, v);
                 //final Spinner feedbackSpinner = (Spinner) findViewById(R.id.ReceiptType);
                 //String ReceiptType = feedbackSpinner.getSelectedItem().toString();
                 AutoCompleteTextView issue_number = (AutoCompleteTextView) findViewById(R.id.txt_issue_no);
@@ -93,19 +96,28 @@ public class ReceiptActivity extends MainActivity {
 
                                         LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
                                         step1.setVisibility(View.GONE);
-                                        if (data_status.equals("onprocess")) {
+                                        if (data_status.equals("onprocess") || data_status.equals("pending")) {
                                             //set notes
                                             EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
                                             //get session
                                             sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
                                             //get issue numb
+                                            TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
                                             String fin_issue_number, fin_from;
                                             if (data_type.equals("puchase_order")) {
                                                 fin_issue_number = data.getString("po_number");
                                                 fin_from = data.getString("supplier_name");
+                                                //build the notes
+                                                String notes = "Akan diterima oleh "+sharedpreferences.getString("name", null);
+                                                notes += " dengan rincian :";
+                                                txt_step2_label1.setText(notes);
                                             } else if (data_type.equals("transfer_issue")) {
                                                 fin_issue_number = data.getString("ti_number");
                                                 fin_from = data.getString("warehouse_from_name");
+                                                txt_receipt_notes.setVisibility(View.GONE);
+                                                txt_step2_label1.setVisibility(View.GONE);
+                                                Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
+                                                btn_confirm.setVisibility(View.GONE);
                                             } else {
                                                 fin_issue_number = data.getString("po_number");
                                                 fin_from = data.getString("supplier_name");
@@ -116,11 +128,6 @@ public class ReceiptActivity extends MainActivity {
                                             txt_step2_from.setText(fin_from);
                                             TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
                                             txt_step2_type.setText(data.getString("type"));
-                                            //build the notes
-                                            String notes = "Akan diterima oleh "+sharedpreferences.getString("name", null);
-                                            notes += " dengan rincian :";
-                                            TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
-                                            txt_step2_label1.setText(notes);
 
                                             LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
                                             step2.setVisibility(View.VISIBLE);
@@ -403,5 +410,10 @@ public class ReceiptActivity extends MainActivity {
         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
         clipboard.setPrimaryClip(clip);
+    }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
