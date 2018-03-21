@@ -29,15 +29,6 @@
             android:textSize="18dip"
             android:textStyle="bold"/>
 
-        <!--<Spinner
-            android:id="@+id/ReceiptType"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_width="fill_parent"
-            android:entries="@array/receipttype">
-        </Spinner>-->
-
         <AutoCompleteTextView
             android:id="@+id/txt_issue_no"
             android:layout_width="match_parent"
@@ -120,12 +111,31 @@
             />
 
         <TextView
+            android:id="@+id/txt_step2_label_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textSize="16dip"
+            android:text="Barang akan diterima di :"
+            />
+
+        <Spinner
+            android:id="@+id/step2_receipt_type"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="fill_parent"
+            android:entries="@array/receipt_type">
+        </Spinner>
+
+        <TextView
             android:id="@+id/txt_step2_label1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:textSize="16dip"
-            android:text="Jumlah barang"
+            android:text="Rincian barang yang diterima :"
+            android:visibility="gone"
             />
 
         <EditText
@@ -135,9 +145,10 @@
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="0dp"
-            android:hint="Rincian barang"
+            android:hint="Masukkan detail barang"
             android:text=""
-            android:inputType="textMultiLine"/>
+            android:inputType="textMultiLine"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_confirm"
@@ -149,7 +160,8 @@
             android:background="@color/colorPrimary"
             android:text="Konfirmasi"
             android:textColor="#fff"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <TextView
             android:layout_height="0dp"

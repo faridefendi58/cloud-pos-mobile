@@ -12,12 +12,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,8 +72,7 @@ public class ReceiptActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboardFrom(ini, v);
-                //final Spinner feedbackSpinner = (Spinner) findViewById(R.id.ReceiptType);
-                //String ReceiptType = feedbackSpinner.getSelectedItem().toString();
+
                 AutoCompleteTextView issue_number = (AutoCompleteTextView) findViewById(R.id.txt_issue_no);
 
                 Map<String, String> params = new HashMap<String, String>();
@@ -104,13 +105,9 @@ public class ReceiptActivity extends MainActivity {
                                             //get issue numb
                                             TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
                                             String fin_issue_number, fin_from;
-                                            if (data_type.equals("puchase_order")) {
+                                            if (data_type.equals("purchase_order")) {
                                                 fin_issue_number = data.getString("po_number");
                                                 fin_from = data.getString("supplier_name");
-                                                //build the notes
-                                                String notes = "Akan diterima oleh "+sharedpreferences.getString("name", null);
-                                                notes += " dengan rincian :";
-                                                txt_step2_label1.setText(notes);
                                             } else if (data_type.equals("transfer_issue")) {
                                                 fin_issue_number = data.getString("ti_number");
                                                 fin_from = data.getString("warehouse_from_name");
@@ -166,6 +163,9 @@ public class ReceiptActivity extends MainActivity {
         // second button action
         Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
         btn_confirm_trigger(btn_confirm, ini);
+
+        Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
+        select_receipt_type(step2_receipt_type, ini);
         Button btn_copy = (Button) findViewById(R.id.btn_copy);
         btn_copy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -415,5 +415,33 @@ public class ReceiptActivity extends MainActivity {
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void select_receipt_type(final Spinner select, Context ini) {
+        select.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String type = select.getSelectedItem().toString();
+                Log.e("Selected item : ", type);
+                TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
+                EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
+                if (type.equals("Bandara") || type.equals("Ekspedisi") || type.equals("Lainnya")) {
+                    txt_step2_label1.setVisibility(View.VISIBLE);
+                    txt_receipt_notes.setVisibility(View.VISIBLE);
+                    btn_confirm.setVisibility(View.VISIBLE);
+                } else {
+                    txt_step2_label1.setVisibility(View.GONE);
+                    txt_receipt_notes.setVisibility(View.GONE);
+                    btn_confirm.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
     }
 }
