@@ -18,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
@@ -33,42 +36,6 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG_USERNAME = "username";
     public static final String TAG_NAME = "name";
 
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //txt_id = (TextView) findViewById(R.id.txt_id);
-        txt_username = (TextView) findViewById(R.id.txt_username);
-        btn_logout = (Button) findViewById(R.id.btn_logout);
-
-        sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
-
-        id = getIntent().getStringExtra(TAG_ID);
-        username = getIntent().getStringExtra(TAG_USERNAME);
-
-        //txt_id.setText("ID : " + id);
-        txt_username.setText("USERNAME : " + username);
-
-        btn_logout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                // update login session ke FALSE dan mengosongkan nilai id dan username
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putBoolean(Login.session_status, false);
-                editor.putString(TAG_ID, null);
-                editor.putString(TAG_USERNAME, null);
-                editor.commit();
-
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                finish();
-                startActivity(intent);
-            }
-        });
-    }*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +43,14 @@ public class MainActivity extends AppCompatActivity
 
         setDinamicContent(R.layout.app_bar_main);
         buildMenu();
+        RelativeLayout dashboard_menu1 = (RelativeLayout) findViewById(R.id.dashboard_menu1);
+        dashboard_menu1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ReceiptActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void setDinamicContent(@LayoutRes int app_bar) {
@@ -111,8 +86,8 @@ public class MainActivity extends AppCompatActivity
 
         View v = navigationView.getHeaderView(0);
         TextView txt_full_name = (TextView) v.findViewById(R.id.txt_full_name);
-        full_name = getIntent().getStringExtra(TAG_NAME);
-        txt_full_name.setText(full_name);
+        sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        txt_full_name.setText( sharedpreferences.getString(TAG_NAME, null) );
     }
 
     @Override
@@ -158,8 +133,6 @@ public class MainActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_stock_in) {
-            /*Intent intent = new Intent(this, StockIn.class);
-            startActivity(intent);*/
             Intent intent = new Intent(getApplicationContext(), ReceiptActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_transfer_out) {
