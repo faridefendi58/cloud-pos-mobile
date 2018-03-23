@@ -5,9 +5,9 @@
         <item>Ekspedisi</item>
         <item>Lainnya</item>
     </string-array>
-    <string-array name="warehouselist">
-        <item>Warehouse Serpong</item>
-        <item>Warehouse Kalimalang</item>
-        <item>Warehouse Citra Garden</item>
+    <string-array name="warehouse_list">
+        <item>Serpong</item>
+        <item>Kalimalang</item>
+        <item>Citra Garden</item>
     </string-array>
 </resources>

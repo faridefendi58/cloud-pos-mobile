@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:textSize="16dip"
             android:text=""
             android:textStyle="bold"
@@ -104,29 +104,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:textSize="16dip"
             android:text=""
             android:textStyle="bold"
             />
-
-        <TextView
-            android:id="@+id/txt_step2_label_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textSize="16dip"
-            android:text="Barang akan diterima di :"
-            />
-
-        <Spinner
-            android:id="@+id/step2_receipt_type"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_width="fill_parent"
-            android:entries="@array/receipt_type">
-        </Spinner>
 
         <TextView
             android:id="@+id/txt_step2_label1"
@@ -149,6 +131,42 @@
             android:text=""
             android:inputType="textMultiLine"
             android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/txt_step2_label_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textSize="16dip"
+            android:text="Barang akan diterima di :"
+            />
+
+        <Spinner
+            android:id="@+id/step2_receipt_type"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="fill_parent"
+            android:entries="@array/receipt_type">
+        </Spinner>
+
+        <TextView
+            android:id="@+id/txt_step2_label_wh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textSize="16dip"
+            android:text="Warehouse penerima :"
+            />
+
+        <Spinner
+            android:id="@+id/step2_receipt_wh"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="fill_parent"
+            android:entries="@array/warehouse_list">
+        </Spinner>
 
         <Button
             android:id="@+id/btn_confirm"
@@ -187,6 +205,36 @@
         </ListView>
 
         <TextView
+            android:id="@+id/txt_step2_label_receipts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:textSize="16dip"
+            android:text="Detail Penerimaan :"
+            android:visibility="gone"
+            />
+        <ListView
+            android:id="@+id/list-receipts"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:visibility="gone">
+        </ListView>
+
+        <Button
+            android:id="@+id/btn_confirm_receipt"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorPrimary"
+            android:text="Konfirmasi"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+        <TextView
             android:id="@+id/txt_step2_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -194,6 +242,16 @@
             android:layout_marginTop="10dp"
             android:textSize="16dip"
             android:visibility="invisible"
+            />
+
+        <TextView
+            android:id="@+id/txt_step2_item_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16dip"
+            android:visibility="visible"
             />
 
     </LinearLayout>
