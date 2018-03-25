@@ -81,7 +81,7 @@ public class ReceiptActivity extends MainActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("issue_number", issue_number.getText().toString());
 
-                _string_request(Request.Method.GET, get_issue_url, params,
+                _string_request(Request.Method.GET, get_issue_url, params, true,
                         new VolleyCallback() {
                             @Override
                             public void onSuccess(String result) {
@@ -153,6 +153,11 @@ public class ReceiptActivity extends MainActivity {
                                             ListView listView = (ListView) findViewById(R.id.list);
                                             listView.setAdapter(adapter2);
                                             setListEvent(listView, ini, items_data);
+                                            // build spinner wh
+                                            Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
+                                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, android.R.layout.simple_spinner_item, get_list_warehouse());
+                                            whAdapter.notifyDataSetChanged();
+                                            step2_receipt_wh.setAdapter(whAdapter);
                                         } else {
 
                                         }
@@ -171,6 +176,10 @@ public class ReceiptActivity extends MainActivity {
         // second button action
         Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
         btn_confirm_trigger(btn_confirm, ini);
+
+        // confirm receipt button
+        Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
+        btn_confirm_receipt_trigger(btn_confirm_receipt, ini);
 
         Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
         select_receipt_type(step2_receipt_type, ini);
@@ -205,6 +214,7 @@ public class ReceiptActivity extends MainActivity {
                         Request.Method.POST,
                         confirm_url,
                         params,
+                        true,
                         new VolleyCallback() {
                             @Override
                             public void onSuccess(String result) {
@@ -259,7 +269,7 @@ public class ReceiptActivity extends MainActivity {
 
         final ArrayList<String> items = new ArrayList<String>();
 
-        _string_request(Request.Method.GET, issue_list_url, params,
+        _string_request(Request.Method.GET, issue_list_url, params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
@@ -375,11 +385,13 @@ public class ReceiptActivity extends MainActivity {
             pDialog.dismiss();
     }
 
-    public void _string_request(int method, String url, final Map params, final VolleyCallback callback) {
-        pDialog = new ProgressDialog(this);
-        pDialog.setCancelable(false);
-        pDialog.setMessage("Request data ...");
-        showDialog();
+    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
 
         if (method == Request.Method.GET) { //get method doesnt support getParams
             Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
@@ -403,7 +415,9 @@ public class ReceiptActivity extends MainActivity {
                 Log.e(TAG, "Request Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
+                if (show_dialog) {
+                    hideDialog();
+                }
             }
         })
         {
@@ -501,6 +515,7 @@ public class ReceiptActivity extends MainActivity {
                 final EditText input = new EditText(ini);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setHint("Jumlah yg diterima ?");
+
                 builder.setView(input);
 
                 builder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
@@ -519,21 +534,30 @@ public class ReceiptActivity extends MainActivity {
                         }
                         Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
                         Integer i = 0;
+                        String list_receipt_str = "";
                         ArrayList<String> list_receipts = new ArrayList<String>();
                         while(iterator.hasNext())
                         {
                             Map.Entry<String, String> pair = iterator.next();
+                            String r_label = product_names.get(pair.getKey())+" "+pair.getValue()+" "+product_units.get(pair.getKey());
                             if (i > 0) {
-                                product_stack_str += "&" + pair.getKey() + "=" + pair.getValue();
+                                product_stack_str += "-" + pair.getKey() + "," + pair.getValue();
+                                list_receipt_str += ", " + r_label;
                             } else {
-                                product_stack_str += pair.getKey() + "=" + pair.getValue();
+                                product_stack_str += pair.getKey() + "," + pair.getValue();
+                                list_receipt_str += r_label;
                             }
-                            list_receipts.add(product_names.get(pair.getKey())+" "+pair.getValue()+" "+product_units.get(pair.getKey()));
+                            list_receipts.add(r_label);
                             i ++;
                         }
 
                         TextView txt_step2_item_select = (TextView) findViewById(R.id.txt_step2_item_select);
                         txt_step2_item_select.setText(product_stack_str);
+
+                        // list in string
+                        TextView txt_step2_item_select_str = (TextView) findViewById(R.id.txt_step2_item_select_str);
+                        txt_step2_item_select_str.setText(list_receipt_str);
+
                         //set the list again
                         ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
                                 R.layout.activity_list_view, list_receipts);
@@ -555,6 +579,112 @@ public class ReceiptActivity extends MainActivity {
                 });
 
                 builder.show();
+            }
+        });
+    }
+
+    public ArrayList get_list_warehouse() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
+
+        final ArrayList<String> items = new ArrayList<String>();
+        items.add("-");
+
+        String wh_url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, wh_url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response: " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                Log.e(TAG, "Response: " + data.toString());
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    items.add(data_n.getString("title"));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        return items;
+    }
+
+    private void btn_confirm_receipt_trigger(Button btn, Context ini) {
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView txt_step2_item_select = (TextView) findViewById(R.id.txt_step2_item_select);
+                TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
+                TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
+                Spinner step2_receipt_wh = (Spinner) findViewById(R.id.step2_receipt_wh);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("items", txt_step2_item_select.getText().toString());
+                params.put("issue_number", txt_step2_issue_no.getText().toString());
+                params.put("type", txt_step2_type.getText().toString());
+                params.put("warehouse_name", step2_receipt_wh.getSelectedItem().toString());
+                params.put("admin_id", sharedpreferences.getString("id", null));
+                String confirm_url = Server.URL + "receipt/confirm?api-key=" + Server.API_KEY;
+                _string_request(
+                        Request.Method.POST,
+                        confirm_url,
+                        params,
+                        true,
+                        new VolleyCallback() {
+                            @Override
+                            public void onSuccess(String result) {
+                                Log.e(TAG, "Response: " + result.toString());
+                                hideDialog();
+                                try {
+                                    JSONObject jObj = new JSONObject(result);
+                                    success = jObj.getInt(TAG_SUCCESS);
+                                    if (success == 1) {
+                                        TextView msg = (TextView) findViewById(R.id.txt_step3_message);
+                                        TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
+                                        //EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                                        TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
+                                        Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
+                                        Spinner step2_wh = (Spinner) findViewById(R.id.step2_receipt_wh);
+                                        String r_type = step2_receipt_type.getSelectedItem().toString();
+                                        String r_wh = step2_wh.getSelectedItem().toString();
+                                        String success_msg = "Nomor pengadaan "+ txt_step2_issue_no.getText().toString()
+                                                +" dari "+ txt_step2_from.getText().toString()
+                                                +" telah diterima oleh "+ sharedpreferences.getString("name", null)
+                                                +" di warehouse "+r_wh;
+
+                                        TextView txt_step2_item_select_str = (TextView) findViewById(R.id.txt_step2_item_select_str);
+                                        success_msg += " dengan rincian : "+txt_step2_item_select_str.getText().toString();
+
+                                        msg.setText(success_msg);
+
+                                        LinearLayout step3 = (LinearLayout) findViewById(R.id.step3);
+                                        step3.setVisibility(View.VISIBLE);
+                                        LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                        step2.setVisibility(View.GONE);
+                                        LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
+                                        step1.setVisibility(View.GONE);
+
+                                        Toast.makeText(getApplicationContext(),
+                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(),
+                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
             }
         });
     }
