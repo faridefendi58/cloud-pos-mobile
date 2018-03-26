@@ -43,11 +43,21 @@ public class MainActivity extends AppCompatActivity
 
         setDinamicContent(R.layout.app_bar_main);
         buildMenu();
+        // dashboard receipt menu
         RelativeLayout dashboard_menu1 = (RelativeLayout) findViewById(R.id.dashboard_menu1);
         dashboard_menu1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ReceiptActivity.class);
+                startActivity(intent);
+            }
+        });
+        // dashboard stock menu
+        RelativeLayout dashboard_menu4 = (RelativeLayout) findViewById(R.id.dashboard_menu4);
+        dashboard_menu4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), StockActivity.class);
                 startActivity(intent);
             }
         });

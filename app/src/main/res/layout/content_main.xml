@@ -45,6 +45,7 @@
         android:background="#1ABC9C">
 
         <RelativeLayout
+            android:id="@+id/dashboard_menu2"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -71,6 +72,7 @@
         android:background="#34495e">
 
         <RelativeLayout
+            android:id="@+id/dashboard_menu3"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -99,6 +101,7 @@
         >
 
         <RelativeLayout
+            android:id="@+id/dashboard_menu4"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -106,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:id="@+id/mail"
+                android:id="@+id/stock-menu"
                 android:src="@drawable/ic_menu_stock"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -114,7 +117,7 @@
                 android:textColor="#000"
                 android:textSize="20sp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mail"
+                android:layout_below="@+id/stock-menu"
                 android:layout_centerHorizontal="true"
                 android:text="Cek Stok"/>
         </RelativeLayout>
