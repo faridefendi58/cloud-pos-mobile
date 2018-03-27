@@ -633,6 +633,7 @@ public class ReceiptActivity extends MainActivity {
                 params.put("type", txt_step2_type.getText().toString());
                 params.put("warehouse_name", step2_receipt_wh.getSelectedItem().toString());
                 params.put("admin_id", sharedpreferences.getString("id", null));
+                Log.e(TAG, params.toString());
                 String confirm_url = Server.URL + "receipt/confirm?api-key=" + Server.API_KEY;
                 _string_request(
                         Request.Method.POST,
