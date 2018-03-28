@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    app:orientation="horizontal"
+    android:background="@color/backgroundcolor"
     tools:context="com.slightsite.ucokinventory.ReceiptActivity"
-    tools:showIn="@layout/app_bar_receipt">
+    tools:showIn="@layout/app_bar_receipt"
+    >
 
     <LinearLayout
         android:id="@+id/step1"
@@ -58,57 +61,36 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin"
-        android:visibility="invisible">
+        android:paddingLeft="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_vertical_margin"
+        android:visibility="gone">
 
-        <TextView
-            android:id="@+id/TextView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
-            android:text="PENERIMAAN BARANG"
-            android:textSize="18dip"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/txt_step2_label_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textSize="16dip"
-            android:text="Nomor Pengadaan :"
-            />
-
-        <TextView
-            android:id="@+id/txt_step2_issue_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_marginBottom="10dp"
-            android:textSize="16dip"
-            android:text=""
-            android:textStyle="bold"
-            />
-        <TextView
-            android:id="@+id/txt_step2_label2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textSize="16dip"
-            android:text="Dikirim Dari :"
-            />
-        <TextView
-            android:id="@+id/txt_step2_from"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="10dp"
-            android:textSize="16dip"
-            android:text=""
-            android:textStyle="bold"
-            />
+            android:paddingBottom="10dp"
+            android:background="@drawable/textlines">
+            <TextView
+                android:id="@+id/txt_step2_issue_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="15dp"
+                android:text="PO-000001"
+                android:textSize="18dip"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txt_step2_from"
+                android:text="Supplier Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="16dip"/>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/txt_step2_label1"
@@ -202,10 +184,10 @@
 
         <ListView
             android:id="@+id/list"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:scrollbars="none">
-        </ListView>
+            android:isScrollContainer="false"
+            />
 
         <TextView
             android:id="@+id/txt_step2_label_receipts"
@@ -298,4 +280,4 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-</android.support.v7.widget.GridLayout>
+</LinearLayout>

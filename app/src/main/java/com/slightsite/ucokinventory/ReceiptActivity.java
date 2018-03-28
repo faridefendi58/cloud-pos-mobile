@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -491,6 +492,7 @@ public class ReceiptActivity extends MainActivity {
     Map<String, String> product_names = new HashMap<String, String>();
     Map<String, String> product_units = new HashMap<String, String>();
     TextView current_view;
+    int max_quantity = 0;
 
     private void setListEvent(final ListView listView, final Context ini, final JSONArray items_data) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -504,7 +506,7 @@ public class ReceiptActivity extends MainActivity {
                     product_names.put(product_id, json_obj_n.getString("product_name").toString());
                     product_units.put(product_id, json_obj_n.getString("unit").toString());
                     current_view = (TextView) view;
-                    Toast.makeText(getBaseContext(),title,Toast.LENGTH_SHORT).show();
+                    max_quantity = Integer.parseInt(json_obj_n.getString("quantity").toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -526,6 +528,10 @@ public class ReceiptActivity extends MainActivity {
                         //push to stack
                         int i_text = Integer.parseInt(m_Text);
                         if (i_text > 0) {
+                            if (max_quantity > 0 && i_text > max_quantity) {
+                                m_Text = ""+ max_quantity;
+                                Toast.makeText(getBaseContext(),"Quantity maksimum "+ m_Text,Toast.LENGTH_SHORT).show();
+                            }
                             product_stack.put(product_id, m_Text);
                         } else {
                             if (product_stack.containsKey(product_id)) {
