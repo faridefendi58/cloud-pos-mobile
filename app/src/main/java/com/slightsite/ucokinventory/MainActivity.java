@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         setDinamicContent(R.layout.app_bar_main);
         buildMenu();
         // dashboard receipt menu
-        RelativeLayout dashboard_menu1 = (RelativeLayout) findViewById(R.id.dashboard_menu1);
+        LinearLayout dashboard_menu1 = (LinearLayout) findViewById(R.id.dashboard_menu1);
         dashboard_menu1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         // dashboard stock menu
-        RelativeLayout dashboard_menu4 = (RelativeLayout) findViewById(R.id.dashboard_menu4);
+        LinearLayout dashboard_menu4 = (LinearLayout) findViewById(R.id.dashboard_menu4);
         dashboard_menu4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
