@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Item Barang"
+        android:paddingLeft="0dp"
+        android:textSize="16dip"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/textlines"
+        />
+
+    <TextView
+        android:id="@+id/txt_label_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="16dip"
+        android:text="Pilih Produk :"
+        android:textStyle="bold"
+        />
+
+    <Spinner
+        android:id="@+id/list_product"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="#fff"
+        android:entries="@array/warehouse_list"
+        >
+    </Spinner>
+
+    <TextView
+        android:id="@+id/txt_label_qty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="16dip"
+        android:text="Jumlah Barang :"
+        android:textStyle="bold"
+        />
+
+    <EditText
+        android:id="@+id/txt_qty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="0dp"
+        android:hint="Masukkan jumlah barang"
+        android:text=""/>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <Button
+            android:id="@+id/btn_dialog_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Simpan"
+            android:background="@color/green"
+            android:textColor="#fff"
+            android:layout_gravity="left"
+            android:visibility="visible"/>
+
+        <Button
+            android:id="@+id/btn_dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Batal"
+            android:background="@color/yellow"
+            android:textColor="#fff"
+            android:layout_gravity="left"
+            android:layout_marginLeft="100dp"
+            android:visibility="visible"/>
+    </FrameLayout>
+
+</LinearLayout>
