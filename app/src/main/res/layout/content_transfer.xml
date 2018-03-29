@@ -96,10 +96,12 @@
         </Spinner>-->
 
         <FrameLayout
+            android:id="@+id/btn_add_container"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:visibility="gone">
             <Button
                 android:id="@+id/btn_add"
                 android:text="Tambah Item Barang"
@@ -114,6 +116,43 @@
                 android:drawableLeft="@drawable/ic_add_24dp"
                 />
         </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/list_item_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:visibility="visible">
+
+            <ListView
+                android:id="@+id/list_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isScrollContainer="false"
+                />
+
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/txt_item_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16dip"
+            android:visibility="gone"
+            />
+        <TextView
+            android:id="@+id/txt_item_select_str"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16dip"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/btn_submit"

@@ -3,17 +3,15 @@ package com.slightsite.ucokinventory;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,13 +36,16 @@ import java.util.Map;
  */
 
 public class TransferActivity extends MainActivity {
-    Intent intent;
     ProgressDialog pDialog;
     int success;
 
     private static final String TAG = TransferActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
+    ArrayList list_products;
+    Map<String, String> list_items = new HashMap<String, String>();
+    Map<String, String> product_names = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,24 @@ public class TransferActivity extends MainActivity {
         whAdapter.notifyDataSetChanged();
         wh_list_to.setAdapter(whAdapter);
 
+        final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+        wh_list_from.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!adapterView.getSelectedItem().toString().equals("-"))
+                    btn_add_container.setVisibility(View.VISIBLE);
+                else
+                    btn_add_container.setVisibility(View.GONE);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                btn_add_container.setVisibility(View.GONE);
+            }
+        });
+
         final Context ini = this;
+        // define the product list
+        list_products = get_list_product();
         btn_add_trigger(ini);
     }
 
@@ -74,28 +92,14 @@ public class TransferActivity extends MainActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(getApplicationContext(), "Please do something!", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item, null);
 
                 final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
-                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, get_list_product());
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_products);
                 list_product.setAdapter(productAdapter);
-                //builder.setTitle("Tambah Item Barang");
 
                 builder.setView(mView);
-                /*builder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //String m_Text = input.getText().toString();
-                    }
-                });
-                builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });*/
                 final AlertDialog dialog = builder.create();
 
                 Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
@@ -103,6 +107,74 @@ public class TransferActivity extends MainActivity {
                     @Override
                     public void onClick(View view) {
                         dialog.cancel();
+                    }
+                });
+
+                final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+                Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+                btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int has_error = 0;
+                        if (list_product.getSelectedItem().toString().length() <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                        }
+                        if (txt_qty.getText().toString().length() <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                        } else {
+                            boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                            if (digitsOnly) {
+                                int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                                if (tot_qty_val <= 0) {
+                                    has_error = has_error + 1;
+                                    Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                has_error = has_error + 1;
+                                txt_qty.setText("");
+                                Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        if (has_error == 0) {
+                            list_items.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
+                            //Log.e(TAG, "Product list: " + product_names.toString());
+                            Toast.makeText(getApplicationContext(), "Cart: " +list_items.toString(), Toast.LENGTH_LONG).show();
+                            dialog.hide();
+                            // show the added item
+                            Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
+                            ArrayList<String> arr_list_items = new ArrayList<String>();
+                            Integer i = 0;
+                            String product_stack_str = "";
+                            String list_item_str = "";
+                            while(iterator.hasNext())
+                            {
+                                Map.Entry<String, String> pair = iterator.next();
+                                String r_label = pair.getKey()+" "+pair.getValue();
+                                if (i > 0) {
+                                    product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
+                                    list_item_str += ", " + r_label;
+                                } else {
+                                    product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
+                                    list_item_str += r_label;
+                                }
+                                arr_list_items.add(r_label);
+                                i ++;
+                            }
+
+                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
+
+                            ListView listView = (ListView) findViewById(R.id.list_item);
+                            listView.setAdapter(adapter2);
+
+                            TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
+                            txt_item_select.setText(product_stack_str);
+
+                            TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
+                            txt_item_select_str.setText(list_item_str);
+                        }
                     }
                 });
 
@@ -233,6 +305,7 @@ public class TransferActivity extends MainActivity {
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
+                                    product_names.put(data_n.getString("title"), data_n.getString("id"));
                                 }
                             }
 
