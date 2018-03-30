@@ -100,7 +100,7 @@ public class ReceiptActivity extends MainActivity {
 
                                         LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
                                         step1.setVisibility(View.GONE);
-                                        if (data_status.equals("onprocess") || data_status.equals("pending")) {
+                                        if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
                                             //set notes
                                             EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
                                             //get session

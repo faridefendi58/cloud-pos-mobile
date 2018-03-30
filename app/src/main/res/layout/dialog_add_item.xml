@@ -66,8 +66,11 @@
             android:id="@+id/btn_dialog_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="Simpan"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Tambahkan"
             android:background="@color/green"
             android:textColor="#fff"
             android:layout_gravity="left"
@@ -82,7 +85,7 @@
             android:background="@color/yellow"
             android:textColor="#fff"
             android:layout_gravity="left"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="120dp"
             android:visibility="visible"/>
     </FrameLayout>
 

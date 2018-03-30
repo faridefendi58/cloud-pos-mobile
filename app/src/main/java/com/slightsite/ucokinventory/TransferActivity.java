@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class TransferActivity extends MainActivity {
     ArrayList list_products;
     Map<String, String> list_items = new HashMap<String, String>();
     Map<String, String> product_names = new HashMap<String, String>();
+    Map<String, String> product_units = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,16 @@ public class TransferActivity extends MainActivity {
         // define the product list
         list_products = get_list_product();
         btn_add_trigger(ini);
+        // copy btn trigger
+        Button btn_copy = (Button) findViewById(R.id.btn_copy);
+        btn_copy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView txt_success_message = (TextView) findViewById(R.id.txt_success_message);
+                setClipboard(ini, txt_success_message.getText().toString());
+                Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void btn_add_trigger(final Context ini) {
@@ -140,8 +152,7 @@ public class TransferActivity extends MainActivity {
                         }
                         if (has_error == 0) {
                             list_items.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
-                            //Log.e(TAG, "Product list: " + product_names.toString());
-                            Toast.makeText(getApplicationContext(), "Cart: " +list_items.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
                             dialog.hide();
                             // show the added item
                             Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
@@ -152,7 +163,7 @@ public class TransferActivity extends MainActivity {
                             while(iterator.hasNext())
                             {
                                 Map.Entry<String, String> pair = iterator.next();
-                                String r_label = pair.getKey()+" "+pair.getValue();
+                                String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
                                 if (i > 0) {
                                     product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
                                     list_item_str += ", " + r_label;
@@ -174,6 +185,10 @@ public class TransferActivity extends MainActivity {
 
                             TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
                             txt_item_select_str.setText(list_item_str);
+
+                            Button btn_submit = (Button) findViewById(R.id.btn_submit);
+                            btn_submit.setVisibility(View.VISIBLE);
+                            btn_submit_trigger(btn_submit, ini);
                         }
                     }
                 });
@@ -192,7 +207,7 @@ public class TransferActivity extends MainActivity {
 
         String wh_url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, wh_url, params, false,
-                new StockActivity.VolleyCallback() {
+                new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         Log.e(TAG, "Response: " + result.toString());
@@ -219,7 +234,7 @@ public class TransferActivity extends MainActivity {
         return items;
     }
 
-    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final StockActivity.VolleyCallback callback) {
+    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
         if (show_dialog) {
             pDialog = new ProgressDialog(this);
             pDialog.setCancelable(false);
@@ -290,7 +305,7 @@ public class TransferActivity extends MainActivity {
 
         String wh_url = Server.URL + "product/list?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, wh_url, params, false,
-                new StockActivity.VolleyCallback() {
+                new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         Log.e(TAG, "Response: " + result.toString());
@@ -306,6 +321,7 @@ public class TransferActivity extends MainActivity {
                                     JSONObject data_n = data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
                                     product_names.put(data_n.getString("title"), data_n.getString("id"));
+                                    product_units.put(data_n.getString("title"), data_n.getString("unit"));
                                 }
                             }
 
@@ -316,5 +332,78 @@ public class TransferActivity extends MainActivity {
                 });
 
         return items;
+    }
+
+    private void btn_submit_trigger(final Button btn, Context ini) {
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Spinner wh_list_from = (Spinner) findViewById(R.id.wh_list_from);
+                final Spinner wh_list_to = (Spinner) findViewById(R.id.wh_list_to);
+                TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("items", txt_item_select.getText().toString());
+                params.put("warehouse_from_name", wh_list_from.getSelectedItem().toString());
+                params.put("warehouse_to_name", wh_list_to.getSelectedItem().toString());
+                params.put("admin_id", sharedpreferences.getString("id", null));
+                Log.e(TAG, params.toString());
+
+                String transfer_url = Server.URL + "transfer/create?api-key=" + Server.API_KEY;
+                _string_request(
+                        Request.Method.POST,
+                        transfer_url,
+                        params,
+                        true,
+                        new VolleyCallback(){
+                            @Override
+                            public void onSuccess(String result) {
+                                Log.e(TAG, "Response: " + result.toString());
+                                hideDialog();
+                                try {
+                                    JSONObject jObj = new JSONObject(result);
+                                    success = jObj.getInt(TAG_SUCCESS);
+                                    if (success == 1) {
+                                        String success_msg = "Perpindahan stok dari Warehouse "+ wh_list_from.getSelectedItem().toString()
+                                                +" telah dikirim oleh "+ sharedpreferences.getString("name", null);
+
+                                        if (wh_list_to.getSelectedItem().toString().length() > 0) {
+                                            success_msg += " ke Warehouse " + wh_list_to.getSelectedItem().toString();
+                                        }
+
+                                        TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
+                                        success_msg += " dengan rincian : " + txt_item_select_str.getText().toString();
+
+                                        TextView msg = (TextView) findViewById(R.id.txt_success_message);
+                                        msg.setText(success_msg);
+                                        msg.setVisibility(View.VISIBLE);
+
+                                        // hide the other
+                                        LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
+                                        step1.setVisibility(View.GONE);
+
+                                        LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                        step2.setVisibility(View.VISIBLE);
+
+                                        Toast.makeText(getApplicationContext(),
+                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(),
+                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            }
+        });
+    }
+
+    private void setClipboard(Context context, String text) {
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
+        clipboard.setPrimaryClip(clip);
     }
 }
