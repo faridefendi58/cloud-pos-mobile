@@ -52,6 +52,24 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        // dashboard transfer menu
+        LinearLayout dashboard_menu2 = (LinearLayout) findViewById(R.id.dashboard_menu2);
+        dashboard_menu2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), TransferActivity.class);
+                startActivity(intent);
+            }
+        });
+        // dashboard purchase menu
+        LinearLayout dashboard_menu3 = (LinearLayout) findViewById(R.id.dashboard_menu3);
+        dashboard_menu3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PurchaseActivity.class);
+                startActivity(intent);
+            }
+        });
         // dashboard stock menu
         LinearLayout dashboard_menu4 = (LinearLayout) findViewById(R.id.dashboard_menu4);
         dashboard_menu4.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +164,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), ReceiptActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_transfer_out) {
-
+            Intent intent = new Intent(getApplicationContext(), TransferActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_inventory_out) {
 
         } else if (id == R.id.nav_profile) {
