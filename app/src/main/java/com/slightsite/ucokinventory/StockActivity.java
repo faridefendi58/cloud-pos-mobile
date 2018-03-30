@@ -229,7 +229,7 @@ public class StockActivity extends MainActivity {
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
                                     String item = data_n.getString("product_name")+" : "
-                                            + data_n.getString("quantity");
+                                            + data_n.getString("quantity") + " " + data_n.getString("unit");
                                     items.add( item );
                                 }
                                 ArrayAdapter adapter = new ArrayAdapter<String>(ini,

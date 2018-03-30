@@ -24,26 +24,29 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="STOCK PER WAREHOUSE"
+            android:layout_marginBottom="0dp"
+            android:text="STOK PER WAREHOUSE"
             android:textSize="18dip"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:background="@drawable/textlines"
+            />
 
         <TextView
             android:id="@+id/txt_step1_label_wh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:textSize="16dip"
             android:text="Pilih Warehouse :"
+            android:textStyle="bold"
             />
 
         <Spinner
             android:id="@+id/step1_wh_list"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:layout_width="fill_parent"
             android:textColor="#fff"
             android:layout_weight="1.0"
@@ -75,14 +78,16 @@
 
         <TextView
             android:id="@+id/TextView2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="15dp"
-            android:text="STOCK DI WAREHOUSE"
+            android:text="STOK DI WAREHOUSE"
             android:textSize="18dip"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:background="@drawable/textlines"
+            />
 
         <ListView
             android:id="@+id/list"
