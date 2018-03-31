@@ -777,6 +777,7 @@ public class ReceiptActivity extends MainActivity {
      * @param dialog
      */
     private void trigger_dialog_button(final View mView, final Context ini, final Spinner list_product, final AlertDialog dialog) {
+        // cancel method
         Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
         btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -785,6 +786,7 @@ public class ReceiptActivity extends MainActivity {
             }
         });
 
+        // Saving or submiting method
         final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
 
         Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
@@ -827,7 +829,6 @@ public class ReceiptActivity extends MainActivity {
                     while(iterator.hasNext())
                     {
                         Map.Entry<String, String> pair = iterator.next();
-                        Log.e(TAG, "Pair key : " + pair.getKey());
                         String p_id = product_ids.get(pair.getKey());
                         String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(p_id);
                         if (i > 0) {
@@ -861,6 +862,52 @@ public class ReceiptActivity extends MainActivity {
                 }
             }
         });
+
+        // action of delete button
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
+                if (product_stack.containsKey(stack_id.getText().toString())) {
+                    product_stack.remove(stack_id.getText().toString());
+                }
+                Log.e(TAG, product_stack.toString());
+                Log.e(TAG, stack_id.getText().toString());
+                Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
+                ArrayList<String> arr_list_items = new ArrayList<String>();
+                Integer i = 0;
+                String product_stack_str = "";
+                String list_item_str = "";
+                while(iterator.hasNext())
+                {
+                    Map.Entry<String, String> pair = iterator.next();
+                    String p_id = product_ids.get(pair.getKey());
+                    String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(p_id);
+                    if (i > 0) {
+                        product_stack_str += "-" + p_id + "," + pair.getValue();
+                        list_item_str += ", " + r_label;
+                    } else {
+                        product_stack_str += p_id + "," + pair.getValue();
+                        list_item_str += r_label;
+                    }
+                    arr_list_items.add(r_label);
+                    i ++;
+                }
+
+                ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
+                ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
+                list_receipts.setAdapter(adapter2);
+
+                TextView txt_item_select = (TextView) findViewById(R.id.txt_step2_item_select);
+                txt_item_select.setText(product_stack_str);
+
+                TextView txt_item_select_str = (TextView) findViewById(R.id.txt_step2_item_select_str);
+                txt_item_select_str.setText(list_item_str);
+
+                dialog.hide();
+            }
+        });
     }
 
     private void set_list_receipt_trigger(final ListView list, final Context ini) {
@@ -873,16 +920,15 @@ public class ReceiptActivity extends MainActivity {
                 Integer j = 0;
                 Integer k = 0;
                 String current_val = "";
+                String current_key = "";
                 while(iterator.hasNext())
                 {
                     Map.Entry<String, String> pair = iterator.next();
                     if (j.equals(i)) {
                         String p_id = product_ids.get(pair.getKey());
-                        String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(p_id);
-
-                        Log.e(TAG, "Pair id : " + pair.getKey() + " and label :" + r_label);
                         k = i;
                         current_val = pair.getValue();
+                        current_key = pair.getKey();
                     }
                     j ++;
                 }
@@ -898,11 +944,20 @@ public class ReceiptActivity extends MainActivity {
                 TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
                 txt_qty.setText(current_val);
 
+                TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
+                stack_id.setText(current_key);
+
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
 
                 // submit, cancel, and delete button trigger
                 trigger_dialog_button(mView, ini, list_product, dialog);
+
+                // show button delete
+                Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+                btn_dialog_delete.setVisibility(View.VISIBLE);
+                Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+                btn_dialog_cancel.setVisibility(View.GONE);
 
                 dialog.show();
             }
