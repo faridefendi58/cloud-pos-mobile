@@ -15,6 +15,9 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="@android:style/Widget.TextView.SpinnerItem" >
+        <item name="android:padding">3dp</item>
+    </style>
+
 
 </resources>

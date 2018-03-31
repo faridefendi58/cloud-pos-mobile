@@ -46,6 +46,7 @@ public class TransferActivity extends MainActivity {
 
     ArrayList list_products;
     Map<String, String> list_items = new HashMap<String, String>();
+    ArrayList<String> list_product_items = new ArrayList<String>();
     Map<String, String> product_names = new HashMap<String, String>();
     Map<String, String> product_units = new HashMap<String, String>();
 
@@ -59,7 +60,7 @@ public class TransferActivity extends MainActivity {
 
         // build spinner wh list
         Spinner wh_list_from = (Spinner)findViewById(R.id.wh_list_from);
-        ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, get_list_warehouse());
+        ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_warehouse());
         whAdapter.notifyDataSetChanged();
         wh_list_from.setAdapter(whAdapter);
 
@@ -108,92 +109,151 @@ public class TransferActivity extends MainActivity {
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item, null);
 
                 final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
-                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_products);
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), R.layout.spinner_item, list_product_items);
                 list_product.setAdapter(productAdapter);
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
 
-                Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
-                btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.cancel();
-                    }
-                });
-
-                final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
-
-                Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
-                btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int has_error = 0;
-                        if (list_product.getSelectedItem().toString().length() <= 0) {
-                            has_error = has_error + 1;
-                            Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
-                        }
-                        if (txt_qty.getText().toString().length() <= 0) {
-                            has_error = has_error + 1;
-                            Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
-                        } else {
-                            boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
-                            if (digitsOnly) {
-                                int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
-                                if (tot_qty_val <= 0) {
-                                    has_error = has_error + 1;
-                                    Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
-                                }
-                            } else {
-                                has_error = has_error + 1;
-                                txt_qty.setText("");
-                                Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        if (has_error == 0) {
-                            list_items.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
-                            Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-                            dialog.hide();
-                            // show the added item
-                            Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
-                            ArrayList<String> arr_list_items = new ArrayList<String>();
-                            Integer i = 0;
-                            String product_stack_str = "";
-                            String list_item_str = "";
-                            while(iterator.hasNext())
-                            {
-                                Map.Entry<String, String> pair = iterator.next();
-                                String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
-                                if (i > 0) {
-                                    product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
-                                    list_item_str += ", " + r_label;
-                                } else {
-                                    product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
-                                    list_item_str += r_label;
-                                }
-                                arr_list_items.add(r_label);
-                                i ++;
-                            }
-
-                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
-
-                            ListView listView = (ListView) findViewById(R.id.list_item);
-                            listView.setAdapter(adapter2);
-
-                            TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
-                            txt_item_select.setText(product_stack_str);
-
-                            TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
-                            txt_item_select_str.setText(list_item_str);
-
-                            Button btn_submit = (Button) findViewById(R.id.btn_submit);
-                            btn_submit.setVisibility(View.VISIBLE);
-                            btn_submit_trigger(btn_submit, ini);
-                        }
-                    }
-                });
+                // submit, cancel, and delete button trigger
+                trigger_dialog_button(mView, ini, list_product, dialog);
 
                 dialog.show();
+            }
+        });
+    }
+
+    private void trigger_dialog_button(final View mView, final Context ini, final Spinner list_product, final AlertDialog dialog) {
+        // cancel method
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int has_error = 0;
+                if (list_product.getSelectedItem().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                }
+                if (txt_qty.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                } else {
+                    boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                    if (digitsOnly) {
+                        int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                        if (tot_qty_val <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        has_error = has_error + 1;
+                        txt_qty.setText("");
+                        Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+                }
+                if (has_error == 0) {
+                    list_items.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
+                    Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+                    dialog.hide();
+                    // show the added item
+                    Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
+                    ArrayList<String> arr_list_items = new ArrayList<String>();
+                    Integer i = 0;
+                    String product_stack_str = "";
+                    String list_item_str = "";
+                    while(iterator.hasNext())
+                    {
+                        Map.Entry<String, String> pair = iterator.next();
+                        String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
+                        if (i > 0) {
+                            product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
+                            list_item_str += ", " + r_label;
+                        } else {
+                            product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
+                            list_item_str += r_label;
+                        }
+                        arr_list_items.add(r_label);
+                        i ++;
+                    }
+
+                    ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
+
+                    ListView listView = (ListView) findViewById(R.id.list_item);
+                    listView.setAdapter(adapter2);
+
+                    // and then set the list event for update and deletion
+                    set_list_item_trigger(listView, ini);
+
+                    TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
+                    txt_item_select.setText(product_stack_str);
+
+                    TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
+                    txt_item_select_str.setText(list_item_str);
+
+                    Button btn_submit = (Button) findViewById(R.id.btn_submit);
+                    btn_submit.setVisibility(View.VISIBLE);
+                    btn_submit_trigger(btn_submit, ini);
+                }
+            }
+        });
+
+        // action of delete button
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
+                if (list_items.containsKey(stack_id.getText().toString())) {
+                    list_items.remove(stack_id.getText().toString());
+                }
+                Log.e(TAG, "Cart stack : " + list_items.toString());
+                Log.e(TAG, "Stack would be deleted : " + stack_id.getText().toString());
+
+                Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
+                ArrayList<String> arr_list_items = new ArrayList<String>();
+                Integer i = 0;
+                String product_stack_str = "";
+                String list_item_str = "";
+                while(iterator.hasNext())
+                {
+                    Map.Entry<String, String> pair = iterator.next();
+                    String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
+                    if (i > 0) {
+                        product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
+                        list_item_str += ", " + r_label;
+                    } else {
+                        product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
+                        list_item_str += r_label;
+                    }
+                    arr_list_items.add(r_label);
+                    i ++;
+                }
+
+                ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
+
+                ListView listView = (ListView) findViewById(R.id.list_item);
+                listView.setAdapter(adapter2);
+
+                // and then set the list event for update and deletion
+                set_list_item_trigger(listView, ini);
+
+                TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
+                txt_item_select.setText(product_stack_str);
+
+                TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
+                txt_item_select_str.setText(list_item_str);
+
+                dialog.hide();
             }
         });
     }
@@ -320,6 +380,7 @@ public class TransferActivity extends MainActivity {
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
+                                    list_product_items.add(data_n.getString("title"));
                                     product_names.put(data_n.getString("title"), data_n.getString("id"));
                                     product_units.put(data_n.getString("title"), data_n.getString("unit"));
                                 }
@@ -364,7 +425,8 @@ public class TransferActivity extends MainActivity {
                                     JSONObject jObj = new JSONObject(result);
                                     success = jObj.getInt(TAG_SUCCESS);
                                     if (success == 1) {
-                                        String success_msg = "Perpindahan stok dari Warehouse "+ wh_list_from.getSelectedItem().toString()
+                                        String issue_number = jObj.getString("issue_number");
+                                        String success_msg = "Perpindahan stok dengan kode " + issue_number + " dari Warehouse "+ wh_list_from.getSelectedItem().toString()
                                                 +" telah dikirim oleh "+ sharedpreferences.getString("name", null);
 
                                         if (wh_list_to.getSelectedItem().toString().length() > 0) {
@@ -397,6 +459,61 @@ public class TransferActivity extends MainActivity {
                                 }
                             }
                         });
+            }
+        });
+    }
+
+    private void set_list_item_trigger(final ListView list, final Context ini) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String title = list.getItemAtPosition(i).toString();
+                Log.e(TAG, "List items : " + list_items.toString());
+                Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
+                Integer j = 0;
+                String current_val = "";
+                String current_key = "";
+                while(iterator.hasNext())
+                {
+                    Map.Entry<String, String> pair = iterator.next();
+                    if (j.equals(i)) {
+                        String p_id = product_names.get(pair.getKey());
+                        current_val = pair.getValue();
+                        current_key = pair.getKey();
+                    }
+                    j ++;
+                }
+                Log.e(TAG, "Current key :" + current_key);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ini);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
+
+                final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), R.layout.spinner_item, list_product_items);
+                list_product.setAdapter(productAdapter);
+                Log.e(TAG, "List product items : " + list_product_items.toString());
+                Integer index_p_items = list_product_items.indexOf(current_key);
+                list_product.setSelection(index_p_items);
+
+                TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
+                txt_qty.setText(current_val);
+
+                TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
+                stack_id.setText(current_key);
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+
+                // submit, cancel, and delete button trigger
+                trigger_dialog_button(mView, ini, list_product, dialog);
+
+                // show button delete
+                Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+                btn_dialog_delete.setVisibility(View.VISIBLE);
+                Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+                btn_dialog_cancel.setVisibility(View.GONE);
+
+                dialog.show();
             }
         });
     }

@@ -166,7 +166,7 @@ public class ReceiptActivity extends MainActivity {
 
                                             // build spinner wh
                                             Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
-                                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, android.R.layout.simple_spinner_item, get_list_warehouse());
+                                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_warehouse());
                                             whAdapter.notifyDataSetChanged();
                                             step2_receipt_wh.setAdapter(whAdapter);
                                         } else {
@@ -755,7 +755,7 @@ public class ReceiptActivity extends MainActivity {
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
 
                 final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
-                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_product_items);
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), R.layout.spinner_item, list_product_items);
                 list_product.setAdapter(productAdapter);
 
                 builder.setView(mView);
@@ -915,7 +915,7 @@ public class ReceiptActivity extends MainActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String title = list.getItemAtPosition(i).toString();
-                Toast.makeText(getApplicationContext(), product_stack.toString(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Product stack : " + product_stack.toString());
                 Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
                 Integer j = 0;
                 Integer k = 0;
@@ -939,7 +939,9 @@ public class ReceiptActivity extends MainActivity {
                 final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
                 ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_product_items);
                 list_product.setAdapter(productAdapter);
-                list_product.setSelection(k);
+                //list_product.setSelection(k);
+                Integer index_p_items = list_product_items.indexOf(current_key);
+                list_product.setSelection(index_p_items);
 
                 TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
                 txt_qty.setText(current_val);
