@@ -129,7 +129,8 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
             android:layout_width="fill_parent"
-            android:entries="@array/receipt_type">
+            android:entries="@array/receipt_type"
+            >
         </Spinner>
 
         <TextView
@@ -152,6 +153,17 @@
             >
         </Spinner>
 
+        <TextView
+            android:id="@+id/show_items"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Tampilkan detail barang!"
+            android:textSize="16dp"
+            android:textStyle="italic"
+            android:layout_marginLeft="5dp"
+            android:visibility="visible"
+            />
+
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="126dp"
@@ -172,22 +184,53 @@
             android:visibility="invisible"
             />
 
-        <TextView
-            android:id="@+id/txt_step2_label0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:textSize="16dip"
-            android:text="Detail Barang :"
-            />
+        <FrameLayout
+            android:id="@+id/txt_item_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone">
 
-        <ListView
-            android:id="@+id/list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:isScrollContainer="false"
-            />
+            <TextView
+                android:id="@+id/txt_step2_label0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:textSize="16dip"
+                android:text="Detail Barang :"
+                />
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isScrollContainer="false"
+                android:layout_marginTop="30dp"
+                />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/btn_add_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btn_add"
+                android:text="Tambah Item Barang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:background="@color/green"
+                android:textColor="#fff"
+                android:textAllCaps="false"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:drawableLeft="@drawable/ic_add_24dp"
+                />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/txt_step2_label_receipts"
@@ -200,7 +243,7 @@
             android:visibility="gone"
             />
         <ListView
-            android:id="@+id/list-receipts"
+            android:id="@+id/list_receipts"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:visibility="gone">
