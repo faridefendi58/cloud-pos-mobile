@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -51,6 +53,8 @@ public class ReceiptActivity extends MainActivity {
     private static final String TAG = ReceiptActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
+    final ArrayList<String> list_items = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +141,6 @@ public class ReceiptActivity extends MainActivity {
                                             step2.setVisibility(View.VISIBLE);
 
                                             //set the list
-                                            ArrayList<String> list_items = new ArrayList<String>();
                                             JSONArray items_data = data.getJSONArray("items");
                                             for(int n = 0; n < items_data.length(); n++)
                                             {
@@ -183,6 +186,14 @@ public class ReceiptActivity extends MainActivity {
 
         Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
         select_receipt_type(step2_receipt_type, ini);
+
+        Spinner step2_receipt_wh = (Spinner) findViewById(R.id.step2_receipt_wh);
+        spinner_receipt_wh_trigger(step2_receipt_wh, ini);
+
+        // triggering btn add item
+        btn_add_trigger(ini);
+
+        // button copy action
         Button btn_copy = (Button) findViewById(R.id.btn_copy);
         btn_copy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -470,6 +481,9 @@ public class ReceiptActivity extends MainActivity {
                     txt_step2_label_receipts.setVisibility(View.GONE);
                     Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
                     btn_confirm_receipt.setVisibility(View.GONE);
+                    // also hide add item button
+                    FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+                    btn_add_container.setVisibility(View.GONE);
                 } else {
                     txt_step2_label1.setVisibility(View.GONE);
                     txt_receipt_notes.setVisibility(View.GONE);
@@ -691,6 +705,124 @@ public class ReceiptActivity extends MainActivity {
                                 }
                             }
                         });
+            }
+        });
+    }
+
+    private void spinner_receipt_wh_trigger(Spinner spinner, Context ini) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!adapterView.getSelectedItem().toString().equals("-")) {
+                    btn_add_container.setVisibility(View.VISIBLE);
+                } else {
+                    btn_add_container.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                btn_add_container.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void btn_add_trigger(final Context ini) {
+        Button btn_add = (Button) findViewById(R.id.btn_add);
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ini);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
+
+                final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_items);
+                list_product.setAdapter(productAdapter);
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+
+                Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+                btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.cancel();
+                    }
+                });
+
+                final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+                Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+                btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int has_error = 0;
+                        if (list_product.getSelectedItem().toString().length() <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                        }
+                        if (txt_qty.getText().toString().length() <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                        } else {
+                            boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                            if (digitsOnly) {
+                                int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                                if (tot_qty_val <= 0) {
+                                    has_error = has_error + 1;
+                                    Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                has_error = has_error + 1;
+                                txt_qty.setText("");
+                                Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        if (has_error == 0) {
+                            product_stack.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
+                            Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+                            dialog.hide();
+                            // show the added item
+                            Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
+                            ArrayList<String> arr_list_items = new ArrayList<String>();
+                            Integer i = 0;
+                            String product_stack_str = "";
+                            String list_item_str = "";
+                            while(iterator.hasNext())
+                            {
+                                Map.Entry<String, String> pair = iterator.next();
+                                String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
+                                if (i > 0) {
+                                    product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
+                                    list_item_str += ", " + r_label;
+                                } else {
+                                    product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
+                                    list_item_str += r_label;
+                                }
+                                arr_list_items.add(r_label);
+                                i ++;
+                            }
+
+                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
+
+                            ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
+                            list_receipts.setAdapter(adapter2);
+                            list_receipts.setVisibility(View.VISIBLE);
+
+                            TextView txt_item_select = (TextView) findViewById(R.id.txt_step2_item_select);
+                            txt_item_select.setText(product_stack_str);
+
+                            TextView txt_item_select_str = (TextView) findViewById(R.id.txt_step2_item_select_str);
+                            txt_item_select_str.setText(list_item_str);
+
+                            //Button btn_submit = (Button) findViewById(R.id.btn_submit);
+                            //btn_submit.setVisibility(View.VISIBLE);
+                            //btn_submit_trigger(btn_submit, ini);
+                        }
+                    }
+                });
+
+                dialog.show();
             }
         });
     }
