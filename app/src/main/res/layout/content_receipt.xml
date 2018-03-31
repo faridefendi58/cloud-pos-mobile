@@ -152,6 +152,17 @@
             >
         </Spinner>
 
+        <TextView
+            android:id="@+id/show_items"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Tampilkan detail barang!"
+            android:textSize="16dp"
+            android:textStyle="italic"
+            android:layout_marginLeft="5dp"
+            android:visibility="visible"
+            />
+
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="126dp"
@@ -193,6 +204,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:isScrollContainer="false"
+                android:layout_marginTop="30dp"
                 />
 
         </FrameLayout>
@@ -266,7 +278,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:textSize="16dip"
-            android:visibility="visible"
+            android:visibility="gone"
             />
         <TextView
             android:id="@+id/txt_step2_item_select_str"
@@ -275,7 +287,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:textSize="16dip"
-            android:visibility="visible"
+            android:visibility="gone"
             />
 
     </LinearLayout>

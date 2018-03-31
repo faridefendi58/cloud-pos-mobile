@@ -55,6 +55,9 @@ public class ReceiptActivity extends MainActivity {
     private static final String TAG_MESSAGE = "message";
 
     final ArrayList<String> list_items = new ArrayList<String>();
+    final ArrayList<String> list_product_items = new ArrayList<String>();
+    final Map<String, String> product_ids = new HashMap<String, String>();
+    final Map<String, String> product_units = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,13 +152,18 @@ public class ReceiptActivity extends MainActivity {
                                                         json_obj_n.getString("product_name")+" " +
                                                                 json_obj_n.getString("quantity")+" " +
                                                                 json_obj_n.getString("unit"));
+                                                list_product_items.add(json_obj_n.getString("product_name"));
+                                                product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
+                                                product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
                                             }
                                             ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
                                                     R.layout.activity_list_view, list_items);
 
                                             ListView listView = (ListView) findViewById(R.id.list);
                                             listView.setAdapter(adapter2);
-                                            setListEvent(listView, ini, items_data);
+                                            // hide the event due to conflict with add button
+                                            //setListEvent(listView, ini, items_data);
+
                                             // build spinner wh
                                             Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
                                             ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, android.R.layout.simple_spinner_item, get_list_warehouse());
@@ -192,6 +200,17 @@ public class ReceiptActivity extends MainActivity {
 
         // triggering btn add item
         btn_add_trigger(ini);
+
+        // toggle items detail
+        TextView show_items = (TextView) findViewById(R.id.show_items);
+        show_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.setVisibility(View.GONE);
+                FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                txt_item_container.setVisibility(View.VISIBLE);
+            }
+        });
 
         // button copy action
         Button btn_copy = (Button) findViewById(R.id.btn_copy);
@@ -503,7 +522,6 @@ public class ReceiptActivity extends MainActivity {
     String product_id;
     Map<String, String> product_stack = new HashMap<String, String>();
     Map<String, String> product_names = new HashMap<String, String>();
-    Map<String, String> product_units = new HashMap<String, String>();
     TextView current_view;
     int max_quantity = 0;
 
@@ -517,7 +535,6 @@ public class ReceiptActivity extends MainActivity {
                     //title = json_obj_n.getString("product_name").toString();
                     product_id = json_obj_n.getString("product_id").toString();
                     product_names.put(product_id, json_obj_n.getString("product_name").toString());
-                    product_units.put(product_id, json_obj_n.getString("unit").toString());
                     current_view = (TextView) view;
                     max_quantity = Integer.parseInt(json_obj_n.getString("quantity").toString());
                 } catch (JSONException e) {
@@ -712,6 +729,7 @@ public class ReceiptActivity extends MainActivity {
     private void spinner_receipt_wh_trigger(Spinner spinner, Context ini) {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+            final FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (!adapterView.getSelectedItem().toString().equals("-")) {
@@ -719,6 +737,7 @@ public class ReceiptActivity extends MainActivity {
                 } else {
                     btn_add_container.setVisibility(View.GONE);
                 }
+                txt_item_container.setVisibility(View.GONE);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -736,91 +755,154 @@ public class ReceiptActivity extends MainActivity {
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
 
                 final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
-                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_items);
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_product_items);
                 list_product.setAdapter(productAdapter);
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
 
-                Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
-                btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.cancel();
-                    }
-                });
+                // submit, cancel, and delete button trigger
+                trigger_dialog_button(mView, ini, list_product, dialog);
 
-                final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+                dialog.show();
+            }
+        });
+    }
 
-                Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
-                btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int has_error = 0;
-                        if (list_product.getSelectedItem().toString().length() <= 0) {
+    /**
+     * Dialog button actions
+     * @param mView
+     * @param ini
+     * @param list_product
+     * @param dialog
+     */
+    private void trigger_dialog_button(final View mView, final Context ini, final Spinner list_product, final AlertDialog dialog) {
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int has_error = 0;
+                if (list_product.getSelectedItem().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                }
+                if (txt_qty.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                } else {
+                    boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                    if (digitsOnly) {
+                        int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                        if (tot_qty_val <= 0) {
                             has_error = has_error + 1;
-                            Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
                         }
-                        if (txt_qty.getText().toString().length() <= 0) {
-                            has_error = has_error + 1;
-                            Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                    } else {
+                        has_error = has_error + 1;
+                        txt_qty.setText("");
+                        Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+                }
+                if (has_error == 0) {
+                    product_stack.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
+                    Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+                    dialog.hide();
+                    // show the added item
+                    Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
+                    ArrayList<String> arr_list_items = new ArrayList<String>();
+                    Integer i = 0;
+                    String product_stack_str = "";
+                    String list_item_str = "";
+                    Log.e(TAG, "Product ids : " + product_ids.toString());
+                    while(iterator.hasNext())
+                    {
+                        Map.Entry<String, String> pair = iterator.next();
+                        Log.e(TAG, "Pair key : " + pair.getKey());
+                        String p_id = product_ids.get(pair.getKey());
+                        String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(p_id);
+                        if (i > 0) {
+                            product_stack_str += "-" + p_id + "," + pair.getValue();
+                            list_item_str += ", " + r_label;
                         } else {
-                            boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
-                            if (digitsOnly) {
-                                int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
-                                if (tot_qty_val <= 0) {
-                                    has_error = has_error + 1;
-                                    Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
-                                }
-                            } else {
-                                has_error = has_error + 1;
-                                txt_qty.setText("");
-                                Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
-                            }
+                            product_stack_str += p_id + "," + pair.getValue();
+                            list_item_str += r_label;
                         }
-                        if (has_error == 0) {
-                            product_stack.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
-                            Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-                            dialog.hide();
-                            // show the added item
-                            Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
-                            ArrayList<String> arr_list_items = new ArrayList<String>();
-                            Integer i = 0;
-                            String product_stack_str = "";
-                            String list_item_str = "";
-                            while(iterator.hasNext())
-                            {
-                                Map.Entry<String, String> pair = iterator.next();
-                                String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
-                                if (i > 0) {
-                                    product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
-                                    list_item_str += ", " + r_label;
-                                } else {
-                                    product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
-                                    list_item_str += r_label;
-                                }
-                                arr_list_items.add(r_label);
-                                i ++;
-                            }
-
-                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
-
-                            ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
-                            list_receipts.setAdapter(adapter2);
-                            list_receipts.setVisibility(View.VISIBLE);
-
-                            TextView txt_item_select = (TextView) findViewById(R.id.txt_step2_item_select);
-                            txt_item_select.setText(product_stack_str);
-
-                            TextView txt_item_select_str = (TextView) findViewById(R.id.txt_step2_item_select_str);
-                            txt_item_select_str.setText(list_item_str);
-
-                            //Button btn_submit = (Button) findViewById(R.id.btn_submit);
-                            //btn_submit.setVisibility(View.VISIBLE);
-                            //btn_submit_trigger(btn_submit, ini);
-                        }
+                        arr_list_items.add(r_label);
+                        i ++;
                     }
-                });
+
+                    ArrayAdapter adapter2 = new ArrayAdapter<String>(ini, R.layout.activity_list_view, arr_list_items);
+
+                    ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
+                    list_receipts.setAdapter(adapter2);
+                    list_receipts.setVisibility(View.VISIBLE);
+
+                    // and then set the list event for update and deletion
+                    set_list_receipt_trigger(list_receipts, ini);
+
+                    TextView txt_item_select = (TextView) findViewById(R.id.txt_step2_item_select);
+                    txt_item_select.setText(product_stack_str);
+
+                    TextView txt_item_select_str = (TextView) findViewById(R.id.txt_step2_item_select_str);
+                    txt_item_select_str.setText(list_item_str);
+
+                    Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
+                    btn_confirm_receipt.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void set_list_receipt_trigger(final ListView list, final Context ini) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String title = list.getItemAtPosition(i).toString();
+                Toast.makeText(getApplicationContext(), product_stack.toString(), Toast.LENGTH_LONG).show();
+                Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
+                Integer j = 0;
+                Integer k = 0;
+                String current_val = "";
+                while(iterator.hasNext())
+                {
+                    Map.Entry<String, String> pair = iterator.next();
+                    if (j.equals(i)) {
+                        String p_id = product_ids.get(pair.getKey());
+                        String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(p_id);
+
+                        Log.e(TAG, "Pair id : " + pair.getKey() + " and label :" + r_label);
+                        k = i;
+                        current_val = pair.getValue();
+                    }
+                    j ++;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ini);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
+
+                final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
+                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), android.R.layout.simple_spinner_item, list_product_items);
+                list_product.setAdapter(productAdapter);
+                list_product.setSelection(k);
+
+                TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
+                txt_qty.setText(current_val);
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+
+                // submit, cancel, and delete button trigger
+                trigger_dialog_button(mView, ini, list_product, dialog);
 
                 dialog.show();
             }
