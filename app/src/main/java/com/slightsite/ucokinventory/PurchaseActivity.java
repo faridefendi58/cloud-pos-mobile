@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class PurchaseActivity extends MainActivity {
 
     ArrayList list_products;
     Map<String, String> list_items = new HashMap<String, String>();
+    Map<String, String> list_prices = new HashMap<String, String>();
     ArrayList<String> list_product_items = new ArrayList<String>();
     Map<String, String> product_names = new HashMap<String, String>();
     Map<String, String> product_units = new HashMap<String, String>();
@@ -313,6 +315,7 @@ public class PurchaseActivity extends MainActivity {
         });
 
         final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+        final EditText txt_price = (EditText) mView.findViewById(R.id.txt_price);
 
         Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
         btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
@@ -340,9 +343,28 @@ public class PurchaseActivity extends MainActivity {
                         Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
                     }
                 }
+                // validation for price form
+                if (txt_price.getText().toString().length() > 0) {
+                    boolean pdigitsOnly = TextUtils.isDigitsOnly(txt_price.getText().toString());
+                    if (pdigitsOnly) {
+                        int tot_price_val = Integer.parseInt(txt_price.getText().toString());
+                        if (tot_price_val <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Harga barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        has_error = has_error + 1;
+                        txt_price.setText("");
+                        Toast.makeText(getApplicationContext(), "Harga barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+                }
                 if (has_error == 0) {
                     list_items.put(list_product.getSelectedItem().toString(), txt_qty.getText().toString());
+                    if (txt_price.getText().toString().length() > 0) {
+                        list_prices.put(list_product.getSelectedItem().toString(), txt_price.getText().toString());
+                    }
                     Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "List price : " + list_prices.toString());
                     dialog.hide();
                     // show the added item
                     Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
@@ -350,16 +372,31 @@ public class PurchaseActivity extends MainActivity {
                     Integer i = 0;
                     String product_stack_str = "";
                     String list_item_str = "";
+                    String price_stack_str = "";
+                    String list_price_str = "";
                     while(iterator.hasNext())
                     {
                         Map.Entry<String, String> pair = iterator.next();
                         String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
+                        String s_label = "";
+                        if (list_prices.get(pair.getKey()).length() > 0) {
+                            r_label += " @" + list_prices.get(pair.getKey());
+                            s_label += pair.getKey() + " @" + list_prices.get(pair.getKey());
+                        }
                         if (i > 0) {
                             product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
                             list_item_str += ", " + r_label;
+                            if (s_label.length() > 0) {
+                                price_stack_str += "-" + product_names.get(pair.getKey()) + "," + list_prices.get(pair.getKey());
+                                list_price_str += ", " + s_label;
+                            }
                         } else {
                             product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
                             list_item_str += r_label;
+                            if (s_label.length() > 0) {
+                                price_stack_str += product_names.get(pair.getKey()) + "," + list_prices.get(pair.getKey());
+                                list_price_str += s_label;
+                            }
                         }
                         arr_list_items.add(r_label);
                         i ++;
@@ -378,6 +415,19 @@ public class PurchaseActivity extends MainActivity {
 
                     TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
                     txt_item_select_str.setText(list_item_str);
+
+                    if (price_stack_str.length() > 0) {
+                        TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
+                        txt_price_select.setText(price_stack_str);
+                    }
+
+                    if (list_price_str.length() > 0) {
+                        TextView txt_price_select_str = (TextView) findViewById(R.id.txt_price_select_str);
+                        txt_price_select_str.setText(list_price_str);
+                    }
+
+                    Log.e(TAG, "Price stack : " + price_stack_str);
+                    Log.e(TAG, "List price : " + list_price_str);
 
                     Button btn_submit = (Button) findViewById(R.id.btn_submit);
                     btn_submit.setVisibility(View.VISIBLE);
@@ -403,16 +453,31 @@ public class PurchaseActivity extends MainActivity {
                 Integer i = 0;
                 String product_stack_str = "";
                 String list_item_str = "";
+                String price_stack_str = "";
+                String list_price_str = "";
                 while(iterator.hasNext())
                 {
                     Map.Entry<String, String> pair = iterator.next();
                     String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
+                    String s_label = "";
+                    if (list_prices.get(pair.getKey()).length() > 0) {
+                        r_label += " @" + list_prices.get(pair.getKey());
+                        s_label += pair.getKey() + " @" + list_prices.get(pair.getKey());
+                    }
                     if (i > 0) {
                         product_stack_str += "-" + product_names.get(pair.getKey()) + "," + pair.getValue();
                         list_item_str += ", " + r_label;
+                        if (s_label.length() > 0) {
+                            price_stack_str += "-" + product_names.get(pair.getKey()) + "," + list_prices.get(pair.getKey());
+                            list_price_str += ", " + s_label;
+                        }
                     } else {
                         product_stack_str += product_names.get(pair.getKey()) + "," + pair.getValue();
                         list_item_str += r_label;
+                        if (s_label.length() > 0) {
+                            price_stack_str += product_names.get(pair.getKey()) + "," + list_prices.get(pair.getKey());
+                            list_price_str += s_label;
+                        }
                     }
                     arr_list_items.add(r_label);
                     i ++;
@@ -432,6 +497,16 @@ public class PurchaseActivity extends MainActivity {
                 TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
                 txt_item_select_str.setText(list_item_str);
 
+                if (price_stack_str.length() > 0) {
+                    TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
+                    txt_price_select.setText(price_stack_str);
+                }
+
+                if (list_price_str.length() > 0) {
+                    TextView txt_price_select_str = (TextView) findViewById(R.id.txt_price_select_str);
+                    txt_price_select_str.setText(list_price_str);
+                }
+
                 dialog.hide();
             }
         });
@@ -447,6 +522,7 @@ public class PurchaseActivity extends MainActivity {
                 Integer j = 0;
                 String current_val = "";
                 String current_key = "";
+                String current_price = "";
                 while(iterator.hasNext())
                 {
                     Map.Entry<String, String> pair = iterator.next();
@@ -454,6 +530,9 @@ public class PurchaseActivity extends MainActivity {
                         String p_id = product_names.get(pair.getKey());
                         current_val = pair.getValue();
                         current_key = pair.getKey();
+                        if (list_prices.containsKey(pair.getKey())) {
+                            current_price = list_prices.get(pair.getKey());
+                        }
                     }
                     j ++;
                 }
@@ -474,6 +553,9 @@ public class PurchaseActivity extends MainActivity {
 
                 TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
                 stack_id.setText(current_key);
+
+                TextView txt_price = (TextView) mView.findViewById(R.id.txt_price);
+                txt_price.setText(current_price);
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
@@ -499,9 +581,11 @@ public class PurchaseActivity extends MainActivity {
                 final Spinner supplier_name = (Spinner) findViewById(R.id.supplier_name);
                 final Spinner shipment_name = (Spinner) findViewById(R.id.shipment_name);
                 TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
+                TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("items", txt_item_select.getText().toString());
+                params.put("prices", txt_price_select.getText().toString());
                 params.put("supplier_name", supplier_name.getSelectedItem().toString());
                 params.put("shipment_name", shipment_name.getSelectedItem().toString());
                 params.put("admin_id", sharedpreferences.getString("id", null));
