@@ -152,7 +152,10 @@ public class ReceiptActivity extends MainActivity {
                                                         json_obj_n.getString("product_name")+" " +
                                                                 json_obj_n.getString("quantity")+" " +
                                                                 json_obj_n.getString("unit"));
-                                                list_product_items.add(json_obj_n.getString("product_name"));
+                                                // check the items still available to be received
+                                                int available_qty = json_obj_n.getInt("available_qty");
+                                                if (available_qty > 0)
+                                                    list_product_items.add(json_obj_n.getString("product_name"));
                                                 product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
                                                 product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
                                             }

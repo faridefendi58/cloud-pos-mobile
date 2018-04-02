@@ -379,7 +379,7 @@ public class PurchaseActivity extends MainActivity {
                         Map.Entry<String, String> pair = iterator.next();
                         String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
                         String s_label = "";
-                        if (list_prices.get(pair.getKey()).length() > 0) {
+                        if (list_prices.containsKey(pair.getKey()) && list_prices.get(pair.getKey()).length() > 0) {
                             r_label += " @" + list_prices.get(pair.getKey());
                             s_label += pair.getKey() + " @" + list_prices.get(pair.getKey());
                         }
@@ -460,7 +460,7 @@ public class PurchaseActivity extends MainActivity {
                     Map.Entry<String, String> pair = iterator.next();
                     String r_label = pair.getKey() + " " + pair.getValue() + " " + product_units.get(pair.getKey());
                     String s_label = "";
-                    if (list_prices.get(pair.getKey()).length() > 0) {
+                    if (list_prices.containsKey(pair.getKey()) && list_prices.get(pair.getKey()).length() > 0) {
                         r_label += " @" + list_prices.get(pair.getKey());
                         s_label += pair.getKey() + " @" + list_prices.get(pair.getKey());
                     }
@@ -607,11 +607,11 @@ public class PurchaseActivity extends MainActivity {
                                     success = jObj.getInt(TAG_SUCCESS);
                                     if (success == 1) {
                                         String issue_number = jObj.getString("issue_number");
-                                        String success_msg = "Penambahan stok dengan kode " + issue_number + " dari Supplier "+ supplier_name.getSelectedItem().toString()
-                                                +" telah minta oleh "+ sharedpreferences.getString("name", null);
+                                        String success_msg = "Pengadaan barang dengan kode " + issue_number + " dari Supplier "+ supplier_name.getSelectedItem().toString()
+                                                +" telah di-request oleh "+ sharedpreferences.getString("name", null);
 
                                         if (shipment_name.getSelectedItem().toString().length() > 0) {
-                                            success_msg += " akan dikirim melalui " + shipment_name.getSelectedItem().toString();
+                                            success_msg += " dan akan dikirim melalui " + shipment_name.getSelectedItem().toString();
                                         }
 
                                         TextView txt_item_select_str = (TextView) findViewById(R.id.txt_item_select_str);
