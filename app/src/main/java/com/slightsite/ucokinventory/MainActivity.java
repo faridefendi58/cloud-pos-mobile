@@ -79,6 +79,15 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        // dashboard inventory issue menu
+        LinearLayout dashboard_menu5 = (LinearLayout) findViewById(R.id.dashboard_menu5);
+        dashboard_menu5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void setDinamicContent(@LayoutRes int app_bar) {
@@ -167,7 +176,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), TransferActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_inventory_out) {
-
+            Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_profile) {
 
         } else if (id == R.id.nav_logout) {
