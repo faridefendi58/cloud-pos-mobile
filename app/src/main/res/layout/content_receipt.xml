@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:paddingHorizontal="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/backgroundcolor"
     tools:context="com.slightsite.ucokinventory.ReceiptActivity"
@@ -64,7 +64,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:orientation="vertical"
-        android:layout_marginTop="10dp"
         android:padding="@dimen/activity_vertical_margin">
 
         <TextView
@@ -326,6 +325,14 @@
             android:textSize="16dip"
             android:visibility="gone"
             />
+
+        <Button
+            android:id="@+id/btn_step2_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="Kembali" />
 
     </LinearLayout>
     <LinearLayout

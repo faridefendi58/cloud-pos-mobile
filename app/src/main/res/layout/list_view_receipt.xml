@@ -12,7 +12,18 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="Title"
-        android:textSize="16dip" />
+        android:textSize="16dip"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/list_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="Catatan"
+        android:layout_marginTop="20dp"
+        android:textSize="15dip" />
 
     <Button
         android:id="@+id/action"

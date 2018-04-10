@@ -56,8 +56,10 @@ public class ReceiptActivity extends MainActivity {
 
     final ArrayList<String> list_items = new ArrayList<String>();
     final ArrayList<String> list_product_items = new ArrayList<String>();
+    final ArrayList<String> list_issues = new ArrayList<String>();
     final Map<String, String> product_ids = new HashMap<String, String>();
     final Map<String, String> product_units = new HashMap<String, String>();
+    final Map<String, String> issue_origins = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -979,29 +981,34 @@ public class ReceiptActivity extends MainActivity {
     private void buildTheIssueList(final Context ini) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("status", "onprocess");
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
 
-        final ArrayList<String> items = new ArrayList<String>();
-
+        final ArrayList<String> descs = new ArrayList<String>();
         _string_request(Request.Method.GET, issue_list_url, params, false,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         Log.e(TAG, "Response: " + result.toString());
-                        //hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = jObj.getJSONObject("origin");
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
-                                    items.add(data.getString(n));
+                                    list_issues.add(data.getString(n));
+                                    issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                    descs.add(origins.getString(data.getString(n)));
                                 }
-                                Log.e(TAG, "List available issue : " + items.toString());
-                                ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
-                                        R.layout.list_view_receipt, R.id.list_title, items);
+                                Log.e(TAG, "List available issue : " + list_issues.toString());
+                                Log.e(TAG, "List issue origin : " + issue_origins.toString());
+                                /*ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
+                                        R.layout.list_view_receipt, R.id.list_title, list_issues);*/
+                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_issues, descs);
 
                                 ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
                                 list_available_issue.setAdapter(adapter2);
@@ -1108,6 +1115,19 @@ public class ReceiptActivity extends MainActivity {
                                     ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_assigned_wh());
                                     whAdapter.notifyDataSetChanged();
                                     step2_receipt_wh.setAdapter(whAdapter);
+
+                                    // trigger back button
+                                    Button btn_step2_back = (Button) findViewById(R.id.btn_step2_back);
+                                    btn_step2_back.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                            step2.setVisibility(View.GONE);
+
+                                            LinearLayout step1_1 = (LinearLayout) findViewById(R.id.step1_1);
+                                            step1_1.setVisibility(View.VISIBLE);
+                                        }
+                                    });
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(),
