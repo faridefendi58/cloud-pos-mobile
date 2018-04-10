@@ -49,6 +49,9 @@ public class LoginActivity extends AppCompatActivity {
     public final static String TAG_USERNAME = "username";
     public final static String TAG_ID = "id";
     public final static String TAG_NAME = "name";
+    public final static String TAG_IS_ADMIN = "is_admin";
+    public final static String TAG_IS_PIC = "is_pic";
+    public final static String TAG_ROLES = "roles";
 
     String tag_json_obj = "json_obj_req";
 
@@ -155,6 +158,9 @@ public class LoginActivity extends AppCompatActivity {
                         String username = jObj.getString(TAG_USERNAME);
                         String id = jObj.getString(TAG_ID);
                         String name = jObj.getString(TAG_NAME);
+                        String is_admin = jObj.getString(TAG_IS_ADMIN);
+                        String is_pic = jObj.getString(TAG_IS_PIC);
+                        String roles = jObj.getString(TAG_ROLES);
 
                         Log.e("Successfully Login!", jObj.toString());
 
@@ -166,6 +172,9 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString(TAG_ID, id);
                         editor.putString(TAG_USERNAME, username);
                         editor.putString(TAG_NAME, name);
+                        editor.putString(TAG_IS_ADMIN, is_admin);
+                        editor.putString(TAG_IS_PIC, is_pic);
+                        editor.putString(TAG_ROLES, roles);
                         editor.commit();
 
                         // Memanggil main activity
@@ -173,6 +182,9 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra(TAG_ID, id);
                         intent.putExtra(TAG_USERNAME, username);
                         intent.putExtra(TAG_NAME, name);
+                        intent.putExtra(TAG_IS_ADMIN, is_admin);
+                        intent.putExtra(TAG_IS_PIC, is_pic);
+                        intent.putExtra(TAG_ROLES, roles);
                         finish();
                         startActivity(intent);
                     } else {

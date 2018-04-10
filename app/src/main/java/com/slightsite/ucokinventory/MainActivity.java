@@ -8,12 +8,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,9 +45,13 @@ public class MainActivity extends AppCompatActivity
     String id, username, full_name;
     SharedPreferences sharedpreferences;
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static final String TAG_ID = "id";
     public static final String TAG_USERNAME = "username";
     public static final String TAG_NAME = "name";
+    public final static String TAG_IS_ADMIN = "is_admin";
+    public final static String TAG_IS_PIC = "is_pic";
+    public final static String TAG_ROLES = "roles";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +60,10 @@ public class MainActivity extends AppCompatActivity
 
         setDinamicContent(R.layout.app_bar_main);
         buildMenu();
+
+        // customize dashboard according to the roles
+        buildDashboard();
+
         // dashboard receipt menu
         LinearLayout dashboard_menu1 = (LinearLayout) findViewById(R.id.dashboard_menu1);
         dashboard_menu1.setOnClickListener(new View.OnClickListener() {
@@ -197,5 +218,48 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void buildDashboard() {
+        Boolean is_admin = Boolean.valueOf(sharedpreferences.getString(TAG_IS_ADMIN, null));
+        Boolean is_pic = Boolean.valueOf(sharedpreferences.getString(TAG_IS_PIC, null));
+
+        if (!is_admin || !is_pic) {
+            // Check stock menu
+            CardView stock_menu_wrapper = (CardView) findViewById(R.id.stock_menu_wrapper);
+            stock_menu_wrapper.setVisibility(View.GONE);
+        }
+
+        // just dump
+        Log.e(TAG, "Is Admin : " + is_admin );
+        Log.e(TAG, "PIC : " + is_pic );
+        Log.e(TAG, "List Assigned WH : " + get_list_assigned_wh().toString());
+    }
+
+    /**
+     * Geting the list assigned warehouse
+     * @return
+     */
+    public ArrayList get_list_assigned_wh() {
+        final ArrayList<String> items = new ArrayList<String>();
+
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            Log.e(TAG, "List Roles : " + jsonObject.toString());
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                items.add(data_n.getString("warehouse_name"));
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return items;
     }
 }
