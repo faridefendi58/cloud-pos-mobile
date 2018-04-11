@@ -1009,12 +1009,13 @@ public class ReceiptActivity extends MainActivity {
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
                                 JSONObject origins = jObj.getJSONObject("origin");
+                                JSONObject destinations = jObj.getJSONObject("destination");
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     list_issues.add(data.getString(n));
                                     issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
-                                    descs.add(origins.getString(data.getString(n)));
+                                    descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
                                 }
                                 Log.e(TAG, "List available issue : " + list_issues.toString());
                                 Log.e(TAG, "List issue origin : " + issue_origins.toString());
@@ -1063,6 +1064,7 @@ public class ReceiptActivity extends MainActivity {
 
                                 LinearLayout step1 = (LinearLayout) findViewById(R.id.step1_1);
                                 step1.setVisibility(View.GONE);
+
                                 if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
                                     //set notes
                                     EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
@@ -1145,8 +1147,20 @@ public class ReceiptActivity extends MainActivity {
                                             list_product_items.clear();
                                             product_ids.clear();
                                             product_units.clear();
+                                            product_stack.clear();
                                             FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
                                             btn_add_container.setVisibility(View.GONE);
+                                            // Hide several field
+                                            Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
+                                            btn_confirm_receipt.setVisibility(View.GONE);
+                                            TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
+                                            txt_step2_label_receipts.setVisibility(View.GONE);
+                                            ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
+                                            list_receipts.setVisibility(View.GONE);
+                                            TextView show_items = (TextView) findViewById(R.id.show_items);
+                                            show_items.setVisibility(View.GONE);
+                                            FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                                            txt_item_container.setVisibility(View.VISIBLE);
                                         }
                                     });
                                 }
