@@ -156,6 +156,7 @@
             android:layout_marginLeft="5dp"
             android:textSize="16dip"
             android:text="Barang akan diterima di :"
+            android:visibility="gone"
             />
 
         <Spinner
@@ -165,6 +166,7 @@
             android:layout_marginTop="5dp"
             android:layout_width="fill_parent"
             android:entries="@array/receipt_type"
+            android:visibility="gone"
             >
         </Spinner>
 
@@ -196,7 +198,7 @@
             android:textSize="16dp"
             android:textStyle="italic"
             android:layout_marginLeft="5dp"
-            android:visibility="visible"
+            android:visibility="gone"
             />
 
         <Button
@@ -222,8 +224,7 @@
         <FrameLayout
             android:id="@+id/txt_item_container"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="gone">
+            android:layout_height="fill_parent">
 
             <TextView
                 android:id="@+id/txt_step2_label0"
@@ -254,7 +255,7 @@
             android:visibility="gone">
             <Button
                 android:id="@+id/btn_add"
-                android:text="Tambah Item Barang"
+                android:text="Tambah Item Penerimaan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -332,6 +333,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:paddingHorizontal="20dp"
             android:text="Kembali" />
 
     </LinearLayout>

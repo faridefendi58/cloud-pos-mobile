@@ -738,7 +738,7 @@ public class ReceiptActivity extends MainActivity {
                 } else {
                     btn_add_container.setVisibility(View.GONE);
                 }
-                txt_item_container.setVisibility(View.GONE);
+                //txt_item_container.setVisibility(View.GONE);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -1097,17 +1097,20 @@ public class ReceiptActivity extends MainActivity {
                                                         json_obj_n.getString("quantity")+" " +
                                                         json_obj_n.getString("unit"));
                                         // check the items still available to be received
-                                        int available_qty = json_obj_n.getInt("available_qty");
-                                        if (available_qty > 0)
-                                            list_product_items.add(json_obj_n.getString("product_name"));
+                                        if (json_obj_n.has("available_qty")) {
+                                            int available_qty = json_obj_n.getInt("available_qty");
+                                            if (available_qty > 0)
+                                                list_product_items.add(json_obj_n.getString("product_name"));
+                                        }
                                         product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
                                         product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
                                     }
-                                    ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
+                                    ArrayAdapter adapter3 = new ArrayAdapter<String>(ini,
                                             R.layout.activity_list_view, list_items);
 
-                                    ListView listView = (ListView) findViewById(R.id.list);
-                                    listView.setAdapter(adapter2);
+                                    ListView list_issue_items = (ListView) findViewById(R.id.list);
+                                    list_issue_items.setAdapter(adapter3);
+                                    list_issue_items.setVisibility(View.VISIBLE);
 
                                     // build spinner wh
                                     Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
@@ -1123,9 +1126,13 @@ public class ReceiptActivity extends MainActivity {
                                         public void onClick(View view) {
                                             LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
                                             step2.setVisibility(View.GONE);
-
                                             LinearLayout step1_1 = (LinearLayout) findViewById(R.id.step1_1);
                                             step1_1.setVisibility(View.VISIBLE);
+                                            // Also empty the array data
+                                            list_items.clear();
+                                            list_product_items.clear();
+                                            product_ids.clear();
+                                            product_units.clear();
                                         }
                                     });
                                 }
