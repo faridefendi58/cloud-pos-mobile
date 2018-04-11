@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingHorizontal="10dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/backgroundcolor"
     tools:context="com.slightsite.ucokinventory.ReceiptActivity"
     tools:showIn="@layout/app_bar_receipt"
@@ -96,7 +95,6 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_vertical_margin"
-        android:layout_marginTop="10dp"
         android:visibility="gone">
 
         <FrameLayout
@@ -205,7 +203,7 @@
             android:id="@+id/btn_confirm"
             android:layout_width="126dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
             android:background="@color/colorPrimary"
@@ -262,8 +260,7 @@
                 android:background="@color/green"
                 android:textColor="#fff"
                 android:textAllCaps="false"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
+                android:paddingHorizontal="15dp"
                 android:drawableLeft="@drawable/ic_add_24dp"
                 />
         </FrameLayout>
@@ -331,10 +328,12 @@
             android:id="@+id/btn_step2_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:paddingHorizontal="20dp"
-            android:text="Kembali" />
+            android:layout_gravity="left"
+            android:textAllCaps="false"
+            android:text="Kembali Ke Daftar"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+            />
 
     </LinearLayout>
     <LinearLayout

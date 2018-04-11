@@ -36,6 +36,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -602,6 +603,7 @@ public class ReceiptActivity extends MainActivity {
                         ListView listView = (ListView) findViewById(R.id.list_receipts);
                         listView.setAdapter(adapter2);
                         listView.setVisibility(View.VISIBLE);
+                        // also show the label
                         TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
                         txt_step2_label_receipts.setVisibility(View.VISIBLE);
                         Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
@@ -752,6 +754,12 @@ public class ReceiptActivity extends MainActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // hide the detail first
+                FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                txt_item_container.setVisibility(View.GONE);
+                TextView show_items = (TextView) findViewById(R.id.show_items);
+                show_items.setVisibility(View.VISIBLE);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
 
@@ -848,6 +856,9 @@ public class ReceiptActivity extends MainActivity {
                     ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
                     list_receipts.setAdapter(adapter2);
                     list_receipts.setVisibility(View.VISIBLE);
+                    // Then show the labels
+                    TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
+                    txt_step2_label_receipts.setVisibility(View.VISIBLE);
 
                     // and then set the list event for update and deletion
                     set_list_receipt_trigger(list_receipts, ini);
@@ -985,11 +996,12 @@ public class ReceiptActivity extends MainActivity {
         params.put("admin_id", admin_id);
 
         final ArrayList<String> descs = new ArrayList<String>();
-        _string_request(Request.Method.GET, issue_list_url, params, false,
+        _string_request(Request.Method.GET, issue_list_url, params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         Log.e(TAG, "Response: " + result.toString());
+                        hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -1133,6 +1145,8 @@ public class ReceiptActivity extends MainActivity {
                                             list_product_items.clear();
                                             product_ids.clear();
                                             product_units.clear();
+                                            FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+                                            btn_add_container.setVisibility(View.GONE);
                                         }
                                     });
                                 }
