@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:paddingHorizontal="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/backgroundcolor"
     tools:context="com.slightsite.ucokinventory.PurchaseActivity"
@@ -94,6 +94,28 @@
             android:layout_width="fill_parent"
             android:textColor="#fff"
             android:layout_weight="1.0"
+            >
+        </Spinner>
+
+        <TextView
+            android:id="@+id/txt_stock_availability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:text="Ketersediaan Stok :"
+            />
+
+        <Spinner
+            android:id="@+id/is_pre_order"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="fill_parent"
+            android:textColor="#fff"
+            android:layout_weight="1.0"
+            android:entries="@array/stock_availability"
             >
         </Spinner>
 

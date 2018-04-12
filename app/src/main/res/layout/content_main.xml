@@ -81,7 +81,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Transfer"/>
+                    android:text="Transfer Issue"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -107,46 +107,6 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <android.support.v7.widget.CardView
-            android:layout_width="160dp"
-            android:layout_height="180dp"
-            android:layout_margin="10dp">
-
-            <LinearLayout
-                android:id="@+id/dashboard_menu3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:background="@drawable/circlebackgroundyellow"
-                    android:src="@drawable/ic_attach_money_24dp"
-                    android:padding="10dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginTop="10dp"
-                    android:text="Purchase"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lightgrey"
-                    android:layout_marginTop="10dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Pengadaan Barang"
-                    android:padding="5dp"
-                    android:layout_marginTop="10dp"
-                    android:textColor="#ababab"/>
-
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="160dp"
@@ -180,13 +140,54 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Transaksi Non Penjualan"
+                    android:text="Trans. Non Penjualan"
                     android:padding="5dp"
                     android:layout_marginTop="10dp"
                     android:textColor="#ababab"/>
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+        android:layout_width="160dp"
+        android:layout_height="180dp"
+        android:layout_margin="10dp"
+        android:id="@+id/notification_menu_wrapper">
+
+        <LinearLayout
+            android:id="@+id/dashboard_menu6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/circlebackgroundaccent"
+                android:src="@drawable/ic_notifications_24dp"
+                android:padding="10dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:text="Pemberitahuan"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lightgrey"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Notifikasi Untuk Anda"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
+                android:textColor="#ababab"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
     </LinearLayout>
 
@@ -196,6 +197,46 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="160dp"
+            android:layout_height="180dp"
+            android:layout_margin="10dp">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/circlebackgroundyellow"
+                    android:src="@drawable/ic_attach_money_24dp"
+                    android:padding="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:text="Purchase Order"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightgrey"
+                    android:layout_marginTop="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Pengadaan Barang"
+                    android:padding="5dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#ababab"/>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="160dp"
@@ -212,7 +253,7 @@
                 <ImageView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:background="@drawable/circlebackgroundaccent"
+                    android:background="@drawable/circlebackgroundgreen"
                     android:src="@drawable/ic_card_travel_black_24dp"
                     android:padding="10dp"/>
                 <TextView
@@ -220,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Cek Stock"/>
+                    android:text="Laporan Stock"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

@@ -10,4 +10,8 @@
         <item>Kalimalang</item>
         <item>Citra Garden</item>
     </string-array>
+    <string-array name="stock_availability">
+        <item>Tersedia</item>
+        <item>Pre Order</item>
+    </string-array>
 </resources>
