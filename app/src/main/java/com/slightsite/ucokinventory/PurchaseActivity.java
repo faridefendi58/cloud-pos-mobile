@@ -51,6 +51,8 @@ public class PurchaseActivity extends MainActivity {
     ArrayList<String> list_product_items = new ArrayList<String>();
     Map<String, String> product_names = new HashMap<String, String>();
     Map<String, String> product_units = new HashMap<String, String>();
+    ArrayList<String> assigned_whs = new ArrayList<String>();
+    ArrayList<String> group_whs = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,14 @@ public class PurchaseActivity extends MainActivity {
         Spinner shipment_name = (Spinner)findViewById(R.id.shipment_name);
         ArrayAdapter<String> whAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_shipment());
         shipment_name.setAdapter(whAdapter2);
+
+        // define the roles
+        set_list_assigned_wh();
+
+        // build spinner of wh coverage
+        Spinner wh_group_name = (Spinner)findViewById(R.id.wh_group_name);
+        ArrayAdapter<String> whAdapter3 = new ArrayAdapter<String>(this, R.layout.spinner_item, group_whs);
+        wh_group_name.setAdapter(whAdapter3);
 
         final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
         supplier_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -580,6 +590,7 @@ public class PurchaseActivity extends MainActivity {
             public void onClick(View view) {
                 final Spinner supplier_name = (Spinner) findViewById(R.id.supplier_name);
                 final Spinner shipment_name = (Spinner) findViewById(R.id.shipment_name);
+                final Spinner wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
                 TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
                 TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
 
@@ -588,6 +599,7 @@ public class PurchaseActivity extends MainActivity {
                 params.put("prices", txt_price_select.getText().toString());
                 params.put("supplier_name", supplier_name.getSelectedItem().toString());
                 params.put("shipment_name", shipment_name.getSelectedItem().toString());
+                params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
                 params.put("admin_id", sharedpreferences.getString("id", null));
                 Log.e(TAG, "Params : " + params.toString());
 
@@ -642,5 +654,28 @@ public class PurchaseActivity extends MainActivity {
                         });
             }
         });
+    }
+
+    private void set_list_assigned_wh() {
+
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                assigned_whs.add(data_n.getString("warehouse_name"));
+                if (!group_whs.contains(data_n.getString("warehouse_group_name"))) {
+                    group_whs.add(data_n.getString("warehouse_group_name"));
+                }
+
+            }
+            Log.e(TAG, "List Group WH : " + group_whs.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
