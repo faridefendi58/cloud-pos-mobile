@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="-10dp"
             android:layout_marginBottom="10dp"
             android:text="Pengadaan Barang"
             android:textSize="18dip"
@@ -34,90 +34,153 @@
             android:background="@drawable/textlines"
             />
 
-        <TextView
-            android:id="@+id/txt_label_supplier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="16dip"
-            android:text="Nama Supplier :"
-            android:textStyle="bold"
-            />
-
-        <Spinner
-            android:id="@+id/supplier_name"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:id="@+id/supplier_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/txt_label_supplier"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="Supplier :"
+                android:textStyle="bold"
+                android:layout_gravity="left"
+                />
+
+            <Spinner
+                android:id="@+id/supplier_name"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_weight="1.0"
+                android:layout_gravity="right"
+                >
+            </Spinner>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/wh_group_container"
             android:layout_width="fill_parent"
-            android:textColor="#fff"
-            android:layout_weight="1.0"
-            >
-        </Spinner>
-
-        <TextView
-            android:id="@+id/txt_wh_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="16dip"
-            android:textStyle="bold"
-            android:text="Tujuan Area Warehouse :"
-            />
-
-        <Spinner
-            android:id="@+id/wh_group_name"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/txt_wh_group"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:text="Tujuan :"
+                android:layout_gravity="left"
+                />
+
+            <Spinner
+                android:id="@+id/wh_group_name"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_weight="1.0"
+                android:layout_gravity="right"
+                >
+            </Spinner>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/shipment_container"
             android:layout_width="fill_parent"
-            android:textColor="#fff"
-            android:layout_weight="1.0"
-            >
-        </Spinner>
-
-        <TextView
-            android:id="@+id/txt_shipment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="16dip"
-            android:textStyle="bold"
-            android:text="Cara Pengiriman :"
-            />
-
-        <Spinner
-            android:id="@+id/shipment_name"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/txt_shipment"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:text="Cara Pengiriman :"
+                android:layout_gravity="left"
+                />
+
+            <Spinner
+                android:id="@+id/shipment_name"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_weight="1.0"
+                android:layout_gravity="right"
+                >
+            </Spinner>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/date_container"
             android:layout_width="fill_parent"
-            android:textColor="#fff"
-            android:layout_weight="1.0"
-            >
-        </Spinner>
-
-        <TextView
-            android:id="@+id/txt_stock_availability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="16dip"
-            android:textStyle="bold"
-            android:text="Ketersediaan Stok :"
-            />
-
-        <Spinner
-            android:id="@+id/is_pre_order"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:layout_width="fill_parent"
-            android:textColor="#fff"
-            android:layout_weight="1.0"
-            android:entries="@array/stock_availability"
-            >
-        </Spinner>
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/txt_effective_date"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:text="Tanggal Kirim :"
+                android:layout_gravity="left"
+                />
+
+            <FrameLayout
+                android:id="@+id/date_value_container"
+                android:layout_width="160dp"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right">
+                <TextView
+                    android:id="@+id/effective_date"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text=""
+                    android:textSize="15dip"
+                    android:onClick="setDate"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Button
+                    android:id="@+id/btn_change_date"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="setDate"
+                    android:text=""
+                    android:paddingVertical="0dp"
+                    android:layout_marginTop="-10dp"
+                    android:layout_gravity="right"
+                    android:drawableLeft="@drawable/ic_date_range_black_24dp"
+                    android:background="@android:color/transparent"/>
+            </FrameLayout>
+
+        </FrameLayout>
+
+        <CheckBox
+            android:id="@+id/is_preorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:paddingHorizontal="0dp"
+            android:textColor="#717171"
+            android:text="Pre Order Stock" />
 
         <FrameLayout
             android:id="@+id/btn_add_container"
@@ -193,6 +256,12 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:textSize="16dip"
+            android:visibility="gone"
+            />
+        <TextView
+            android:id="@+id/txt_is_preorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="gone"
             />
 

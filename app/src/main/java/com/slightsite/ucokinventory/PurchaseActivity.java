@@ -1,6 +1,8 @@
 package com.slightsite.ucokinventory;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -29,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -99,6 +104,12 @@ public class PurchaseActivity extends MainActivity {
         // define the product list
         list_products = get_list_product();
         btn_add_trigger(ini);
+
+        // init checkbox
+        initCheckBox();
+
+        //define date picker
+        initDatePicker();
 
         // copy btn trigger
         Button btn_copy = (Button) findViewById(R.id.btn_copy);
@@ -593,6 +604,8 @@ public class PurchaseActivity extends MainActivity {
                 final Spinner wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
                 TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
                 TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
+                TextView effective_date = (TextView) findViewById(R.id.effective_date);
+                TextView txt_is_pre_order = (TextView) findViewById(R.id.txt_is_preorder);
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("items", txt_item_select.getText().toString());
@@ -600,6 +613,8 @@ public class PurchaseActivity extends MainActivity {
                 params.put("supplier_name", supplier_name.getSelectedItem().toString());
                 params.put("shipment_name", shipment_name.getSelectedItem().toString());
                 params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
+                params.put("effective_date", effective_date.getText().toString());
+                params.put("is_pre_order", txt_is_pre_order.getText().toString());
                 params.put("admin_id", sharedpreferences.getString("id", null));
                 Log.e(TAG, "Params : " + params.toString());
 
@@ -677,5 +692,72 @@ public class PurchaseActivity extends MainActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initCheckBox()
+    {
+        final CheckBox is_preorder = (CheckBox)findViewById(R.id.is_preorder);
+        final TextView txt_is_preorder = (TextView) findViewById(R.id.txt_is_preorder);
+
+        is_preorder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(is_preorder.isChecked())
+                {
+                    txt_is_preorder.setText("true");
+                    Toast.makeText(PurchaseActivity.this,"is_preorder checkbox checked", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    txt_is_preorder.setText("false");
+                    Toast.makeText(PurchaseActivity.this,"is_preorder checkbox Unchecked", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+
+    private DatePicker datePicker;
+    private Calendar calendar;
+    private TextView dateView;
+    private int year, month, day;
+
+    private void initDatePicker()
+    {
+        dateView = (TextView) findViewById(R.id.effective_date);
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        showDate(year, month + 1, day);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setDate(View view) {
+        showDialog(999);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this, myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+            // arg1 = year, arg2 = month, arg3 = day
+            showDate(arg1, arg2+1, arg3);
+        }
+    };
+
+    private void showDate(int year, int month, int day) {
+        dateView.setText(new StringBuilder().append(day).append("/")
+                .append(month).append("/").append(year));
     }
 }
