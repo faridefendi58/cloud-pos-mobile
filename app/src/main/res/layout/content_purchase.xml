@@ -148,7 +148,7 @@
                 android:layout_height="fill_parent"
                 android:layout_gravity="right">
                 <TextView
-                    android:id="@+id/effective_date"
+                    android:id="@+id/due_date"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"

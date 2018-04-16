@@ -604,7 +604,7 @@ public class PurchaseActivity extends MainActivity {
                 final Spinner wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
                 TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
                 TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
-                TextView effective_date = (TextView) findViewById(R.id.effective_date);
+                TextView due_date = (TextView) findViewById(R.id.due_date);
                 TextView txt_is_pre_order = (TextView) findViewById(R.id.txt_is_preorder);
 
                 Map<String, String> params = new HashMap<String, String>();
@@ -613,7 +613,7 @@ public class PurchaseActivity extends MainActivity {
                 params.put("supplier_name", supplier_name.getSelectedItem().toString());
                 params.put("shipment_name", shipment_name.getSelectedItem().toString());
                 params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
-                params.put("effective_date", effective_date.getText().toString());
+                params.put("due_date", due_date.getText().toString());
                 params.put("is_pre_order", txt_is_pre_order.getText().toString());
                 params.put("admin_id", sharedpreferences.getString("id", null));
                 Log.e(TAG, "Params : " + params.toString());
@@ -724,7 +724,7 @@ public class PurchaseActivity extends MainActivity {
 
     private void initDatePicker()
     {
-        dateView = (TextView) findViewById(R.id.effective_date);
+        dateView = (TextView) findViewById(R.id.due_date);
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
 
