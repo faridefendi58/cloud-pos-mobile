@@ -757,7 +757,7 @@ public class PurchaseActivity extends MainActivity {
     };
 
     private void showDate(int year, int month, int day) {
-        dateView.setText(new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
+        dateView.setText(new StringBuilder().append(day).append("-")
+                .append(month).append("-").append(year));
     }
 }
