@@ -1,6 +1,8 @@
 package com.slightsite.ucokinventory;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -29,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,6 +56,8 @@ public class PurchaseActivity extends MainActivity {
     ArrayList<String> list_product_items = new ArrayList<String>();
     Map<String, String> product_names = new HashMap<String, String>();
     Map<String, String> product_units = new HashMap<String, String>();
+    ArrayList<String> assigned_whs = new ArrayList<String>();
+    ArrayList<String> group_whs = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,14 @@ public class PurchaseActivity extends MainActivity {
         Spinner shipment_name = (Spinner)findViewById(R.id.shipment_name);
         ArrayAdapter<String> whAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_shipment());
         shipment_name.setAdapter(whAdapter2);
+
+        // define the roles
+        set_list_assigned_wh();
+
+        // build spinner of wh coverage
+        Spinner wh_group_name = (Spinner)findViewById(R.id.wh_group_name);
+        ArrayAdapter<String> whAdapter3 = new ArrayAdapter<String>(this, R.layout.spinner_item, group_whs);
+        wh_group_name.setAdapter(whAdapter3);
 
         final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
         supplier_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -89,6 +104,12 @@ public class PurchaseActivity extends MainActivity {
         // define the product list
         list_products = get_list_product();
         btn_add_trigger(ini);
+
+        // init checkbox
+        initCheckBox();
+
+        //define date picker
+        initDatePicker();
 
         // copy btn trigger
         Button btn_copy = (Button) findViewById(R.id.btn_copy);
@@ -580,14 +601,20 @@ public class PurchaseActivity extends MainActivity {
             public void onClick(View view) {
                 final Spinner supplier_name = (Spinner) findViewById(R.id.supplier_name);
                 final Spinner shipment_name = (Spinner) findViewById(R.id.shipment_name);
+                final Spinner wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
                 TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
                 TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
+                TextView due_date = (TextView) findViewById(R.id.due_date);
+                TextView txt_is_pre_order = (TextView) findViewById(R.id.txt_is_preorder);
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("items", txt_item_select.getText().toString());
                 params.put("prices", txt_price_select.getText().toString());
                 params.put("supplier_name", supplier_name.getSelectedItem().toString());
                 params.put("shipment_name", shipment_name.getSelectedItem().toString());
+                params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
+                params.put("due_date", due_date.getText().toString());
+                params.put("is_pre_order", txt_is_pre_order.getText().toString());
                 params.put("admin_id", sharedpreferences.getString("id", null));
                 Log.e(TAG, "Params : " + params.toString());
 
@@ -642,5 +669,95 @@ public class PurchaseActivity extends MainActivity {
                         });
             }
         });
+    }
+
+    private void set_list_assigned_wh() {
+
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                assigned_whs.add(data_n.getString("warehouse_name"));
+                if (!group_whs.contains(data_n.getString("warehouse_group_name"))) {
+                    group_whs.add(data_n.getString("warehouse_group_name"));
+                }
+
+            }
+            Log.e(TAG, "List Group WH : " + group_whs.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initCheckBox()
+    {
+        final CheckBox is_preorder = (CheckBox)findViewById(R.id.is_preorder);
+        final TextView txt_is_preorder = (TextView) findViewById(R.id.txt_is_preorder);
+
+        is_preorder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(is_preorder.isChecked())
+                {
+                    txt_is_preorder.setText("true");
+                    Toast.makeText(PurchaseActivity.this,"is_preorder checkbox checked", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    txt_is_preorder.setText("false");
+                    Toast.makeText(PurchaseActivity.this,"is_preorder checkbox Unchecked", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+
+    private DatePicker datePicker;
+    private Calendar calendar;
+    private TextView dateView;
+    private int year, month, day;
+
+    private void initDatePicker()
+    {
+        dateView = (TextView) findViewById(R.id.due_date);
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        showDate(year, month + 1, day);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setDate(View view) {
+        showDialog(999);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this, myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+            // arg1 = year, arg2 = month, arg3 = day
+            showDate(arg1, arg2+1, arg3);
+        }
+    };
+
+    private void showDate(int year, int month, int day) {
+        dateView.setText(new StringBuilder().append(day).append("-")
+                .append(month).append("-").append(year));
     }
 }

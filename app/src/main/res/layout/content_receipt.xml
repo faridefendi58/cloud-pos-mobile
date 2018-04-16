@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:paddingHorizontal="10dp"
     android:background="@color/backgroundcolor"
     tools:context="com.slightsite.ucokinventory.ReceiptActivity"
     tools:showIn="@layout/app_bar_receipt"
@@ -19,7 +18,8 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin">
+        android:padding="@dimen/activity_vertical_margin"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/step1_TextView"
@@ -38,8 +38,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:layout_margin="10dp"
+            android:layout_marginBottom="20dp"
             android:hint="Nomor Pengadaan Barang">
-            <requestFocus />
+            <!--<requestFocus />-->
         </AutoCompleteTextView>
 
         <Button
@@ -54,6 +55,37 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/step1_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:id="@+id/step1_1_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
+            android:text="PENERIMAAN BARANG"
+            android:textSize="18dip"
+            android:textStyle="bold"
+            android:background="@drawable/textlines"/>
+
+        <ListView
+            android:id="@+id/list_available_issue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+        </ListView>
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/step2"
         android:layout_width="match_parent"
@@ -68,6 +100,7 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:paddingBottom="10dp"
             android:background="@drawable/textlines">
@@ -121,6 +154,7 @@
             android:layout_marginLeft="5dp"
             android:textSize="16dip"
             android:text="Barang akan diterima di :"
+            android:visibility="gone"
             />
 
         <Spinner
@@ -130,6 +164,7 @@
             android:layout_marginTop="5dp"
             android:layout_width="fill_parent"
             android:entries="@array/receipt_type"
+            android:visibility="gone"
             >
         </Spinner>
 
@@ -161,14 +196,14 @@
             android:textSize="16dp"
             android:textStyle="italic"
             android:layout_marginLeft="5dp"
-            android:visibility="visible"
+            android:visibility="gone"
             />
 
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="126dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
             android:background="@color/colorPrimary"
@@ -187,8 +222,7 @@
         <FrameLayout
             android:id="@+id/txt_item_container"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="gone">
+            android:layout_height="fill_parent">
 
             <TextView
                 android:id="@+id/txt_step2_label0"
@@ -219,15 +253,14 @@
             android:visibility="gone">
             <Button
                 android:id="@+id/btn_add"
-                android:text="Tambah Item Barang"
+                android:text="Tambah Item Penerimaan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:background="@color/green"
                 android:textColor="#fff"
                 android:textAllCaps="false"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
+                android:paddingHorizontal="15dp"
                 android:drawableLeft="@drawable/ic_add_24dp"
                 />
         </FrameLayout>
@@ -289,6 +322,17 @@
             android:layout_marginTop="10dp"
             android:textSize="16dip"
             android:visibility="gone"
+            />
+
+        <Button
+            android:id="@+id/btn_step2_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textAllCaps="false"
+            android:text="Kembali Ke Daftar"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
             />
 
     </LinearLayout>

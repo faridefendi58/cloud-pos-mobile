@@ -36,6 +36,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,8 +57,10 @@ public class ReceiptActivity extends MainActivity {
 
     final ArrayList<String> list_items = new ArrayList<String>();
     final ArrayList<String> list_product_items = new ArrayList<String>();
+    final ArrayList<String> list_issues = new ArrayList<String>();
     final Map<String, String> product_ids = new HashMap<String, String>();
     final Map<String, String> product_units = new HashMap<String, String>();
+    final Map<String, String> issue_origins = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,17 +70,13 @@ public class ReceiptActivity extends MainActivity {
         setDinamicContent(R.layout.app_bar_receipt);
         buildMenu();
 
-        //autocomplete
-        ArrayList items = set_auto_complete();
-        AutoCompleteTextView txt_issue_number = (AutoCompleteTextView)findViewById(R.id.txt_issue_no);
-        ArrayAdapter adapter = new
-                ArrayAdapter(this,android.R.layout.simple_list_item_1,items);
+        // If needed build the advance search
+        //buildAutoComplete();
 
-        txt_issue_number.setAdapter(adapter);
-        txt_issue_number.setThreshold(1);
+        final Context ini = this;
+        buildTheIssueList(ini);
 
         Button btn_next = (Button) findViewById(R.id.btn_next);
-        final Context ini = this;
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -302,12 +301,12 @@ public class ReceiptActivity extends MainActivity {
 
         final ArrayList<String> items = new ArrayList<String>();
 
-        _string_request(Request.Method.GET, issue_list_url, params, true,
+        _string_request(Request.Method.GET, issue_list_url, params, false,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         Log.e(TAG, "Response: " + result.toString());
-                        hideDialog();
+                        //hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -604,6 +603,7 @@ public class ReceiptActivity extends MainActivity {
                         ListView listView = (ListView) findViewById(R.id.list_receipts);
                         listView.setAdapter(adapter2);
                         listView.setVisibility(View.VISIBLE);
+                        // also show the label
                         TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
                         txt_step2_label_receipts.setVisibility(View.VISIBLE);
                         Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
@@ -740,7 +740,7 @@ public class ReceiptActivity extends MainActivity {
                 } else {
                     btn_add_container.setVisibility(View.GONE);
                 }
-                txt_item_container.setVisibility(View.GONE);
+                //txt_item_container.setVisibility(View.GONE);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -754,6 +754,12 @@ public class ReceiptActivity extends MainActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // hide the detail first
+                FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                txt_item_container.setVisibility(View.GONE);
+                TextView show_items = (TextView) findViewById(R.id.show_items);
+                show_items.setVisibility(View.VISIBLE);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
 
@@ -850,6 +856,9 @@ public class ReceiptActivity extends MainActivity {
                     ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
                     list_receipts.setAdapter(adapter2);
                     list_receipts.setVisibility(View.VISIBLE);
+                    // Then show the labels
+                    TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
+                    txt_step2_label_receipts.setVisibility(View.VISIBLE);
 
                     // and then set the list event for update and deletion
                     set_list_receipt_trigger(list_receipts, ini);
@@ -967,5 +976,227 @@ public class ReceiptActivity extends MainActivity {
                 dialog.show();
             }
         });
+    }
+
+    private void buildAutoComplete() {
+        //autocomplete
+        ArrayList items = set_auto_complete();
+        AutoCompleteTextView txt_issue_number = (AutoCompleteTextView)findViewById(R.id.txt_issue_no);
+        ArrayAdapter adapter = new
+                ArrayAdapter(this,android.R.layout.simple_list_item_1,items);
+
+        txt_issue_number.setAdapter(adapter);
+        txt_issue_number.setThreshold(1);
+    }
+
+    private void buildTheIssueList(final Context ini) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("status", "onprocess");
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _string_request(Request.Method.GET, issue_list_url, params, true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response: " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = jObj.getJSONObject("origin");
+                                JSONObject destinations = jObj.getJSONObject("destination");
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    list_issues.add(data.getString(n));
+                                    issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                    descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
+                                }
+                                Log.e(TAG, "List available issue : " + list_issues.toString());
+                                Log.e(TAG, "List issue origin : " + issue_origins.toString());
+                                /*ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
+                                        R.layout.list_view_receipt, R.id.list_title, list_issues);*/
+                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_issues, descs);
+
+                                ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
+                                list_available_issue.setAdapter(adapter2);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    public void showDetailIssue(View view) {
+        final Context ini = (Context) view.getContext();
+        hideKeyboardFrom(ini, view);
+
+        final View parent = (View) view.getParent();
+        TextView issue_number = (TextView) parent.findViewById(R.id.list_title);
+        Log.e(TAG, "Choosen : " + issue_number.getText().toString());
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("issue_number", issue_number.getText().toString());
+
+        _string_request(Request.Method.GET, get_issue_url, params, true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response: " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONObject data = jObj.getJSONObject("data");
+                                String data_status = data.getString("status");
+                                String data_type = data.getString("type");
+
+                                Log.e("Successfully Request!", data.toString());
+
+                                LinearLayout step1 = (LinearLayout) findViewById(R.id.step1_1);
+                                step1.setVisibility(View.GONE);
+
+                                if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
+                                    //set notes
+                                    EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                                    //get session
+                                    sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+                                    //get issue numb
+                                    TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
+                                    String fin_issue_number, fin_from;
+                                    if (data_type.equals("purchase_order")) {
+                                        fin_issue_number = data.getString("po_number");
+                                        fin_from = data.getString("supplier_name");
+                                    } else if (data_type.equals("transfer_issue")) {
+                                        fin_issue_number = data.getString("ti_number");
+                                        fin_from = data.getString("warehouse_from_name");
+                                        txt_receipt_notes.setVisibility(View.GONE);
+                                        txt_step2_label1.setVisibility(View.GONE);
+                                        Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
+                                        btn_confirm.setVisibility(View.GONE);
+                                        Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
+                                        step2_receipt_type.setVisibility(View.GONE);
+                                        TextView txt_step2_label_type = (TextView) findViewById(R.id.txt_step2_label_type);
+                                        txt_step2_label_type.setVisibility(View.GONE);
+                                    } else {
+                                        fin_issue_number = data.getString("po_number");
+                                        fin_from = data.getString("supplier_name");
+                                    }
+                                    TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
+                                    txt_step2_issue_no.setText(fin_issue_number);
+                                    TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
+                                    txt_step2_from.setText(fin_from);
+                                    TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
+                                    txt_step2_type.setText(data.getString("type"));
+
+                                    LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                    step2.setVisibility(View.VISIBLE);
+
+                                    //set the list
+                                    JSONArray items_data = data.getJSONArray("items");
+                                    for(int n = 0; n < items_data.length(); n++)
+                                    {
+                                        JSONObject json_obj_n = items_data.getJSONObject(n);
+                                        list_items.add(
+                                                json_obj_n.getString("product_name")+" " +
+                                                        json_obj_n.getString("quantity")+" " +
+                                                        json_obj_n.getString("unit"));
+                                        // check the items still available to be received
+                                        if (json_obj_n.has("available_qty")) {
+                                            int available_qty = json_obj_n.getInt("available_qty");
+                                            if (available_qty > 0)
+                                                list_product_items.add(json_obj_n.getString("product_name"));
+                                        }
+                                        product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
+                                        product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
+                                    }
+                                    ArrayAdapter adapter3 = new ArrayAdapter<String>(ini,
+                                            R.layout.activity_list_view, list_items);
+
+                                    ListView list_issue_items = (ListView) findViewById(R.id.list);
+                                    list_issue_items.setAdapter(adapter3);
+                                    list_issue_items.setVisibility(View.VISIBLE);
+
+                                    // build spinner wh
+                                    Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
+
+                                    ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_assigned_wh());
+                                    whAdapter.notifyDataSetChanged();
+                                    step2_receipt_wh.setAdapter(whAdapter);
+
+                                    // trigger back button
+                                    Button btn_step2_back = (Button) findViewById(R.id.btn_step2_back);
+                                    btn_step2_back.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                            step2.setVisibility(View.GONE);
+                                            LinearLayout step1_1 = (LinearLayout) findViewById(R.id.step1_1);
+                                            step1_1.setVisibility(View.VISIBLE);
+                                            // Also empty the array data
+                                            list_items.clear();
+                                            list_product_items.clear();
+                                            product_ids.clear();
+                                            product_units.clear();
+                                            product_stack.clear();
+                                            FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+                                            btn_add_container.setVisibility(View.GONE);
+                                            // Hide several field
+                                            Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
+                                            btn_confirm_receipt.setVisibility(View.GONE);
+                                            TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
+                                            txt_step2_label_receipts.setVisibility(View.GONE);
+                                            ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
+                                            list_receipts.setVisibility(View.GONE);
+                                            TextView show_items = (TextView) findViewById(R.id.show_items);
+                                            show_items.setVisibility(View.GONE);
+                                            FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                                            txt_item_container.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public ArrayList get_list_assigned_wh() {
+        final ArrayList<String> items = new ArrayList<String>();
+
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            Log.e(TAG, "List Roles : " + jsonObject.toString());
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                items.add(data_n.getString("warehouse_name"));
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return items;
     }
 }
