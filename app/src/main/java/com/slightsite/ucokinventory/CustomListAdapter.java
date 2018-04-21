@@ -17,11 +17,13 @@ public class CustomListAdapter extends BaseAdapter {
     ArrayList customListDataModelArrayList = new ArrayList<>();
     ArrayList customListDescArrayList = new ArrayList<>();
     LayoutInflater layoutInflater = null;
+    int the_view = 0;
 
-    public CustomListAdapter(Activity activity, ArrayList customListDataModelArray, ArrayList customListDescArrayList){
+    public CustomListAdapter(Activity activity, ArrayList customListDataModelArray, ArrayList customListDescArrayList, int the_view){
         this.activity=activity;
         this.customListDataModelArrayList = customListDataModelArray;
         this.customListDescArrayList = customListDescArrayList;
+        this.the_view = the_view;
         layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -59,7 +61,7 @@ public class CustomListAdapter extends BaseAdapter {
             // create  viewholder object for list_rowcell View.
             viewHolder = new ViewHolder();
             // inflate list_rowcell for each row
-            vi = layoutInflater.inflate(R.layout.list_view_receipt,null);
+            vi = layoutInflater.inflate(the_view,null);
             viewHolder.list_title = (TextView) vi.findViewById(R.id.list_title);
             viewHolder.list_desc = (TextView) vi.findViewById(R.id.list_desc);
             /*We can use setTag() and getTag() to set and get custom objects as per our requirement.

@@ -1021,7 +1021,7 @@ public class ReceiptActivity extends MainActivity {
                                 Log.e(TAG, "List issue origin : " + issue_origins.toString());
                                 /*ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
                                         R.layout.list_view_receipt, R.id.list_title, list_issues);*/
-                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_issues, descs);
+                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_issues, descs, R.layout.list_view_receipt);
 
                                 ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
                                 list_available_issue.setAdapter(adapter2);
