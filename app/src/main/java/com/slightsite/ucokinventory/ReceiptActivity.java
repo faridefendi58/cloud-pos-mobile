@@ -58,6 +58,7 @@ public class ReceiptActivity extends MainActivity {
     final ArrayList<String> list_items = new ArrayList<String>();
     final ArrayList<String> list_product_items = new ArrayList<String>();
     final ArrayList<String> list_issues = new ArrayList<String>();
+    final ArrayList<String> list_ids = new ArrayList<String>();
     final Map<String, String> product_ids = new HashMap<String, String>();
     final Map<String, String> product_units = new HashMap<String, String>();
     final Map<String, String> issue_origins = new HashMap<String, String>();
@@ -1013,6 +1014,7 @@ public class ReceiptActivity extends MainActivity {
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
+                                    list_ids.add(""+ n);
                                     list_issues.add(data.getString(n));
                                     issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
                                     descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
@@ -1021,7 +1023,7 @@ public class ReceiptActivity extends MainActivity {
                                 Log.e(TAG, "List issue origin : " + issue_origins.toString());
                                 /*ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
                                         R.layout.list_view_receipt, R.id.list_title, list_issues);*/
-                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_issues, descs);
+                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_ids, list_issues, descs, R.layout.list_view_receipt);
 
                                 ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
                                 list_available_issue.setAdapter(adapter2);
