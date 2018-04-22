@@ -1,5 +1,6 @@
 package com.slightsite.ucokinventory;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +13,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +85,7 @@ public class NotificationActivity extends MainActivity {
 
     final ArrayList<String> list_items = new ArrayList<String>();
     final ArrayList<String> list_messages = new ArrayList<String>();
+    final ArrayList<String> list_ids = new ArrayList<String>();
 
     private void buildTheNotifList(final Context ini) {
         Map<String, String> params = new HashMap<String, String>();
@@ -110,12 +115,14 @@ public class NotificationActivity extends MainActivity {
                                     JSONObject data_n = new JSONObject(data.getString(n));
                                     list_items.add(data_n.getString("created_at"));
                                     list_messages.add(data_n.getString("message"));
+                                    list_ids.add(data_n.getString("id"));
                                 }
 
-                                CustomListAdapter adapter2 = new CustomListAdapter(NotificationActivity.this, list_items, list_messages, R.layout.list_view_notification);
+                                CustomListAdapter adapter2 = new CustomListAdapter(NotificationActivity.this, list_ids, list_items, list_messages, R.layout.list_view_notification);
 
                                 ListView list_notification = (ListView) findViewById(R.id.list_notification);
                                 list_notification.setAdapter(adapter2);
+                                itemListener(list_notification);
                             }
 
                         } catch (JSONException e) {
@@ -182,5 +189,20 @@ public class NotificationActivity extends MainActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void itemListener(final ListView list) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //String title = list.getItemAtPosition(i).toString();
+                TextView id = (TextView) view.findViewById(R.id.list_id);
+                TextView title = (TextView) view.findViewById(R.id.list_title);
+                TextView desc = (TextView) view.findViewById(R.id.list_desc);
+
+                Log.e(TAG, id.getText().toString());
+
+            }
+        });
     }
 }

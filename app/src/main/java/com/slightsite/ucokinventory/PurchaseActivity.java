@@ -705,12 +705,8 @@ public class PurchaseActivity extends MainActivity {
                 if(is_preorder.isChecked())
                 {
                     txt_is_preorder.setText("true");
-                    Toast.makeText(PurchaseActivity.this,"is_preorder checkbox checked", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                } else {
                     txt_is_preorder.setText("false");
-                    Toast.makeText(PurchaseActivity.this,"is_preorder checkbox Unchecked", Toast.LENGTH_SHORT).show();
                 }
 
             }

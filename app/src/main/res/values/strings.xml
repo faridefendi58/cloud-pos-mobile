@@ -6,4 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="txt_purchase_order">Pengadaan Barang</string>
+    <string name="txt_receipt">Penerimaan Barang</string>
+    <string name="txt_notification">Pemberitahuan</string>
 </resources>

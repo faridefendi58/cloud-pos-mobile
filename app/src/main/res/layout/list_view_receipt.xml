@@ -37,5 +37,11 @@
         android:background="@android:color/transparent"
         android:drawableLeft="@drawable/ic_assignment_black_24dp"
         />
+    <TextView
+        android:id="@+id/list_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
 
 </RelativeLayout>
