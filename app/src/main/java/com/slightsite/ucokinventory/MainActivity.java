@@ -118,6 +118,15 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        // dashboard delivery menu
+        LinearLayout dashboard_menu7 = (LinearLayout) findViewById(R.id.dashboard_menu7);
+        dashboard_menu7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), DeliveryActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void setDinamicContent(@LayoutRes int app_bar) {

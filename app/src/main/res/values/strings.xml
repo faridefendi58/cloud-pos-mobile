@@ -10,4 +10,5 @@
     <string name="txt_receipt">Penerimaan Barang</string>
     <string name="txt_notification">Pemberitahuan</string>
     <string name="txt_transfer_issue">Transfer Antar Warehouse</string>
+    <string name="txt_delivery">Pengiriman Barang</string>
 </resources>
