@@ -33,6 +33,7 @@
             android:textSize="18dip"
             android:textStyle="bold"
             android:background="@drawable/textlines"
+            android:visibility="gone"
             />
 
         <TextView

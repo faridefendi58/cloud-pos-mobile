@@ -16,8 +16,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class NotificationActivity extends MainActivity {
 
     private static final String TAG = NotificationActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,9 +202,60 @@ public class NotificationActivity extends MainActivity {
                 TextView title = (TextView) view.findViewById(R.id.list_title);
                 TextView desc = (TextView) view.findViewById(R.id.list_desc);
 
-                Log.e(TAG, id.getText().toString());
+                TextView detail_title = (TextView) findViewById(R.id.detail_title);
+                detail_title.setText(list_items.get(i));
 
+                TextView detail_desc = (TextView) findViewById(R.id.detail_desc);
+                detail_desc.setText(list_messages.get(i));
+                LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
+                step1.setVisibility(View.GONE);
+                LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                step2.setVisibility(View.VISIBLE);
+                mark_as_viewed(id.getText().toString());
             }
         });
+
+        Button btn_step2_back = (Button) findViewById(R.id.btn_step2_back);
+        btn_step2_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                step2.setVisibility(View.GONE);
+                LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
+                step1.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void mark_as_viewed(String notification_id)
+    {
+        Log.e(TAG, "Id : "+ notification_id);
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+        params.put("notification_id", notification_id);
+
+        _string_request(
+                Request.Method.POST,
+                Server.URL + "notification/read?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response: " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                Log.e(TAG, jObj.getString(TAG_MESSAGE));
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
