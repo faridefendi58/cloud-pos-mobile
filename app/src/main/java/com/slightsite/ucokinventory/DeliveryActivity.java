@@ -1,5 +1,6 @@
 package com.slightsite.ucokinventory;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,13 +14,34 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DeliveryActivity extends MainActivity {
+    ProgressDialog pDialog;
     int success;
 
     private static final String TAG = DeliveryActivity.class.getSimpleName();
@@ -59,6 +81,9 @@ public class DeliveryActivity extends MainActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        buildThePreOrderList();
+        buildTheDeliveryOrderList();
     }
 
     public void buildMenu() {
@@ -150,8 +175,211 @@ public class DeliveryActivity extends MainActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 2 total pages.
+            return 2;
         }
+    }
+
+    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                url += "&" + pair.getKey() + "=" + pair.getValue();
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.e(TAG, "Request Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+    }
+
+    public interface VolleyCallback{
+        void onSuccess(String result);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    final ArrayList<String> list_items = new ArrayList<String>();
+    final ArrayList<String> list_descs = new ArrayList<String>();
+    final ArrayList<String> list_ids = new ArrayList<String>();
+
+    public void buildThePreOrderList() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+        params.put("status", "pending");
+        params.put("is_pre_order", "1");
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "purchase/list?api-key=" + Server.API_KEY,
+                params,
+                true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response: " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = new JSONObject(jObj.getString("origin"));
+                                JSONObject destinations = new JSONObject(jObj.getString("destination"));
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    list_items.add(data.getString(n));
+                                    list_ids.add(data.getString(n));
+                                    String desc = "Pengadaan dari " + origins.getString(data.getString(n)) +
+                                            " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
+                                    list_descs.add(desc);
+                                }
+
+                                CustomListAdapter adapter2 = new CustomListAdapter(DeliveryActivity.this, list_ids, list_items, list_descs, R.layout.list_view_notification);
+
+                                ListView list_pre_order = (ListView) findViewById(R.id.list_pre_order);
+                                list_pre_order.setAdapter(adapter2);
+                                itemListener(list_pre_order);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void itemListener(final ListView list) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //String title = list.getItemAtPosition(i).toString();
+                TextView id = (TextView) view.findViewById(R.id.list_id);
+                TextView title = (TextView) view.findViewById(R.id.list_title);
+                TextView desc = (TextView) view.findViewById(R.id.list_desc);
+
+                TextView detail_title = (TextView) findViewById(R.id.detail_title);
+                detail_title.setText(list_items.get(i));
+
+                TextView detail_desc = (TextView) findViewById(R.id.detail_desc);
+                detail_desc.setText(list_descs.get(i));
+                LinearLayout layout_1 = (LinearLayout) findViewById(R.id.layout_1);
+                layout_1.setVisibility(View.GONE);
+                LinearLayout layout_1_detail = (LinearLayout) findViewById(R.id.layout_1_detail);
+                layout_1_detail.setVisibility(View.VISIBLE);
+            }
+        });
+
+        Button btn_pre_order_back = (Button) findViewById(R.id.btn_pre_order_back);
+        btn_pre_order_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout_1 = (LinearLayout) findViewById(R.id.layout_1);
+                layout_1.setVisibility(View.VISIBLE);
+                LinearLayout layout_1_detail = (LinearLayout) findViewById(R.id.layout_1_detail);
+                layout_1_detail.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    final ArrayList<String> list_do_items = new ArrayList<String>();
+    final ArrayList<String> list_do_descs = new ArrayList<String>();
+    final ArrayList<String> list_do_ids = new ArrayList<String>();
+
+    public void buildTheDeliveryOrderList() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "delivery/list?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of delivery: " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject po_data = new JSONObject(jObj.getString("po_data"));
+                                JSONObject origins = new JSONObject(jObj.getString("po_origin"));
+                                JSONObject destinations = new JSONObject(jObj.getString("po_destination"));
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    list_do_items.add(data.getString(n));
+                                    list_do_ids.add(data.getString(n));
+                                    String desc = "Dikirim dari " + origins.getString(data.getString(n)) +
+                                            " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
+                                    list_do_descs.add(desc);
+                                }
+
+                                Log.e(TAG, "List do items: " + list_do_items.toString());
+                                Log.e(TAG, "List do ids: " + list_do_ids.toString());
+                                Log.e(TAG, "List do descs: " + list_do_descs.toString());
+
+                                //CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
+                                ArrayAdapter adapter3 = new ArrayAdapter<String>(DeliveryActivity.this,
+                                        R.layout.activity_list_view, list_do_items);
+
+                                ListView list_do_status = (ListView) findViewById(R.id.list_do_status);
+                                list_do_status.setAdapter(adapter3);
+                                //itemListener(list_pre_order);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
