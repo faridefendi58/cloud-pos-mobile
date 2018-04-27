@@ -77,7 +77,7 @@ public class DeliveryActivity extends MainActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
@@ -115,48 +115,6 @@ public class DeliveryActivity extends MainActivity {
     }
 
     /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_delivery, container, false);
-            LinearLayout layout_1 = (LinearLayout) rootView.findViewById(R.id.layout_1);
-            LinearLayout layout_2 = (LinearLayout) rootView.findViewById(R.id.layout_2);
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                layout_1.setVisibility(View.VISIBLE);
-                layout_2.setVisibility(View.GONE);
-            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
-                layout_2.setVisibility(View.VISIBLE);
-                layout_1.setVisibility(View.GONE);
-            }
-            return rootView;
-        }
-    }
-
-    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
@@ -169,8 +127,16 @@ public class DeliveryActivity extends MainActivity {
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    TabFragment1 tab1 = new TabFragment1();
+                    return tab1;
+                case 1:
+                    TabFragment2 tab2 = new TabFragment2();
+                    return tab2;
+                default:
+                    return null;
+            }
         }
 
         @Override
@@ -367,9 +333,9 @@ public class DeliveryActivity extends MainActivity {
                                 Log.e(TAG, "List do ids: " + list_do_ids.toString());
                                 Log.e(TAG, "List do descs: " + list_do_descs.toString());
 
-                                //CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
-                                ArrayAdapter adapter3 = new ArrayAdapter<String>(DeliveryActivity.this,
-                                        R.layout.activity_list_view, list_do_items);
+                                CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
+                                /*ArrayAdapter adapter3 = new ArrayAdapter<String>(DeliveryActivity.this,
+                                        R.layout.activity_list_view, list_do_items);*/
 
                                 ListView list_do_status = (ListView) findViewById(R.id.list_do_status);
                                 list_do_status.setAdapter(adapter3);
@@ -381,5 +347,21 @@ public class DeliveryActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    public static class TabFragment1 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_1, container, false);
+        }
+    }
+
+    public static class TabFragment2 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_2, container, false);
+        }
     }
 }
