@@ -1,5 +1,9 @@
 package com.slightsite.ucokinventory;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,11 +22,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -272,11 +282,13 @@ public class DeliveryActivity extends MainActivity {
                 detail_title.setText(list_items.get(i));
 
                 TextView detail_desc = (TextView) findViewById(R.id.detail_desc);
-                detail_desc.setText(list_descs.get(i));
+                //detail_desc.setText(list_descs.get(i));
                 LinearLayout layout_1 = (LinearLayout) findViewById(R.id.layout_1);
                 layout_1.setVisibility(View.GONE);
                 LinearLayout layout_1_detail = (LinearLayout) findViewById(R.id.layout_1_detail);
                 layout_1_detail.setVisibility(View.VISIBLE);
+                Log.e(TAG, "id : " + id.getText().toString());
+                setListPOItems(view);
             }
         });
 
@@ -363,5 +375,176 @@ public class DeliveryActivity extends MainActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.tab_fragment_2, container, false);
         }
+    }
+
+    final ArrayList<String> list_po_items = new ArrayList<String>();
+    final ArrayList<String> list_product_items = new ArrayList<String>();
+    final ArrayList<String> list_product_ids = new ArrayList<String>();
+    final Map<String, String> product_ids = new HashMap<String, String>();
+    final Map<String, String> product_units = new HashMap<String, String>();
+    final Map<String, String> product_qtys = new HashMap<String, String>();
+
+    private void setListPOItems(final View view) {
+
+        TextView issue_number = (TextView) view.findViewById(R.id.list_id);
+        //define date picker
+        initDatePicker();
+        //clear the array value first
+        list_po_items.clear();
+        list_product_items.clear();
+        list_product_ids.clear();
+        product_ids.clear();
+        product_units.clear();
+        product_qtys.clear();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("issue_number", issue_number.getText().toString());
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "receipt/get-issue?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Items PO Response: " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONObject data = jObj.getJSONObject("data");
+                                String data_status = data.getString("status");
+                                String data_type = data.getString("type");
+
+                                if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
+                                    //set notes
+                                    EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                                    //get session
+                                    sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+                                    //get issue numb
+                                    String fin_issue_number, fin_from, fin_to;
+                                    //if (data_type.equals("purchase_order")) {
+                                        fin_issue_number = data.getString("po_number");
+                                        fin_from = data.getString("supplier_name");
+                                        fin_to = data.getString("wh_group_name");
+                                    //}
+                                    TextView detail_desc = (TextView) findViewById(R.id.detail_desc);
+                                    detail_desc.setText(fin_from + " - " + fin_to);
+                                    detail_desc.setVisibility(View.VISIBLE);
+
+                                    //set the list
+                                    JSONArray items_data = data.getJSONArray("items");
+                                    for(int n = 0; n < items_data.length(); n++)
+                                    {
+                                        JSONObject json_obj_n = items_data.getJSONObject(n);
+                                        list_po_items.add(
+                                                json_obj_n.getString("product_name")+" " +
+                                                        json_obj_n.getString("quantity")+" " +
+                                                        json_obj_n.getString("unit"));
+                                        // check the items still available to be received
+                                        if (json_obj_n.has("available_qty")) {
+                                            int available_qty = json_obj_n.getInt("available_qty");
+                                            if (available_qty > 0)
+                                                list_product_items.add(json_obj_n.getString("product_name"));
+                                        }
+                                        list_product_ids.add(json_obj_n.getString("product_id"));
+                                        product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
+                                        product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
+                                        product_qtys.put(json_obj_n.getString("product_name"), json_obj_n.getString("quantity"));
+                                    }
+
+                                    //ArrayAdapter adapter_po = new ArrayAdapter<String>(DeliveryActivity.this, R.layout.activity_list_view, list_po_items);
+                                    CustomListAdapter adapter_po = new CustomListAdapter(DeliveryActivity.this, list_product_ids, list_po_items, list_product_items, R.layout.list_view_delivery);
+
+                                    ListView list_po_item = (ListView) findViewById(R.id.list_po_item);
+                                    list_po_item.setAdapter(adapter_po);
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private DatePicker datePicker;
+    private Calendar calendar;
+    private TextView dateView;
+    private int year, month, day;
+
+    private void initDatePicker()
+    {
+        dateView = (TextView) findViewById(R.id.due_date);
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        showDate(year, month + 1, day);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setDate(View view) {
+        showDialog(999);
+    }
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this, myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+            // arg1 = year, arg2 = month, arg3 = day
+            showDate(arg1, arg2+1, arg3);
+        }
+    };
+
+    private void showDate(int year, int month, int day) {
+        dateView.setText(new StringBuilder().append(day).append("-")
+                .append(month).append("-").append(year));
+    }
+
+    public void changePOItem(View view)
+    {
+        final Context ini = (Context) view.getContext();
+        hideKeyboardFrom(ini, view);
+
+        final View parent = (View) view.getParent();
+        TextView issue_number = (TextView) parent.findViewById(R.id.list_title);
+        Log.e(TAG, "Choosen : " + issue_number.getText().toString());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ini);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_update_item_delivery, null);
+
+        TextView product_nm = (TextView) mView.findViewById(R.id.txt_product_name);
+        TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
+        TextView list_desc = (TextView) parent.findViewById(R.id.list_desc);
+
+        product_nm.setText(list_desc.getText().toString());
+        txt_qty.setText(product_qtys.get(list_desc.getText().toString()));
+
+        builder.setView(mView);
+        final AlertDialog dialog = builder.create();
+
+        // submit, cancel, and delete button trigger
+        //trigger_dialog_button(mView, ini, list_product, dialog);
+
+        dialog.show();
+    }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
