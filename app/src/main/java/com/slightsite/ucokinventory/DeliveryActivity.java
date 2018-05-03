@@ -18,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -380,6 +381,8 @@ public class DeliveryActivity extends MainActivity {
     final ArrayList<String> list_po_items = new ArrayList<String>();
     final ArrayList<String> list_product_items = new ArrayList<String>();
     final ArrayList<String> list_product_ids = new ArrayList<String>();
+    final ArrayList<String> list_item_ids = new ArrayList<String>();
+
     final Map<String, String> product_ids = new HashMap<String, String>();
     final Map<String, String> product_units = new HashMap<String, String>();
     final Map<String, String> product_qtys = new HashMap<String, String>();
@@ -449,13 +452,14 @@ public class DeliveryActivity extends MainActivity {
                                                 list_product_items.add(json_obj_n.getString("product_name"));
                                         }
                                         list_product_ids.add(json_obj_n.getString("product_id"));
+                                        list_item_ids.add(json_obj_n.getString("id"));
                                         product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
                                         product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
                                         product_qtys.put(json_obj_n.getString("product_name"), json_obj_n.getString("quantity"));
                                     }
 
                                     //ArrayAdapter adapter_po = new ArrayAdapter<String>(DeliveryActivity.this, R.layout.activity_list_view, list_po_items);
-                                    CustomListAdapter adapter_po = new CustomListAdapter(DeliveryActivity.this, list_product_ids, list_po_items, list_product_items, R.layout.list_view_delivery);
+                                    CustomListAdapter adapter_po = new CustomListAdapter(DeliveryActivity.this, list_item_ids, list_po_items, list_product_items, R.layout.list_view_delivery);
 
                                     ListView list_po_item = (ListView) findViewById(R.id.list_po_item);
                                     list_po_item.setAdapter(adapter_po);
@@ -517,6 +521,7 @@ public class DeliveryActivity extends MainActivity {
 
     public void changePOItem(View view)
     {
+        Log.e(TAG, "List id : " + list_ids.toString());
         final Context ini = (Context) view.getContext();
         hideKeyboardFrom(ini, view);
 
@@ -530,15 +535,18 @@ public class DeliveryActivity extends MainActivity {
         TextView product_nm = (TextView) mView.findViewById(R.id.txt_product_name);
         TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
         TextView list_desc = (TextView) parent.findViewById(R.id.list_desc);
+        TextView po_item_id = (TextView) mView.findViewById(R.id.po_item_id);
+        TextView list_id = (TextView) parent.findViewById(R.id.list_id);
 
         product_nm.setText(list_desc.getText().toString());
         txt_qty.setText(product_qtys.get(list_desc.getText().toString()));
+        po_item_id.setText(list_id.getText().toString());
 
         builder.setView(mView);
         final AlertDialog dialog = builder.create();
 
-        // submit, cancel, and delete button trigger
-        //trigger_dialog_button(mView, ini, list_product, dialog);
+        // update, cancel, and delete button trigger
+        trigger_dialog_button(mView, ini, dialog);
 
         dialog.show();
     }
@@ -546,5 +554,114 @@ public class DeliveryActivity extends MainActivity {
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * Dialog button actions
+     * @param mView
+     * @param ini
+     * @param dialog
+     */
+    private void trigger_dialog_button(final View mView, final Context ini, final AlertDialog dialog) {
+        // cancel method
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        // Saving or submiting method
+        final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int has_error = 0;
+                if (txt_qty.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                } else {
+                    boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                    if (digitsOnly) {
+                        int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                        if (tot_qty_val <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        has_error = has_error + 1;
+                        txt_qty.setText("");
+                        Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+                }
+                if (has_error == 0) {
+                    //post update request
+                    TextView po_item_id = (TextView) mView.findViewById(R.id.po_item_id);
+                    EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+                    Map<String, String> update_params = new HashMap<String, String>();
+                    update_params.put("po_item_id", po_item_id.getText().toString());
+                    update_params.put("quantity", txt_qty.getText().toString());
+                    _modify_po_item("update", update_params);
+                    dialog.hide();
+                }
+            }
+        });
+
+        // action of delete button
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView po_item_id = (TextView) mView.findViewById(R.id.po_item_id);
+
+                Map<String, String> delete_params = new HashMap<String, String>();
+                delete_params.put("po_item_id", po_item_id.getText().toString());
+                _modify_po_item("delete", delete_params);
+                dialog.hide();
+            }
+        });
+    }
+
+    private void _modify_po_item(String action, Map update_params) {
+        String url = Server.URL;
+        if (action.equals("update")) {
+            url += "delivery/update-item?api-key=" + Server.API_KEY;
+        } else if (action.equals("delete")) {
+            url += "delivery/delete-item?api-key=" + Server.API_KEY;
+        }
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        update_params.put("admin_id", admin_id);
+        Log.e(TAG, update_params.toString());
+
+        _string_request(
+                Request.Method.POST,
+                url,
+                update_params,
+                true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            if (success == 1) {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
     }
 }
