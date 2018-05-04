@@ -228,6 +228,7 @@ public class DeliveryActivity extends MainActivity {
         params.put("admin_id", admin_id);
         params.put("status", "pending");
         params.put("is_pre_order", "1");
+        Log.e(TAG, "Params of pending PO : " + params.toString());
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(
@@ -238,7 +239,7 @@ public class DeliveryActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response: " + result.toString());
+                        Log.e(TAG, "Response of list pending PO : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -304,6 +305,14 @@ public class DeliveryActivity extends MainActivity {
                 layout_1.setVisibility(View.VISIBLE);
                 LinearLayout layout_1_detail = (LinearLayout) findViewById(R.id.layout_1_detail);
                 layout_1_detail.setVisibility(View.GONE);
+            }
+        });
+
+        Button btn_pre_order_confirm = (Button) findViewById(R.id.btn_pre_order_confirm);
+        btn_pre_order_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                processDeliveryOrder();
             }
         });
     }
@@ -685,6 +694,61 @@ public class DeliveryActivity extends MainActivity {
                             if (success == 1) {
                                 Toast.makeText(getApplicationContext(),
                                         jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+    }
+
+    private void processDeliveryOrder()
+    {
+        TextView detail_title = (TextView) findViewById(R.id.detail_title);
+        TextView due_date = (TextView) findViewById(R.id.due_date);
+        EditText txt_resi_number = (EditText) findViewById(R.id.txt_resi_number);
+        EditText txt_do_notes = (EditText) findViewById(R.id.txt_do_notes);
+
+        String issue_number = detail_title.getText().toString();
+        String shipping_date = due_date.getText().toString();
+        String resi_number = txt_resi_number.getText().toString();
+        String notes = txt_do_notes.getText().toString();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("issue_number", issue_number);
+        params.put("shipping_date", shipping_date);
+        if (resi_number.trim().length() > 0)
+            params.put("resi_number", resi_number);
+        if (notes.trim().length() > 0)
+            params.put("notes", notes);
+
+        Log.e(TAG, "Params : " + params.toString());
+        _string_request(
+                Request.Method.POST,
+                Server.URL + "purchase/create-shipping?api-key=" + Server.API_KEY,
+                params,
+                true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            if (success == 1) {
+                                LinearLayout layout_1_detail = (LinearLayout) findViewById(R.id.layout_1_detail);
+                                layout_1_detail.setVisibility(View.GONE);
+                                LinearLayout layout_1_submision = (LinearLayout) findViewById(R.id.layout_1_submision);
+                                layout_1_submision.setVisibility(View.VISIBLE);
+
+                                TextView txt_message = (TextView) findViewById(R.id.txt_message);
+                                txt_message.setText(jObj.getString(TAG_MESSAGE));
+                                txt_message.setVisibility(View.VISIBLE);
                             } else {
                                 Toast.makeText(getApplicationContext(),
                                         jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
