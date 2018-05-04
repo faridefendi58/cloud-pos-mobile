@@ -12,67 +12,10 @@
     tools:showIn="@layout/app_bar_notification"
     >
 
-    <LinearLayout
-        android:id="@+id/step1"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin">
-
-        <ListView
-            android:id="@+id/list_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-        </ListView>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/step2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/detail_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:text=""
-            android:textSize="16dip"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:id="@+id/detail_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:text=""
-            android:textSize="16dip"
-            />
-
-        <Button
-            android:id="@+id/btn_step2_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="5dp"
-            android:textAllCaps="false"
-            android:text="Kembali Ke Daftar"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
-            />
-
-    </LinearLayout>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </LinearLayout>

@@ -30,7 +30,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -260,6 +262,7 @@ public class DeliveryActivity extends MainActivity {
 
                                 ListView list_pre_order = (ListView) findViewById(R.id.list_pre_order);
                                 list_pre_order.setAdapter(adapter2);
+                                updateListViewHeight(list_pre_order, 100);
                                 itemListener(list_pre_order);
                             }
 
@@ -463,6 +466,7 @@ public class DeliveryActivity extends MainActivity {
 
                                     ListView list_po_item = (ListView) findViewById(R.id.list_po_item);
                                     list_po_item.setAdapter(adapter_po);
+                                    updateListViewHeight(list_po_item, 0);
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(),
@@ -474,6 +478,26 @@ public class DeliveryActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    public static void updateListViewHeight(ListView myListView, Integer add_height) {
+        ListAdapter myListAdapter = myListView.getAdapter();
+        if (myListAdapter == null) {
+            return;
+        }
+        // get listview height
+        int totalHeight = 0;
+        int adapterCount = myListAdapter.getCount();
+        for (int size = 0; size < adapterCount; size++) {
+            View listItem = myListAdapter.getView(size, null, myListView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+        // Change Height of ListView
+        ViewGroup.LayoutParams params = myListView.getLayoutParams();
+        params.height = (totalHeight
+                + (myListView.getDividerHeight() * (adapterCount))) + add_height;
+        myListView.setLayoutParams(params);
     }
 
     private DatePicker datePicker;
@@ -566,6 +590,15 @@ public class DeliveryActivity extends MainActivity {
         // cancel method
         Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
         btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        // cancel method
+        ImageView image_close = (ImageView) mView.findViewById(R.id.image_close);
+        image_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.cancel();

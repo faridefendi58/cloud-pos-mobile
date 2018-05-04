@@ -6,6 +6,15 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <ImageView
+        android:id="@+id/image_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="right"
+        android:layout_marginBottom="-37dp"
+        android:clickable="true"
+        android:src="@drawable/ic_close_black_24dp" />
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -85,7 +94,7 @@
             android:textColor="#fff"
             android:layout_gravity="left"
             android:layout_marginLeft="100dp"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_dialog_delete"
@@ -97,7 +106,7 @@
             android:textColor="#fff"
             android:layout_gravity="left"
             android:layout_marginLeft="100dp"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
     </FrameLayout>
 
     <TextView
