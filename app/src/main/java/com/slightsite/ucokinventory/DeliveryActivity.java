@@ -294,6 +294,7 @@ public class DeliveryActivity extends MainActivity {
                 layout_1_detail.setVisibility(View.VISIBLE);
                 Log.e(TAG, "id : " + id.getText().toString());
                 setListPOItems(view);
+                buildTheShipment();
             }
         });
 
@@ -713,11 +714,13 @@ public class DeliveryActivity extends MainActivity {
         TextView due_date = (TextView) findViewById(R.id.due_date);
         EditText txt_resi_number = (EditText) findViewById(R.id.txt_resi_number);
         EditText txt_do_notes = (EditText) findViewById(R.id.txt_do_notes);
+        Spinner txt_shipment_name = (Spinner) findViewById(R.id.txt_shipment_name);
 
         String issue_number = detail_title.getText().toString();
         String shipping_date = due_date.getText().toString();
         String resi_number = txt_resi_number.getText().toString();
         String notes = txt_do_notes.getText().toString();
+        String shipment_name = txt_shipment_name.getSelectedItem().toString();
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("issue_number", issue_number);
@@ -726,6 +729,8 @@ public class DeliveryActivity extends MainActivity {
             params.put("resi_number", resi_number);
         if (notes.trim().length() > 0)
             params.put("notes", notes);
+        if (shipment_name.length() > 0 && !shipment_name.equals("-"))
+            params.put("shipment_name", shipment_name);
 
         Log.e(TAG, "Params : " + params.toString());
         _string_request(
@@ -760,5 +765,53 @@ public class DeliveryActivity extends MainActivity {
                     }
                 }
         );
+    }
+
+    private void buildTheShipment()
+    {
+        Spinner shipment = (Spinner) findViewById(R.id.txt_shipment_name);
+
+        ArrayAdapter<String> shAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_shipment());
+        shipment.setAdapter(shAdapter);
+    }
+
+    private ArrayList get_list_shipment() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
+
+        final ArrayList<String> items = new ArrayList<String>();
+        items.add("-");
+
+        String wh_url = Server.URL + "shipment/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                wh_url,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of shipment request : " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                Log.e(TAG, "Shipment List : " + data.toString());
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    items.add(data_n.getString("title"));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        return items;
     }
 }

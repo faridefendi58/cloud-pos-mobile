@@ -401,10 +401,10 @@ public class NotificationActivity extends MainActivity {
                 TextView desc = (TextView) view.findViewById(R.id.list_desc);
 
                 TextView detail_title = (TextView) findViewById(R.id.detail_archive_title);
-                detail_title.setText(list_items.get(i));
+                detail_title.setText(list_archive_items.get(i));
 
                 TextView detail_desc = (TextView) findViewById(R.id.detail_archive_desc);
-                detail_desc.setText(list_messages.get(i));
+                detail_desc.setText(list_archive_messages.get(i));
                 LinearLayout step1 = (LinearLayout) findViewById(R.id.step1_2);
                 step1.setVisibility(View.GONE);
                 LinearLayout step2 = (LinearLayout) findViewById(R.id.step2_2);

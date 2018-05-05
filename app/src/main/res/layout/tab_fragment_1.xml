@@ -135,6 +135,34 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/shipment_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_shipment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Cara Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <Spinner
+                    android:id="@+id/txt_shipment_name"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:layout_weight="1.0"
+                    android:layout_gravity="right"
+                    >
+                </Spinner>
+
+            </FrameLayout>
+
+            <FrameLayout
                 android:id="@+id/resi_container"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
