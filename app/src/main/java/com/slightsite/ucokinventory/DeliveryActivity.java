@@ -322,6 +322,8 @@ public class DeliveryActivity extends MainActivity {
     final ArrayList<String> list_do_descs = new ArrayList<String>();
     final ArrayList<String> list_do_ids = new ArrayList<String>();
 
+    final Map<String, String> list_do_details = new HashMap<String, String>();
+
     public void buildTheDeliveryOrderList() {
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -345,6 +347,8 @@ public class DeliveryActivity extends MainActivity {
                                 JSONObject po_data = new JSONObject(jObj.getString("po_data"));
                                 JSONObject origins = new JSONObject(jObj.getString("po_origin"));
                                 JSONObject destinations = new JSONObject(jObj.getString("po_destination"));
+                                JSONObject details = new JSONObject(jObj.getString("detail"));
+
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
@@ -353,11 +357,13 @@ public class DeliveryActivity extends MainActivity {
                                     String desc = "Dikirim dari " + origins.getString(data.getString(n)) +
                                             " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
                                     list_do_descs.add(desc);
+                                    list_do_details.put(data.getString(n), details.getString(data.getString(n)));
                                 }
 
                                 Log.e(TAG, "List do items: " + list_do_items.toString());
                                 Log.e(TAG, "List do ids: " + list_do_ids.toString());
                                 Log.e(TAG, "List do descs: " + list_do_descs.toString());
+                                Log.e(TAG, "List do details: " + list_do_details.toString());
 
                                 CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
                                 /*ArrayAdapter adapter3 = new ArrayAdapter<String>(DeliveryActivity.this,
@@ -365,7 +371,8 @@ public class DeliveryActivity extends MainActivity {
 
                                 ListView list_do_status = (ListView) findViewById(R.id.list_do_status);
                                 list_do_status.setAdapter(adapter3);
-                                //itemListener(list_pre_order);
+                                updateListViewHeight(list_do_status, 120);
+                                itemStatusListener(list_do_status);
                             }
 
                         } catch (JSONException e) {
@@ -813,5 +820,138 @@ public class DeliveryActivity extends MainActivity {
                 });
 
         return items;
+    }
+
+    private void itemStatusListener(final ListView list) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //String title = list.getItemAtPosition(i).toString();
+                TextView id = (TextView) view.findViewById(R.id.list_id);
+                TextView title = (TextView) view.findViewById(R.id.list_title);
+                TextView desc = (TextView) view.findViewById(R.id.list_desc);
+
+                TextView detail_title_status = (TextView) findViewById(R.id.detail_title_status);
+                detail_title_status.setText(list_do_items.get(i));
+
+                String detail_str = list_do_details.get(list_do_items.get(i));
+                try {
+                    JSONObject details = new JSONObject(detail_str);
+
+                    TextView txt_po_number = (TextView) findViewById(R.id.txt_po_number);
+                    txt_po_number.setText(details.getString("po_number"));
+
+                    TextView txt_origin = (TextView) findViewById(R.id.txt_origin);
+                    txt_origin.setText(details.getString("supplier_name"));
+
+                    TextView txt_destination = (TextView) findViewById(R.id.txt_destination);
+                    txt_destination.setText(details.getString("wh_group_name"));
+
+                    TextView shipping_date = (TextView) findViewById(R.id.txt_shipping_date);
+                    shipping_date.setText(details.getString("shipping_date"));
+
+                    TextView txt_status = (TextView) findViewById(R.id.txt_status);
+                    txt_status.setText(details.getString("status"));
+
+                    TextView txt_resi_number_status = (TextView) findViewById(R.id.txt_resi_number_status);
+                    txt_resi_number_status.setText(details.getString("resi_number"));
+
+                    TextView txt_sender = (TextView) findViewById(R.id.txt_sender);
+                    txt_sender.setText(details.getString("admin_name"));
+
+                    setDOListPOItems(view, details.getString("po_number"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                LinearLayout layout_2 = (LinearLayout) findViewById(R.id.layout_2);
+                layout_2.setVisibility(View.GONE);
+                LinearLayout layout_2_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
+                layout_2_detail.setVisibility(View.VISIBLE);
+                Log.e(TAG, "id : " + id.getText().toString());
+            }
+        });
+
+        Button btn_status_back = (Button) findViewById(R.id.btn_status_back);
+        btn_status_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout_2 = (LinearLayout) findViewById(R.id.layout_2);
+                layout_2.setVisibility(View.VISIBLE);
+                LinearLayout layout_2_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
+                layout_2_detail.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void setDOListPOItems(final View view, String issue_number) {
+        //clear the array value first
+        list_po_items.clear();
+        list_product_items.clear();
+        list_product_ids.clear();
+        product_ids.clear();
+        product_units.clear();
+        product_qtys.clear();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("issue_number", issue_number);
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "receipt/get-issue?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONObject data = jObj.getJSONObject("data");
+                                String data_status = data.getString("status");
+
+                                if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
+                                    //get session
+                                    sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+
+                                    //set the list
+                                    JSONArray items_data = data.getJSONArray("items");
+                                    for(int n = 0; n < items_data.length(); n++)
+                                    {
+                                        JSONObject json_obj_n = items_data.getJSONObject(n);
+                                        list_po_items.add(
+                                                json_obj_n.getString("product_name")+" " +
+                                                        json_obj_n.getString("quantity")+" " +
+                                                        json_obj_n.getString("unit"));
+                                        // check the items still available to be received
+                                        if (json_obj_n.has("available_qty")) {
+                                            int available_qty = json_obj_n.getInt("available_qty");
+                                            if (available_qty > 0)
+                                                list_product_items.add(json_obj_n.getString("product_name"));
+                                        }
+                                        list_product_ids.add(json_obj_n.getString("product_id"));
+                                        list_item_ids.add(json_obj_n.getString("id"));
+                                        product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
+                                        product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
+                                        product_qtys.put(json_obj_n.getString("product_name"), json_obj_n.getString("quantity"));
+                                    }
+
+                                    ArrayAdapter adapter_po = new ArrayAdapter<String>(DeliveryActivity.this, R.layout.activity_list_view, list_po_items);
+
+                                    ListView list_po_item_status = (ListView) findViewById(R.id.list_po_item_status);
+                                    list_po_item_status.setAdapter(adapter_po);
+                                    updateListViewHeight(list_po_item_status, 0);
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
