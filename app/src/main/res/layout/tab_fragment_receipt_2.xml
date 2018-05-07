@@ -18,7 +18,7 @@
             android:visibility="visible">
 
             <ListView
-                android:id="@+id/list_pre_order"
+                android:id="@+id/list_archive_receipts"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:scrollbars="vertical">
@@ -35,6 +35,180 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/activity_vertical_margin"
             android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/textlines">
+
+                <TextView
+                    android:id="@+id/detail_2_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:text=""
+                    android:textSize="18dip"
+                    android:textStyle="bold"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/receipt_issue_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_issue_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Nomor Pengadaan :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_issue_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/receipt_origin_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_origin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Dikirim Dari :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_origin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/receipt_destination_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Warehouse Penerima :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/receipt_date_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Tanggal Penerimaan :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_date_receipt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/receipt_item_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_receipt_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Detail Barang yang Diterima :"
+                    android:textStyle="bold"
+                    />
+
+                <ListView
+                    android:id="@+id/receipt_item_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isScrollContainer="false"
+                    android:layout_marginTop="30dp"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/btns_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:id="@+id/btn_2_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:text="Kembali Ke Daftar"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+                    />
+            </FrameLayout>
 
         </LinearLayout>
 

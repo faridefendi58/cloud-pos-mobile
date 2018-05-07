@@ -107,8 +107,8 @@ public class ReceiptActivity extends MainActivity {
         // If needed build the advance search
         //buildAutoComplete();
 
-        final Context ini = this;
-        buildTheIssueList(ini);
+        buildTheIssueList();
+        buildTheReceiptList();
     }
 
     private void btn_confirm_trigger(Button btn, Context ini) {
@@ -877,7 +877,7 @@ public class ReceiptActivity extends MainActivity {
         txt_issue_number.setThreshold(1);
     }
 
-    private void buildTheIssueList(final Context ini) {
+    private void buildTheIssueList() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("status", "onprocess");
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -888,7 +888,7 @@ public class ReceiptActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response: " + result.toString());
+                        Log.e(TAG, "Response of list issue : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -1105,6 +1105,7 @@ public class ReceiptActivity extends MainActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Log.e(TAG, "Position : " + position);
             // getItem is called to instantiate the fragment for the given page.
             switch (position) {
                 case 0:
@@ -1120,7 +1121,7 @@ public class ReceiptActivity extends MainActivity {
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
+            // Show 3 total pages.
             return 2;
         }
     }
@@ -1289,6 +1290,146 @@ public class ReceiptActivity extends MainActivity {
                 TextView txt_step3_message = (TextView) findViewById(R.id.txt_step3_message);
                 setClipboard(ini, txt_step3_message.getText().toString());
                 Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    final ArrayList<String> list_receipt_ids = new ArrayList<String>();
+    final ArrayList<String> list_receipt_items = new ArrayList<String>();
+    final ArrayList<String> list_receipt_descs = new ArrayList<String>();
+
+    final Map<String, String> list_receipt_details = new HashMap<String, String>();
+    final Map<String, String> list_receipt_detail_items = new HashMap<String, String>();
+
+    private void buildTheReceiptList() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "receipt/list?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of receipts : " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject details = new JSONObject(jObj.getString("detail"));
+                                JSONObject items = new JSONObject(jObj.getString("items"));
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    list_receipt_items.add(data.getString(n));
+                                    list_receipt_ids.add(data.getString(n));
+                                    JSONObject detail_n = new JSONObject(details.getString(data.getString(n)));
+                                    String desc = "Nomor Issue " + detail_n.getString("issue_number");
+                                    if (detail_n.has("warehouse_name")) {
+                                        desc += " diterima oleh " + detail_n.getString("warehouse_name") + "";
+                                    }
+                                    if (detail_n.has("warehouse_to_name") && detail_n.has("warehouse_from_name")) {
+                                        desc += " dari " + detail_n.getString("warehouse_from_name") + " ke " + detail_n.getString("warehouse_to_name");
+                                    }
+                                    list_receipt_descs.add(desc);
+                                    list_receipt_details.put(data.getString(n), details.getString(data.getString(n)));
+
+                                    list_receipt_detail_items.put(data.getString(n), items.getString(data.getString(n)));
+                                }
+
+                                Log.e(TAG, "List receipt details: " + list_receipt_details.toString());
+
+                                CustomListAdapter adapter3 = new CustomListAdapter(ReceiptActivity.this, list_receipt_ids, list_receipt_items, list_receipt_descs, R.layout.list_view_notification);
+
+                                ListView list_receipts = (ListView) findViewById(R.id.list_archive_receipts);
+                                list_receipts.setAdapter(adapter3);
+                                DeliveryActivity.updateListViewHeight(list_receipts, 400);
+                                itemReceiptListener(list_receipts);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void itemReceiptListener(final ListView listView)
+    {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                LinearLayout layout_3 = (LinearLayout) findViewById(R.id.layout_2);
+                layout_3.setVisibility(View.GONE);
+
+                LinearLayout layout_3_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
+                layout_3_detail.setVisibility(View.VISIBLE);
+
+                TextView detail_3_title = (TextView) findViewById(R.id.detail_2_title);
+                String receipt_number = list_receipt_ids.get(i);
+                detail_3_title.setText(receipt_number);
+
+                try {
+                    JSONObject detail = new JSONObject(list_receipt_details.get(receipt_number));
+
+                    TextView txt_issue_number = (TextView) findViewById(R.id.txt_issue_number);
+                    txt_issue_number.setText(detail.getString("issue_number"));
+
+                    TextView txt_origin = (TextView) findViewById(R.id.txt_origin);
+                    TextView txt_destination = (TextView) findViewById(R.id.txt_destination);
+                    if (detail.has("supplier_name")) {
+                        txt_origin.setText(detail.getString("supplier_name"));
+                    }
+                    if (detail.has("warehouse_name")) {
+                        txt_destination.setText(detail.getString("warehouse_name"));
+                    }
+                    if (detail.has("warehouse_from_name")) {
+                        txt_origin.setText(detail.getString("warehouse_from_name"));
+                    }
+                    if (detail.has("warehouse_to_name")) {
+                        txt_destination.setText(detail.getString("warehouse_to_name"));
+                    }
+
+                    TextView txt_date_receipt = (TextView) findViewById(R.id.txt_date_receipt);
+                    txt_date_receipt.setText(detail.getString("completed_at"));
+
+                    JSONArray items_data = new JSONArray(list_receipt_detail_items.get(receipt_number));
+                    ArrayList<String> list_r_items = new ArrayList<String>();
+                    for(int n = 0; n < items_data.length(); n++)
+                    {
+                        JSONObject json_obj_n = items_data.getJSONObject(n);
+                        list_r_items.add(
+                                json_obj_n.getString("product_name")+" " +
+                                        json_obj_n.getString("quantity")+" " +
+                                        json_obj_n.getString("unit"));
+                    }
+
+                    ArrayAdapter adapter_r_items = new ArrayAdapter<String>(ReceiptActivity.this, R.layout.activity_list_view, list_r_items);
+
+                    ListView receipt_item_list = (ListView) findViewById(R.id.receipt_item_list);
+                    receipt_item_list.setAdapter(adapter_r_items);
+                    DeliveryActivity.updateListViewHeight(receipt_item_list, 0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // btn back trigger
+                Button btn_3_back = (Button) findViewById(R.id.btn_2_back);
+                btn_3_back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        LinearLayout layout_3 = (LinearLayout) findViewById(R.id.layout_2);
+                        layout_3.setVisibility(View.VISIBLE);
+
+                        LinearLayout layout_3_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
+                        layout_3_detail.setVisibility(View.GONE);
+                    }
+                });
             }
         });
     }
