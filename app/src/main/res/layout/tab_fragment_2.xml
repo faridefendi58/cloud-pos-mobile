@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/layout_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="visible">
+
+            <ListView
+                android:id="@+id/list_do_status"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:scrollbars="vertical">
+            </ListView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_2_detail"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/activity_vertical_margin"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/textlines">
+                <TextView
+                    android:id="@+id/detail_title_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:text="PO-000001"
+                    android:textSize="18dip"
+                    android:textStyle="bold"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/po_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_po_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Nomor PO :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_po_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/origin_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_origin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Dikirimkan Dari :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_origin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/dest_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Tujuan Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/shipping_date_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_shipping_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Tanggal Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_shipping_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/shipment_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txt_label_shipment_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Cara Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_shipment_name_status"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:layout_weight="1.0"
+                    android:layout_gravity="right"
+                    >
+                </TextView>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/resi_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_resi_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Nomor Resi / Kode Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_resi_number_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/sender_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_sender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Nama Pengirim :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_sender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/status_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Status Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/txt_item_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_po_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Detail Barang Terkirim :"
+                    android:textStyle="bold"
+                    />
+
+                <ListView
+                    android:id="@+id/list_po_item_status"
+                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="30dp">
+                </ListView>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/recipient_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_recipient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textSize="16dip"
+                    android:text="Warehouse Penerima :"
+                    android:textStyle="bold"
+                    />
+
+                <ListView
+                    android:id="@+id/list_po_recipient"
+                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="30dp">
+                </ListView>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/btns_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:id="@+id/btn_status_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:text="Kembali Ke Daftar"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

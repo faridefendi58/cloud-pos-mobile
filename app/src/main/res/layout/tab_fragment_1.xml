@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/layout_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="visible">
+
+            <ListView
+                android:id="@+id/list_pre_order"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:scrollbars="vertical">
+            </ListView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_1_detail"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/activity_vertical_margin"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/textlines">
+                <TextView
+                    android:id="@+id/detail_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:text="PO-000001"
+                    android:textSize="18dip"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/detail_desc"
+                    android:text="Supplier - Destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="16dip"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/txt_item_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_po"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Detail Pemesanan :"
+                    android:textStyle="bold"
+                    />
+
+                <ListView
+                    android:id="@+id/list_po_item"
+                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="30dp">
+                </ListView>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/date_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/txt_send_date"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:textStyle="bold"
+                    android:text="Tanggal Kirim :"
+                    android:layout_gravity="left"
+                    />
+
+                <FrameLayout
+                    android:id="@+id/date_value_container"
+                    android:layout_width="160dp"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right">
+                    <TextView
+                        android:id="@+id/due_date"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text=""
+                        android:textSize="15dip"
+                        android:onClick="setDate"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <Button
+                        android:id="@+id/btn_change_date"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:onClick="setDate"
+                        android:text=""
+                        android:paddingVertical="0dp"
+                        android:layout_marginTop="-10dp"
+                        android:layout_gravity="right"
+                        android:drawableLeft="@drawable/ic_date_range_black_24dp"
+                        android:background="@android:color/transparent"/>
+                </FrameLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/shipment_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/txt_label_shipment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Cara Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <Spinner
+                    android:id="@+id/txt_shipment_name"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:layout_weight="1.0"
+                    android:layout_gravity="right"
+                    >
+                </Spinner>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/resi_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_resi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Nomor Resi / Kode Pengiriman :"
+                    android:textStyle="bold"
+                    />
+
+                <EditText
+                    android:id="@+id/txt_resi_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="15dp"
+                    android:hint="Masukkan nomor resi (jika ada)"
+                    android:text=""
+                    android:inputType="text"
+                    android:textSize="15dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/notes_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:id="@+id/txt_label_notes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Catatan :"
+                    android:textStyle="bold"
+                    />
+
+                <EditText
+                    android:id="@+id/txt_do_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="15dp"
+                    android:hint="Berikan catatan jika perlu. (Tidak wajib)"
+                    android:text=""
+                    android:inputType="textMultiLine"
+                    android:textSize="15dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/btns_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:id="@+id/btn_pre_order_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:text="Kembali Ke Daftar"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+                    />
+
+                <Button
+                    android:id="@+id/btn_pre_order_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:text="Simpan"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#fff"
+                    android:paddingVertical="0dp"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_1_submision"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/activity_vertical_margin"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txt_message"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="15dip"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

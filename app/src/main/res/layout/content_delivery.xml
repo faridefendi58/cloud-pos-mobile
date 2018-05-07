@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="10dp"
+    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/backgroundcolor"
-    tools:context="com.slightsite.ucokinventory.NotificationActivity"
-    tools:showIn="@layout/app_bar_notification"
+    tools:context="com.slightsite.ucokinventory.DeliveryActivity"
+    tools:showIn="@layout/app_bar_delivery"
     >
 
     <android.support.v4.view.ViewPager

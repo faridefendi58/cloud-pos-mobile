@@ -57,6 +57,11 @@
             android:label="@string/txt_notification"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".DeliveryActivity"
+            android:label="@string/txt_delivery"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
