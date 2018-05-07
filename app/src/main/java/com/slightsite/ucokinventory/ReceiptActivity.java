@@ -11,10 +11,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -63,6 +70,21 @@ public class ReceiptActivity extends MainActivity {
     final Map<String, String> product_units = new HashMap<String, String>();
     final Map<String, String> issue_origins = new HashMap<String, String>();
 
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a
+     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,160 +93,22 @@ public class ReceiptActivity extends MainActivity {
         setDinamicContent(R.layout.app_bar_receipt);
         buildMenu();
 
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
         // If needed build the advance search
         //buildAutoComplete();
 
-        final Context ini = this;
-        buildTheIssueList(ini);
-
-        Button btn_next = (Button) findViewById(R.id.btn_next);
-        btn_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideKeyboardFrom(ini, v);
-
-                AutoCompleteTextView issue_number = (AutoCompleteTextView) findViewById(R.id.txt_issue_no);
-
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("issue_number", issue_number.getText().toString());
-
-                _string_request(Request.Method.GET, get_issue_url, params, true,
-                        new VolleyCallback() {
-                            @Override
-                            public void onSuccess(String result) {
-                                Log.e(TAG, "Response: " + result.toString());
-                                hideDialog();
-                                try {
-                                    JSONObject jObj = new JSONObject(result);
-                                    success = jObj.getInt(TAG_SUCCESS);
-                                    // Check for error node in json
-                                    if (success == 1) {
-                                        JSONObject data = jObj.getJSONObject("data");
-                                        String data_status = data.getString("status");
-                                        String data_type = data.getString("type");
-
-                                        Log.e("Successfully Request!", data.toString());
-
-                                        LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
-                                        step1.setVisibility(View.GONE);
-                                        if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
-                                            //set notes
-                                            EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
-                                            //get session
-                                            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
-                                            //get issue numb
-                                            TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
-                                            String fin_issue_number, fin_from;
-                                            if (data_type.equals("purchase_order")) {
-                                                fin_issue_number = data.getString("po_number");
-                                                fin_from = data.getString("supplier_name");
-                                            } else if (data_type.equals("transfer_issue")) {
-                                                fin_issue_number = data.getString("ti_number");
-                                                fin_from = data.getString("warehouse_from_name");
-                                                txt_receipt_notes.setVisibility(View.GONE);
-                                                txt_step2_label1.setVisibility(View.GONE);
-                                                Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
-                                                btn_confirm.setVisibility(View.GONE);
-                                                Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
-                                                step2_receipt_type.setVisibility(View.GONE);
-                                                TextView txt_step2_label_type = (TextView) findViewById(R.id.txt_step2_label_type);
-                                                txt_step2_label_type.setVisibility(View.GONE);
-                                            } else {
-                                                fin_issue_number = data.getString("po_number");
-                                                fin_from = data.getString("supplier_name");
-                                            }
-                                            TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
-                                            txt_step2_issue_no.setText(fin_issue_number);
-                                            TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
-                                            txt_step2_from.setText(fin_from);
-                                            TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
-                                            txt_step2_type.setText(data.getString("type"));
-
-                                            LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
-                                            step2.setVisibility(View.VISIBLE);
-
-                                            //set the list
-                                            JSONArray items_data = data.getJSONArray("items");
-                                            for(int n = 0; n < items_data.length(); n++)
-                                            {
-                                                JSONObject json_obj_n = items_data.getJSONObject(n);
-                                                list_items.add(
-                                                        json_obj_n.getString("product_name")+" " +
-                                                                json_obj_n.getString("quantity")+" " +
-                                                                json_obj_n.getString("unit"));
-                                                // check the items still available to be received
-                                                int available_qty = json_obj_n.getInt("available_qty");
-                                                if (available_qty > 0)
-                                                    list_product_items.add(json_obj_n.getString("product_name"));
-                                                product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
-                                                product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
-                                            }
-                                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
-                                                    R.layout.activity_list_view, list_items);
-
-                                            ListView listView = (ListView) findViewById(R.id.list);
-                                            listView.setAdapter(adapter2);
-                                            // hide the event due to conflict with add button
-                                            //setListEvent(listView, ini, items_data);
-
-                                            // build spinner wh
-                                            Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
-                                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_warehouse());
-                                            whAdapter.notifyDataSetChanged();
-                                            step2_receipt_wh.setAdapter(whAdapter);
-                                        } else {
-
-                                        }
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-        });
-        // second button action
-        Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
-        btn_confirm_trigger(btn_confirm, ini);
-
-        // confirm receipt button
-        Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
-        btn_confirm_receipt_trigger(btn_confirm_receipt, ini);
-
-        Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
-        select_receipt_type(step2_receipt_type, ini);
-
-        Spinner step2_receipt_wh = (Spinner) findViewById(R.id.step2_receipt_wh);
-        spinner_receipt_wh_trigger(step2_receipt_wh, ini);
-
-        // triggering btn add item
-        btn_add_trigger(ini);
-
-        // toggle items detail
-        TextView show_items = (TextView) findViewById(R.id.show_items);
-        show_items.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.setVisibility(View.GONE);
-                FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
-                txt_item_container.setVisibility(View.VISIBLE);
-            }
-        });
-
-        // button copy action
-        Button btn_copy = (Button) findViewById(R.id.btn_copy);
-        btn_copy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextView txt_step3_message = (TextView) findViewById(R.id.txt_step3_message);
-                setClipboard(ini, txt_step3_message.getText().toString());
-                Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
-            }
-        });
+        buildTheIssueList();
+        buildTheReceiptList();
     }
 
     private void btn_confirm_trigger(Button btn, Context ini) {
@@ -756,10 +640,10 @@ public class ReceiptActivity extends MainActivity {
             @Override
             public void onClick(View view) {
                 // hide the detail first
-                FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                /*FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
                 txt_item_container.setVisibility(View.GONE);
                 TextView show_items = (TextView) findViewById(R.id.show_items);
-                show_items.setVisibility(View.VISIBLE);
+                show_items.setVisibility(View.VISIBLE);*/
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
@@ -857,6 +741,9 @@ public class ReceiptActivity extends MainActivity {
                     ListView list_receipts = (ListView) findViewById(R.id.list_receipts);
                     list_receipts.setAdapter(adapter2);
                     list_receipts.setVisibility(View.VISIBLE);
+
+                    DeliveryActivity.updateListViewHeight(list_receipts, 10);
+
                     // Then show the labels
                     TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
                     txt_step2_label_receipts.setVisibility(View.VISIBLE);
@@ -990,7 +877,7 @@ public class ReceiptActivity extends MainActivity {
         txt_issue_number.setThreshold(1);
     }
 
-    private void buildTheIssueList(final Context ini) {
+    private void buildTheIssueList() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("status", "onprocess");
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -1001,7 +888,7 @@ public class ReceiptActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response: " + result.toString());
+                        Log.e(TAG, "Response of list issue : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -1027,6 +914,9 @@ public class ReceiptActivity extends MainActivity {
 
                                 ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
                                 list_available_issue.setAdapter(adapter2);
+                                DeliveryActivity.updateListViewHeight(list_available_issue, 10);
+                                // begin the trigger event
+                                itemListener();
                             }
 
                         } catch (JSONException e) {
@@ -1127,6 +1017,7 @@ public class ReceiptActivity extends MainActivity {
                                     ListView list_issue_items = (ListView) findViewById(R.id.list);
                                     list_issue_items.setAdapter(adapter3);
                                     list_issue_items.setVisibility(View.VISIBLE);
+                                    DeliveryActivity.updateListViewHeight(list_issue_items, 10);
 
                                     // build spinner wh
                                     Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
@@ -1200,5 +1091,346 @@ public class ReceiptActivity extends MainActivity {
         }
 
         return items;
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Log.e(TAG, "Position : " + position);
+            // getItem is called to instantiate the fragment for the given page.
+            switch (position) {
+                case 0:
+                    TabFragment1 tab1 = new TabFragment1();
+                    return tab1;
+                case 1:
+                    TabFragment2 tab2 = new TabFragment2();
+                    return tab2;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 2;
+        }
+    }
+
+    public static class TabFragment1 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_receipt_1, container, false);
+        }
+    }
+
+    public static class TabFragment2 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_receipt_2, container, false);
+        }
+    }
+
+    private void itemListener() {
+        final Context ini = ReceiptActivity.this;
+        /*Button btn_next = (Button) findViewById(R.id.btn_next);
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboardFrom(ini, v);
+
+                AutoCompleteTextView issue_number = (AutoCompleteTextView) findViewById(R.id.txt_issue_no);
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("issue_number", issue_number.getText().toString());
+
+                _string_request(Request.Method.GET, get_issue_url, params, true,
+                        new VolleyCallback() {
+                            @Override
+                            public void onSuccess(String result) {
+                                Log.e(TAG, "Response: " + result.toString());
+                                hideDialog();
+                                try {
+                                    JSONObject jObj = new JSONObject(result);
+                                    success = jObj.getInt(TAG_SUCCESS);
+                                    // Check for error node in json
+                                    if (success == 1) {
+                                        JSONObject data = jObj.getJSONObject("data");
+                                        String data_status = data.getString("status");
+                                        String data_type = data.getString("type");
+
+                                        Log.e("Successfully Request!", data.toString());
+
+                                        LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
+                                        step1.setVisibility(View.GONE);
+                                        if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
+                                            //set notes
+                                            EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
+                                            //get session
+                                            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+                                            //get issue numb
+                                            TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
+                                            String fin_issue_number, fin_from;
+                                            if (data_type.equals("purchase_order")) {
+                                                fin_issue_number = data.getString("po_number");
+                                                fin_from = data.getString("supplier_name");
+                                            } else if (data_type.equals("transfer_issue")) {
+                                                fin_issue_number = data.getString("ti_number");
+                                                fin_from = data.getString("warehouse_from_name");
+                                                txt_receipt_notes.setVisibility(View.GONE);
+                                                txt_step2_label1.setVisibility(View.GONE);
+                                                Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
+                                                btn_confirm.setVisibility(View.GONE);
+                                                Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
+                                                step2_receipt_type.setVisibility(View.GONE);
+                                                TextView txt_step2_label_type = (TextView) findViewById(R.id.txt_step2_label_type);
+                                                txt_step2_label_type.setVisibility(View.GONE);
+                                            } else {
+                                                fin_issue_number = data.getString("po_number");
+                                                fin_from = data.getString("supplier_name");
+                                            }
+                                            TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
+                                            txt_step2_issue_no.setText(fin_issue_number);
+                                            TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
+                                            txt_step2_from.setText(fin_from);
+                                            TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
+                                            txt_step2_type.setText(data.getString("type"));
+
+                                            LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
+                                            step2.setVisibility(View.VISIBLE);
+
+                                            //set the list
+                                            JSONArray items_data = data.getJSONArray("items");
+                                            for(int n = 0; n < items_data.length(); n++)
+                                            {
+                                                JSONObject json_obj_n = items_data.getJSONObject(n);
+                                                list_items.add(
+                                                        json_obj_n.getString("product_name")+" " +
+                                                                json_obj_n.getString("quantity")+" " +
+                                                                json_obj_n.getString("unit"));
+                                                // check the items still available to be received
+                                                int available_qty = json_obj_n.getInt("available_qty");
+                                                if (available_qty > 0)
+                                                    list_product_items.add(json_obj_n.getString("product_name"));
+                                                product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
+                                                product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
+                                            }
+                                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
+                                                    R.layout.activity_list_view, list_items);
+
+                                            ListView listView = (ListView) findViewById(R.id.list);
+                                            listView.setAdapter(adapter2);
+                                            // hide the event due to conflict with add button
+                                            //setListEvent(listView, ini, items_data);
+
+                                            // build spinner wh
+                                            Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
+                                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_warehouse());
+                                            whAdapter.notifyDataSetChanged();
+                                            step2_receipt_wh.setAdapter(whAdapter);
+                                        } else {
+
+                                        }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(),
+                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            }
+        });*/
+        // second button action
+        Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
+        btn_confirm_trigger(btn_confirm, ini);
+
+        // confirm receipt button
+        Button btn_confirm_receipt = (Button) findViewById(R.id.btn_confirm_receipt);
+        btn_confirm_receipt_trigger(btn_confirm_receipt, ini);
+
+        Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
+        select_receipt_type(step2_receipt_type, ini);
+
+        Spinner step2_receipt_wh = (Spinner) findViewById(R.id.step2_receipt_wh);
+        spinner_receipt_wh_trigger(step2_receipt_wh, ini);
+
+        // triggering btn add item
+        btn_add_trigger(ini);
+
+        // toggle items detail
+        TextView show_items = (TextView) findViewById(R.id.show_items);
+        show_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.setVisibility(View.GONE);
+                FrameLayout txt_item_container = (FrameLayout) findViewById(R.id.txt_item_container);
+                txt_item_container.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // button copy action
+        Button btn_copy = (Button) findViewById(R.id.btn_copy);
+        btn_copy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView txt_step3_message = (TextView) findViewById(R.id.txt_step3_message);
+                setClipboard(ini, txt_step3_message.getText().toString());
+                Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    final ArrayList<String> list_receipt_ids = new ArrayList<String>();
+    final ArrayList<String> list_receipt_items = new ArrayList<String>();
+    final ArrayList<String> list_receipt_descs = new ArrayList<String>();
+
+    final Map<String, String> list_receipt_details = new HashMap<String, String>();
+    final Map<String, String> list_receipt_detail_items = new HashMap<String, String>();
+
+    private void buildTheReceiptList() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "receipt/list?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of receipts : " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject details = new JSONObject(jObj.getString("detail"));
+                                JSONObject items = new JSONObject(jObj.getString("items"));
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    list_receipt_items.add(data.getString(n));
+                                    list_receipt_ids.add(data.getString(n));
+                                    JSONObject detail_n = new JSONObject(details.getString(data.getString(n)));
+                                    String desc = "Nomor Issue " + detail_n.getString("issue_number");
+                                    if (detail_n.has("warehouse_name")) {
+                                        desc += " diterima oleh " + detail_n.getString("warehouse_name") + "";
+                                    }
+                                    if (detail_n.has("warehouse_to_name") && detail_n.has("warehouse_from_name")) {
+                                        desc += " dari " + detail_n.getString("warehouse_from_name") + " ke " + detail_n.getString("warehouse_to_name");
+                                    }
+                                    list_receipt_descs.add(desc);
+                                    list_receipt_details.put(data.getString(n), details.getString(data.getString(n)));
+
+                                    list_receipt_detail_items.put(data.getString(n), items.getString(data.getString(n)));
+                                }
+
+                                Log.e(TAG, "List receipt details: " + list_receipt_details.toString());
+
+                                CustomListAdapter adapter3 = new CustomListAdapter(ReceiptActivity.this, list_receipt_ids, list_receipt_items, list_receipt_descs, R.layout.list_view_notification);
+
+                                ListView list_receipts = (ListView) findViewById(R.id.list_archive_receipts);
+                                list_receipts.setAdapter(adapter3);
+                                DeliveryActivity.updateListViewHeight(list_receipts, 400);
+                                itemReceiptListener(list_receipts);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void itemReceiptListener(final ListView listView)
+    {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                LinearLayout layout_3 = (LinearLayout) findViewById(R.id.layout_2);
+                layout_3.setVisibility(View.GONE);
+
+                LinearLayout layout_3_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
+                layout_3_detail.setVisibility(View.VISIBLE);
+
+                TextView detail_3_title = (TextView) findViewById(R.id.detail_2_title);
+                String receipt_number = list_receipt_ids.get(i);
+                detail_3_title.setText(receipt_number);
+
+                try {
+                    JSONObject detail = new JSONObject(list_receipt_details.get(receipt_number));
+
+                    TextView txt_issue_number = (TextView) findViewById(R.id.txt_issue_number);
+                    txt_issue_number.setText(detail.getString("issue_number"));
+
+                    TextView txt_origin = (TextView) findViewById(R.id.txt_origin);
+                    TextView txt_destination = (TextView) findViewById(R.id.txt_destination);
+                    if (detail.has("supplier_name")) {
+                        txt_origin.setText(detail.getString("supplier_name"));
+                    }
+                    if (detail.has("warehouse_name")) {
+                        txt_destination.setText(detail.getString("warehouse_name"));
+                    }
+                    if (detail.has("warehouse_from_name")) {
+                        txt_origin.setText(detail.getString("warehouse_from_name"));
+                    }
+                    if (detail.has("warehouse_to_name")) {
+                        txt_destination.setText(detail.getString("warehouse_to_name"));
+                    }
+
+                    TextView txt_date_receipt = (TextView) findViewById(R.id.txt_date_receipt);
+                    txt_date_receipt.setText(detail.getString("completed_at"));
+
+                    JSONArray items_data = new JSONArray(list_receipt_detail_items.get(receipt_number));
+                    ArrayList<String> list_r_items = new ArrayList<String>();
+                    for(int n = 0; n < items_data.length(); n++)
+                    {
+                        JSONObject json_obj_n = items_data.getJSONObject(n);
+                        list_r_items.add(
+                                json_obj_n.getString("product_name")+" " +
+                                        json_obj_n.getString("quantity")+" " +
+                                        json_obj_n.getString("unit"));
+                    }
+
+                    ArrayAdapter adapter_r_items = new ArrayAdapter<String>(ReceiptActivity.this, R.layout.activity_list_view, list_r_items);
+
+                    ListView receipt_item_list = (ListView) findViewById(R.id.receipt_item_list);
+                    receipt_item_list.setAdapter(adapter_r_items);
+                    DeliveryActivity.updateListViewHeight(receipt_item_list, 0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // btn back trigger
+                Button btn_3_back = (Button) findViewById(R.id.btn_2_back);
+                btn_3_back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        LinearLayout layout_3 = (LinearLayout) findViewById(R.id.layout_2);
+                        layout_3.setVisibility(View.VISIBLE);
+
+                        LinearLayout layout_3_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
+                        layout_3_detail.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
     }
 }
