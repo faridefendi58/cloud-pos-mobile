@@ -354,8 +354,10 @@ public class DeliveryActivity extends MainActivity {
                                 {
                                     list_do_items.add(data.getString(n));
                                     list_do_ids.add(data.getString(n));
-                                    String desc = "Dikirim dari " + origins.getString(data.getString(n)) +
-                                            " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
+                                    JSONObject detail_n = new JSONObject(details.getString(data.getString(n)));
+
+                                    String desc = "Nomor PO "+ detail_n.getString("po_number") +", Dari " + origins.getString(data.getString(n)) +
+                                            " Tujuan " + destinations.getString(data.getString(n));
                                     list_do_descs.add(desc);
                                     list_do_details.put(data.getString(n), details.getString(data.getString(n)));
                                 }
@@ -869,6 +871,8 @@ public class DeliveryActivity extends MainActivity {
                 LinearLayout layout_2_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
                 layout_2_detail.setVisibility(View.VISIBLE);
                 Log.e(TAG, "id : " + id.getText().toString());
+
+                triggerReceiptBtn(id.getText().toString());
             }
         });
 
@@ -953,5 +957,51 @@ public class DeliveryActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    private void triggerReceiptBtn(final String do_number)
+    {
+        Button btn_status_confirm = (Button) findViewById(R.id.btn_status_confirm);
+        btn_status_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(DeliveryActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_receipt, null);
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+
+                // submit, cancel button trigger
+                trigger_dialog_receipt(mView, dialog);
+
+                dialog.show();
+            }
+        });
+    }
+
+    private void trigger_dialog_receipt(final View mView, final AlertDialog dialog) {
+        // cancel method
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int has_error = 0;
+                EditText txt_notes = (EditText) mView.findViewById(R.id.txt_notes);
+                if (txt_notes.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Berikan catatan penerimaan barang.", Toast.LENGTH_LONG).show();
+                }
+                if (has_error == 0) {
+                    // do something
+                }
+            }
+        });
     }
 }
