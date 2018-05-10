@@ -861,6 +861,13 @@ public class DeliveryActivity extends MainActivity {
                     TextView txt_sender = (TextView) findViewById(R.id.txt_sender);
                     txt_sender.setText(details.getString("admin_name"));
 
+                    Button btn_status_confirm = (Button) findViewById(R.id.btn_status_confirm);
+                    if (details.getString("status").equals("completed")) {
+                        btn_status_confirm.setVisibility(View.GONE);
+                    } else {
+                        btn_status_confirm.setVisibility(View.VISIBLE);
+                    }
+
                     setDOListPOItems(view, details.getString("po_number"));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -971,14 +978,14 @@ public class DeliveryActivity extends MainActivity {
                 final AlertDialog dialog = builder.create();
 
                 // submit, cancel button trigger
-                trigger_dialog_receipt(mView, dialog);
+                trigger_dialog_receipt(mView, dialog, do_number);
 
                 dialog.show();
             }
         });
     }
 
-    private void trigger_dialog_receipt(final View mView, final AlertDialog dialog) {
+    private void trigger_dialog_receipt(final View mView, final AlertDialog dialog, final String do_number) {
         // cancel method
         Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
         btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
@@ -1000,6 +1007,41 @@ public class DeliveryActivity extends MainActivity {
                 }
                 if (has_error == 0) {
                     // do something
+                    Map<String, String> params = new HashMap<String, String>();
+                    String admin_id = sharedpreferences.getString(TAG_ID, null);
+                    params.put("admin_id", admin_id);
+                    params.put("notes", txt_notes.getText().toString());
+                    params.put("do_number", do_number);
+                    _string_request(
+                            Request.Method.POST,
+                            Server.URL + "delivery/confirm-receipt?api-key=" + Server.API_KEY,
+                            params,
+                            true,
+                            new VolleyCallback() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    hideDialog();
+                                    try {
+                                        JSONObject jObj = new JSONObject(result);
+                                        success = jObj.getInt(TAG_SUCCESS);
+                                        // Check for error node in json
+                                        if (success == 1) {
+                                            Toast.makeText(getApplicationContext(),
+                                                    jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                                            Button btn_status_confirm = (Button) findViewById(R.id.btn_status_confirm);
+                                            btn_status_confirm.setVisibility(View.GONE);
+                                        } else {
+                                            Toast.makeText(getApplicationContext(),
+                                                    jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                        }
+
+                                        dialog.cancel();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                 }
             }
         });
