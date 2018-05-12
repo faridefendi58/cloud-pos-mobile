@@ -302,6 +302,63 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/receiver_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txt_label_receiver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Diterima oleh :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_receiver"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/received_date_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txt_label_received_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16dip"
+                    android:text="Tanggal Penerimaan :"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_received_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text=""
+                    android:textSize="16dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
                 android:id="@+id/btns_container_status"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

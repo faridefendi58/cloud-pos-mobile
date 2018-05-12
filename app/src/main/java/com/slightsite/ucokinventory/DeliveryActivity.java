@@ -862,10 +862,24 @@ public class DeliveryActivity extends MainActivity {
                     txt_sender.setText(details.getString("admin_name"));
 
                     Button btn_status_confirm = (Button) findViewById(R.id.btn_status_confirm);
+                    FrameLayout receiver_container = (FrameLayout) findViewById(R.id.receiver_container);
+                    FrameLayout received_date_container = (FrameLayout) findViewById(R.id.received_date_container);
                     if (details.getString("status").equals("completed")) {
                         btn_status_confirm.setVisibility(View.GONE);
+
+                        TextView txt_receiver = (TextView) findViewById(R.id.txt_receiver);
+                        txt_receiver.setText(details.getString("completed_by"));
+
+
+                        TextView txt_received_date = (TextView) findViewById(R.id.txt_received_date);
+                        txt_received_date.setText(details.getString("completed_at"));
+
+                        receiver_container.setVisibility(View.VISIBLE);
+                        received_date_container.setVisibility(View.VISIBLE);
                     } else {
                         btn_status_confirm.setVisibility(View.VISIBLE);
+                        receiver_container.setVisibility(View.GONE);
+                        received_date_container.setVisibility(View.GONE);
                     }
 
                     setDOListPOItems(view, details.getString("po_number"));

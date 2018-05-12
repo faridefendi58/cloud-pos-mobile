@@ -1,9 +1,14 @@
 package com.slightsite.ucokinventory;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.LayoutRes;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -116,6 +121,18 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
                 startActivity(intent);
+
+                set_notice();
+                /*final Handler ha=new Handler();
+                ha.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        //call function
+                        set_notice();
+                        ha.postDelayed(this, 10000);
+                    }
+                }, 10000);*/
             }
         });
         // dashboard delivery menu
@@ -279,5 +296,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         return items;
+    }
+
+    public void set_notice()
+    {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_notifications_24dp)
+                .setContentTitle(getString(R.string.txt_notice_title))
+                .setContentText("Much longer text that cannot fit one line...")
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("Much longer text that cannot fit one line..."))
+                .setColor(getResources().getColor(R.color.yellow))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mBuilder.setSound(alarmSound);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, mBuilder.build());
     }
 }
