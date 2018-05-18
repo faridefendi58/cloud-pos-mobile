@@ -702,6 +702,14 @@ public class ReceiptActivity extends MainActivity {
                         if (tot_qty_val <= 0) {
                             has_error = has_error + 1;
                             Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        } else {
+                            //cuk
+                            String max = max_quantities.get(list_product.getSelectedItem().toString());
+                            int in = Integer.valueOf(max);
+                            if (tot_qty_val > in) {
+                                txt_qty.setText(max);
+                                Toast.makeText(getApplicationContext(), "Jumlah barang harus maksimal "+max, Toast.LENGTH_LONG).show();
+                            }
                         }
                     } else {
                         has_error = has_error + 1;
@@ -882,6 +890,7 @@ public class ReceiptActivity extends MainActivity {
         params.put("status", "onprocess");
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         params.put("admin_id", admin_id);
+        params.put("already_received", "1");
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(Request.Method.GET, issue_list_url, params, true,
@@ -926,7 +935,12 @@ public class ReceiptActivity extends MainActivity {
                 });
     }
 
+    final Map<String, String> max_quantities = new HashMap<String, String>();
+
     public void showDetailIssue(View view) {
+        // clear the values for each detail request
+        max_quantities.clear();
+
         final Context ini = (Context) view.getContext();
         hideKeyboardFrom(ini, view);
 
@@ -998,16 +1012,27 @@ public class ReceiptActivity extends MainActivity {
                                     for(int n = 0; n < items_data.length(); n++)
                                     {
                                         JSONObject json_obj_n = items_data.getJSONObject(n);
-                                        list_items.add(
-                                                json_obj_n.getString("product_name")+" " +
-                                                        json_obj_n.getString("quantity")+" " +
-                                                        json_obj_n.getString("unit"));
+
                                         // check the items still available to be received
                                         if (json_obj_n.has("available_qty")) {
                                             int available_qty = json_obj_n.getInt("available_qty");
-                                            if (available_qty > 0)
+                                            if (available_qty > 0) {
                                                 list_product_items.add(json_obj_n.getString("product_name"));
+                                            }
+                                            list_items.add(
+                                                    json_obj_n.getString("product_name")+" "+
+                                                            json_obj_n.getString("available_qty")+ " " +
+                                                            json_obj_n.getString("unit")+" dari "+
+                                                            json_obj_n.getString("quantity")+" "+
+                                                            json_obj_n.getString("unit"));
+                                            max_quantities.put(json_obj_n.getString("product_name"), json_obj_n.getString("available_qty"));
+                                        } else {
+                                            list_items.add(
+                                                    json_obj_n.getString("product_name")+" " +
+                                                            json_obj_n.getString("quantity")+" " +
+                                                            json_obj_n.getString("unit"));
                                         }
+
                                         product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
                                         product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
                                     }

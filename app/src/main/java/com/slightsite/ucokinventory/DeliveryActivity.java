@@ -861,6 +861,16 @@ public class DeliveryActivity extends MainActivity {
                     TextView txt_sender = (TextView) findViewById(R.id.txt_sender);
                     txt_sender.setText(details.getString("admin_name"));
 
+                    FrameLayout status_notes_container = (FrameLayout) findViewById(R.id.notes_container);
+                    TextView txt_notes = (TextView) findViewById(R.id.txt_notes);
+                    if (details.getString("notes").length() > 0 && !details.getString("notes").equals("null")) {
+                        txt_notes.setText(details.getString("notes"));
+                        status_notes_container.setVisibility(View.VISIBLE);
+                    } else {
+                        txt_notes.setText("-");
+                        status_notes_container.setVisibility(View.GONE);
+                    }
+
                     Button btn_status_confirm = (Button) findViewById(R.id.btn_status_confirm);
                     FrameLayout receiver_container = (FrameLayout) findViewById(R.id.receiver_container);
                     FrameLayout received_date_container = (FrameLayout) findViewById(R.id.received_date_container);
@@ -868,7 +878,7 @@ public class DeliveryActivity extends MainActivity {
                         btn_status_confirm.setVisibility(View.GONE);
 
                         TextView txt_receiver = (TextView) findViewById(R.id.txt_receiver);
-                        txt_receiver.setText(details.getString("completed_by"));
+                        txt_receiver.setText(details.getString("completed_by_name"));
 
 
                         TextView txt_received_date = (TextView) findViewById(R.id.txt_received_date);
