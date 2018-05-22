@@ -161,6 +161,7 @@
             android:orientation="vertical"
             android:gravity="center">
             <ImageView
+                android:id="@+id/notification_icon"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@drawable/circlebackgroundaccent"
@@ -187,6 +188,22 @@
                 android:textColor="#ababab"/>
 
         </LinearLayout>
+
+            <TextView
+                android:id="@+id/badge_notification_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="@drawable/item_count"
+                android:text="0"
+                android:textColor="#FFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="8dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"/>
+
     </android.support.v7.widget.CardView>
 
     </LinearLayout>
