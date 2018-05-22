@@ -167,7 +167,8 @@
             android:layout_marginLeft="0dp"
             android:paddingHorizontal="0dp"
             android:textColor="#717171"
-            android:text="Pre Order Stock" />
+            android:text="Pre Order Stock"
+            android:visibility="gone"/>
 
         <FrameLayout
             android:id="@+id/btn_add_container"

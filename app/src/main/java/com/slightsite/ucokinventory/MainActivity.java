@@ -1,9 +1,15 @@
 package com.slightsite.ucokinventory;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.annotation.LayoutRes;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,19 +20,20 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
-import android.text.Layout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +53,9 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sharedpreferences;
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
     public static final String TAG_ID = "id";
     public static final String TAG_USERNAME = "username";
     public static final String TAG_NAME = "name";
@@ -252,6 +262,12 @@ public class MainActivity extends AppCompatActivity
         Log.e(TAG, "Is Admin : " + is_admin );
         Log.e(TAG, "PIC : " + is_pic );
         Log.e(TAG, "List Assigned WH : " + get_list_assigned_wh().toString());
+
+        // notif counter
+        String className = this.getClass().getSimpleName();
+        if (className.equals(TAG)) {
+            set_notification_counter();
+        }
     }
 
     /**
@@ -279,5 +295,159 @@ public class MainActivity extends AppCompatActivity
         }
 
         return items;
+    }
+
+    public void set_notice(String title, String message)
+    {
+        /*final Handler ha=new Handler();
+                ha.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        //call function
+                        set_notice();
+                        ha.postDelayed(this, 10000);
+                    }
+                }, 10000);*/
+        Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
+        intent.putExtra("msg", message);
+        intent.setAction(Long.toString(System.currentTimeMillis()));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0,
+                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_notifications_24dp)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message))
+                .setColor(getResources().getColor(R.color.yellow))
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mBuilder.setSound(alarmSound);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, mBuilder.build());
+    }
+
+    int success;
+
+    public void set_notification_counter()
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _str_request(
+                Request.Method.GET,
+                Server.URL + "notification/count?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Notif Response: " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                TextView badge_notification_counter = (TextView) findViewById(R.id.badge_notification_counter);
+                                int count = jObj.getInt("count");
+                                if (count > 0) {
+                                    badge_notification_counter.setText(jObj.getString("count"));
+                                    badge_notification_counter.setVisibility(View.VISIBLE);
+
+                                    // also set popup notif notification
+                                    String notif_message = sharedpreferences.getString("notif_message", null);
+                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                    Boolean notice = false;
+                                    if (!TextUtils.isEmpty(notif_message)) {
+                                        if (!notif_message.equals(jObj.getString("message"))) {
+                                            notice = true;
+                                        }
+                                    } else {
+                                        notice = true;
+                                    }
+
+                                    if (notice) {
+                                        set_notice(getString(R.string.app_name), jObj.getString("message"));
+                                        editor.putString("notif_message", jObj.getString("message"));
+                                        editor.commit();
+                                    }
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    ProgressDialog pDialog;
+
+    public void _str_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                url += "&" + pair.getKey() + "=" + pair.getValue();
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.e(TAG, "Request Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+    }
+
+    private interface VolleyCallback{
+        void onSuccess(String result);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 }

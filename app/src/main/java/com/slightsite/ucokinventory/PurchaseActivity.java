@@ -605,7 +605,7 @@ public class PurchaseActivity extends MainActivity {
                 TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
                 TextView txt_price_select = (TextView) findViewById(R.id.txt_price_select);
                 TextView due_date = (TextView) findViewById(R.id.due_date);
-                TextView txt_is_pre_order = (TextView) findViewById(R.id.txt_is_preorder);
+                //TextView txt_is_pre_order = (TextView) findViewById(R.id.txt_is_preorder);
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("items", txt_item_select.getText().toString());
@@ -614,7 +614,9 @@ public class PurchaseActivity extends MainActivity {
                 params.put("shipment_name", shipment_name.getSelectedItem().toString());
                 params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
                 params.put("due_date", due_date.getText().toString());
-                params.put("is_pre_order", txt_is_pre_order.getText().toString());
+                //params.put("is_pre_order", txt_is_pre_order.getText().toString());
+                // default to pre order due to every po should have approval
+                params.put("is_pre_order", "1");
                 params.put("admin_id", sharedpreferences.getString("id", null));
                 Log.e(TAG, "Params : " + params.toString());
 
