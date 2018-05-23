@@ -107,7 +107,14 @@ public class ReceiptActivity extends MainActivity {
         // If needed build the advance search
         //buildAutoComplete();
 
-        buildTheIssueList();
+        String issue_number = getIntent().getStringExtra("issue_number");
+        String i_number = null;
+        if (!TextUtils.isEmpty(issue_number)) {
+            Log.e(TAG, "Ada kiriman nomor issue : "+ issue_number);
+            i_number = issue_number;
+        }
+
+        buildTheIssueList(i_number);
         buildTheReceiptList();
     }
 
@@ -885,7 +892,7 @@ public class ReceiptActivity extends MainActivity {
         txt_issue_number.setThreshold(1);
     }
 
-    private void buildTheIssueList() {
+    private void buildTheIssueList(final String i_number) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("status", "onprocess");
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -910,10 +917,19 @@ public class ReceiptActivity extends MainActivity {
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
-                                    list_ids.add(""+ n);
-                                    list_issues.add(data.getString(n));
-                                    issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
-                                    descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
+                                    if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
+                                        if (data.getString(n).equals(i_number)) {
+                                            list_ids.add(""+ n);
+                                            list_issues.add(data.getString(n));
+                                            issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                            descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
+                                        }
+                                    } else {
+                                        list_ids.add(""+ n);
+                                        list_issues.add(data.getString(n));
+                                        issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                        descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
+                                    }
                                 }
                                 Log.e(TAG, "List available issue : " + list_issues.toString());
                                 Log.e(TAG, "List issue origin : " + issue_origins.toString());

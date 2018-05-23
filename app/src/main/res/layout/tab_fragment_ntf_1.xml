@@ -56,17 +56,55 @@
                 android:textSize="16dip"
                 />
 
-            <Button
-                android:id="@+id/btn_step2_back"
+            <TextView
+                android:id="@+id/detail_activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginTop="5dp"
-                android:textAllCaps="false"
-                android:text="Kembali Ke Daftar"
-                android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+                android:text=""
+                android:textSize="16dip"
+                android:visibility="gone"
                 />
+
+            <TextView
+                android:id="@+id/detail_issue_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="16dip"
+                android:visibility="gone"
+                />
+
+            <FrameLayout
+                android:id="@+id/btn_step2_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:id="@+id/btn_step2_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:text="Kembali Ke Daftar"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+                    />
+
+                <Button
+                    android:id="@+id/btn_step2_see"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:textAllCaps="false"
+                    android:text="Lihat Data"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#fff"
+                    android:paddingVertical="0dp"
+                    android:paddingHorizontal="20dp"
+                    android:visibility="visible"
+                    />
+            </FrameLayout>
 
         </LinearLayout>
 

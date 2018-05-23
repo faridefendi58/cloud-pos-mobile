@@ -95,7 +95,14 @@ public class DeliveryActivity extends MainActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        buildThePreOrderList();
+        String issue_number = getIntent().getStringExtra("issue_number");
+        String i_number = null;
+        if (!TextUtils.isEmpty(issue_number)) {
+            Log.e(TAG, "Ada kiriman nomor issue : "+ issue_number);
+            i_number = issue_number;
+        }
+
+        buildThePreOrderList(i_number);
         buildTheDeliveryOrderList();
     }
 
@@ -222,7 +229,7 @@ public class DeliveryActivity extends MainActivity {
     final ArrayList<String> list_descs = new ArrayList<String>();
     final ArrayList<String> list_ids = new ArrayList<String>();
 
-    public void buildThePreOrderList() {
+    public void buildThePreOrderList(final String i_number) {
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         params.put("admin_id", admin_id);
@@ -252,11 +259,21 @@ public class DeliveryActivity extends MainActivity {
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
-                                    list_items.add(data.getString(n));
-                                    list_ids.add(data.getString(n));
-                                    String desc = "Pengadaan dari " + origins.getString(data.getString(n)) +
-                                            " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
-                                    list_descs.add(desc);
+                                    if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
+                                        if (data.getString(n).equals(i_number)) {
+                                            list_items.add(data.getString(n));
+                                            list_ids.add(data.getString(n));
+                                            String desc = "Pengadaan dari " + origins.getString(data.getString(n)) +
+                                                    " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
+                                            list_descs.add(desc);
+                                        }
+                                    } else {
+                                        list_items.add(data.getString(n));
+                                        list_ids.add(data.getString(n));
+                                        String desc = "Pengadaan dari " + origins.getString(data.getString(n)) +
+                                                " dengan tujuan area warehouse " + destinations.getString(data.getString(n));
+                                        list_descs.add(desc);
+                                    }
                                 }
 
                                 CustomListAdapter adapter2 = new CustomListAdapter(DeliveryActivity.this, list_ids, list_items, list_descs, R.layout.list_view_notification);
