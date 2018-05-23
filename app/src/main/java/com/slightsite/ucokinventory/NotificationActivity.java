@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -155,6 +156,9 @@ public class NotificationActivity extends MainActivity {
     final ArrayList<String> list_messages = new ArrayList<String>();
     final ArrayList<String> list_ids = new ArrayList<String>();
 
+    final Map<String, String> list_issues = new HashMap<String, String>();
+    final Map<String, String> list_activities = new HashMap<String, String>();
+
     private void buildTheNotifList(final Context ini) {
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -184,6 +188,23 @@ public class NotificationActivity extends MainActivity {
                                     list_items.add(data_n.getString("created_at"));
                                     list_messages.add(data_n.getString("message"));
                                     list_ids.add(data_n.getString("id"));
+
+                                    if (!TextUtils.isEmpty(data_n.getString("rel_detail")) && !data_n.getString("rel_detail").equals("null")) {
+                                        JSONObject data_n_detail = new JSONObject(data_n.getString("rel_detail"));
+                                        if (!TextUtils.isEmpty(data_n.getString("issue_number"))) {
+                                            list_issues.put(data_n.getString("id"), data_n.getString("issue_number"));
+                                        } else {
+                                            if (data_n.getString("rel_type").equals("purchase_order")) {
+                                                list_issues.put(data_n.getString("id"), data_n_detail.getString("po_number"));
+                                            } else if (data_n.getString("rel_type").equals("transfer_issue")) {
+                                                list_issues.put(data_n.getString("id"), data_n_detail.getString("ti_number"));
+                                            } else if (data_n.getString("rel_type").equals("delivery_order")) {
+                                                list_issues.put(data_n.getString("id"), data_n_detail.getString("do_number"));
+                                            }
+                                        }
+
+                                        list_activities.put(data_n.getString("id"), data_n.getString("rel_activity"));
+                                    }
                                 }
 
                                 CustomListAdapter adapter2 = new CustomListAdapter(NotificationActivity.this, list_ids, list_items, list_messages, R.layout.list_view_notification);
@@ -279,6 +300,12 @@ public class NotificationActivity extends MainActivity {
                 LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
                 step2.setVisibility(View.VISIBLE);
                 mark_as_viewed(id.getText().toString());
+
+                TextView detail_activity = (TextView) findViewById(R.id.detail_activity);
+                detail_activity.setText(list_activities.get(list_ids.get(i)));
+
+                TextView detail_issue_number = (TextView) findViewById(R.id.detail_issue_number);
+                detail_issue_number.setText(list_issues.get(list_ids.get(i)));
             }
         });
 
@@ -290,6 +317,34 @@ public class NotificationActivity extends MainActivity {
                 step2.setVisibility(View.GONE);
                 LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
                 step1.setVisibility(View.VISIBLE);
+            }
+        });
+
+        Button btn_step2_see = (Button) findViewById(R.id.btn_step2_see);
+        btn_step2_see.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView detail_activity = (TextView) findViewById(R.id.detail_activity);
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                if (detail_activity.getText().toString().equals("MainActivity")) {
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                } else if (detail_activity.getText().toString().equals("ReceiptActivity")) {
+                    intent = new Intent(getApplicationContext(), ReceiptActivity.class);
+                } else if (detail_activity.getText().toString().equals("PurchaseActivity")) {
+                    intent = new Intent(getApplicationContext(), PurchaseActivity.class);
+                } else if (detail_activity.getText().toString().equals("DeliveryActivity")) {
+                    intent = new Intent(getApplicationContext(), DeliveryActivity.class);
+                } else {
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                }
+
+                TextView detail_issue_number = (TextView) findViewById(R.id.detail_issue_number);
+                if (!TextUtils.isEmpty(detail_issue_number.getText().toString())) {
+                    intent.putExtra("issue_number", detail_issue_number.getText().toString());
+                }
+
+                startActivity(intent);
             }
         });
     }
@@ -345,6 +400,8 @@ public class NotificationActivity extends MainActivity {
     final ArrayList<String> list_archive_items = new ArrayList<String>();
     final ArrayList<String> list_archive_messages = new ArrayList<String>();
     final ArrayList<String> list_archive_ids = new ArrayList<String>();
+    final Map<String, String> list_archive_issues = new HashMap<String, String>();
+    final Map<String, String> list_archive_activities = new HashMap<String, String>();
 
     private void buildTheArchiveNotifList(final Context ini) {
         Map<String, String> params = new HashMap<String, String>();
@@ -375,6 +432,17 @@ public class NotificationActivity extends MainActivity {
                                     list_archive_items.add(data_n.getString("created_at"));
                                     list_archive_messages.add(data_n.getString("message"));
                                     list_archive_ids.add(data_n.getString("id"));
+                                    if (!TextUtils.isEmpty(data_n.getString("rel_detail")) && !data_n.getString("rel_detail").equals("null")) {
+                                        JSONObject data_n_detail = new JSONObject(data_n.getString("rel_detail"));
+                                        if (data_n.getString("rel_type").equals("purchase_order")) {
+                                            list_archive_issues.put(data_n.getString("id"), data_n_detail.getString("po_number"));
+                                        } else if (data_n.getString("rel_type").equals("transfer_issue")) {
+                                            list_archive_issues.put(data_n.getString("id"), data_n_detail.getString("ti_number"));
+                                        } else if (data_n.getString("rel_type").equals("delivery_order")) {
+                                            list_archive_issues.put(data_n.getString("id"), data_n_detail.getString("do_number"));
+                                        }
+                                        list_archive_activities.put(data_n.getString("id"), data_n.getString("rel_activity"));
+                                    }
                                 }
 
                                 CustomListAdapter adapter2 = new CustomListAdapter(NotificationActivity.this, list_archive_ids, list_archive_items, list_archive_messages, R.layout.list_view_notification);
@@ -409,6 +477,14 @@ public class NotificationActivity extends MainActivity {
                 step1.setVisibility(View.GONE);
                 LinearLayout step2 = (LinearLayout) findViewById(R.id.step2_2);
                 step2.setVisibility(View.VISIBLE);
+
+                Log.e(TAG, "Archive issue : "+ list_archive_issues.get(list_archive_ids.get(i)));
+
+                TextView detail_archive_activity = (TextView) findViewById(R.id.detail_archive_activity);
+                detail_archive_activity.setText(list_archive_activities.get(list_archive_ids.get(i)));
+
+                TextView detail_archive_issue_number = (TextView) findViewById(R.id.detail_archive_issue_number);
+                detail_archive_issue_number.setText(list_archive_issues.get(list_archive_ids.get(i)));
             }
         });
 
@@ -420,6 +496,34 @@ public class NotificationActivity extends MainActivity {
                 step2.setVisibility(View.GONE);
                 LinearLayout step1 = (LinearLayout) findViewById(R.id.step1_2);
                 step1.setVisibility(View.VISIBLE);
+            }
+        });
+
+        Button btn_step2_2_see = (Button) findViewById(R.id.btn_step2_2_see);
+        btn_step2_2_see.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView detail_archive_activity = (TextView) findViewById(R.id.detail_archive_activity);
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                if (detail_archive_activity.getText().toString().equals("MainActivity")) {
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                } else if (detail_archive_activity.getText().toString().equals("ReceiptActivity")) {
+                    intent = new Intent(getApplicationContext(), ReceiptActivity.class);
+                } else if (detail_archive_activity.getText().toString().equals("PurchaseActivity")) {
+                    intent = new Intent(getApplicationContext(), PurchaseActivity.class);
+                } else if (detail_archive_activity.getText().toString().equals("DeliveryActivity")) {
+                    intent = new Intent(getApplicationContext(), DeliveryActivity.class);
+                } else {
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                }
+
+                TextView detail_archive_issue_number = (TextView) findViewById(R.id.detail_archive_issue_number);
+                if (!TextUtils.isEmpty(detail_archive_issue_number.getText().toString())) {
+                    intent.putExtra("issue_number", detail_archive_issue_number.getText().toString());
+                }
+
+                startActivity(intent);
             }
         });
     }
