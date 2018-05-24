@@ -5,10 +5,19 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -59,6 +68,21 @@ public class PurchaseActivity extends MainActivity {
     ArrayList<String> assigned_whs = new ArrayList<String>();
     ArrayList<String> group_whs = new ArrayList<String>();
 
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a
+     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    private PurchaseActivity.SectionsPagerAdapter mSectionsPagerAdapter;
+
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,60 +91,28 @@ public class PurchaseActivity extends MainActivity {
         setDinamicContent(R.layout.app_bar_purchase);
         buildMenu();
 
-        // build spinner supplier list
-        Spinner supplier_name = (Spinner)findViewById(R.id.supplier_name);
-        ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_supplier());
-        supplier_name.setAdapter(whAdapter);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // build spinner shipment list
-        Spinner shipment_name = (Spinner)findViewById(R.id.shipment_name);
-        ArrayAdapter<String> whAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_shipment());
-        shipment_name.setAdapter(whAdapter2);
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        // define the roles
-        set_list_assigned_wh();
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        // build spinner of wh coverage
-        Spinner wh_group_name = (Spinner)findViewById(R.id.wh_group_name);
-        ArrayAdapter<String> whAdapter3 = new ArrayAdapter<String>(this, R.layout.spinner_item, group_whs);
-        wh_group_name.setAdapter(whAdapter3);
-
-        final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
-        supplier_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!adapterView.getSelectedItem().toString().equals("-"))
-                    btn_add_container.setVisibility(View.VISIBLE);
-                else
-                    btn_add_container.setVisibility(View.GONE);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                btn_add_container.setVisibility(View.GONE);
-            }
-        });
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         final Context ini = this;
-        // define the product list
-        list_products = get_list_product();
-        btn_add_trigger(ini);
 
-        // init checkbox
-        initCheckBox();
-
-        //define date picker
-        initDatePicker();
-
-        // copy btn trigger
-        Button btn_copy = (Button) findViewById(R.id.btn_copy);
-        btn_copy.setOnClickListener(new View.OnClickListener() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                TextView txt_success_message = (TextView) findViewById(R.id.txt_success_message);
-                setClipboard(ini, txt_success_message.getText().toString());
-                Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
+            public void run() {
+                // delay build the form after tabs fully finished
+                buildTheForm(ini);
+                buildTheList(null);
             }
-        });
+        }, 1000);
     }
 
     public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
@@ -757,5 +749,186 @@ public class PurchaseActivity extends MainActivity {
     private void showDate(int year, int month, int day) {
         dateView.setText(new StringBuilder().append(day).append("-")
                 .append(month).append("-").append(year));
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            switch (position) {
+                case 0:
+                    TabFragment1 tab1 = new TabFragment1();
+                    return tab1;
+                case 1:
+                    TabFragment2 tab2 = new TabFragment2();
+                    return tab2;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            // Show 2 total pages.
+            return 2;
+        }
+    }
+
+    public static class TabFragment1 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_purchase_1, container, false);
+        }
+    }
+
+    public static class TabFragment2 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_purchase_2, container, false);
+        }
+    }
+
+    public void buildTheForm(final Context ini) {
+        // build spinner supplier list
+        Spinner supplier_name = (Spinner) findViewById(R.id.supplier_name);
+        ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_supplier());
+        supplier_name.setAdapter(whAdapter);
+
+        // build spinner shipment list
+        Spinner shipment_name = (Spinner) findViewById(R.id.shipment_name);
+        ArrayAdapter<String> whAdapter2 = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_shipment());
+        shipment_name.setAdapter(whAdapter2);
+
+        // define the roles
+        set_list_assigned_wh();
+
+        // build spinner of wh coverage
+        Spinner wh_group_name = (Spinner)findViewById(R.id.wh_group_name);
+        ArrayAdapter<String> whAdapter3 = new ArrayAdapter<String>(ini, R.layout.spinner_item, group_whs);
+        wh_group_name.setAdapter(whAdapter3);
+
+        final FrameLayout btn_add_container = (FrameLayout) findViewById(R.id.btn_add_container);
+        supplier_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!adapterView.getSelectedItem().toString().equals("-"))
+                    btn_add_container.setVisibility(View.VISIBLE);
+                else
+                    btn_add_container.setVisibility(View.GONE);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                btn_add_container.setVisibility(View.GONE);
+            }
+        });
+
+        // define the product list
+        list_products = get_list_product();
+        btn_add_trigger(ini);
+
+        // init checkbox
+        initCheckBox();
+
+        //define date picker
+        initDatePicker();
+
+        // copy btn trigger
+        Button btn_copy = (Button) findViewById(R.id.btn_copy);
+        btn_copy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView txt_success_message = (TextView) findViewById(R.id.txt_success_message);
+                setClipboard(getApplicationContext(), txt_success_message.getText().toString());
+                Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    final ArrayList<String> list_ids = new ArrayList<String>();
+    final ArrayList<String> list_issues = new ArrayList<String>();
+    final Map<String, String> issue_origins = new HashMap<String, String>();
+
+    private void buildTheList(final String i_number)
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("status", "onprocess");
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+        params.put("already_received", "0");
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "receipt/list-issue-number?api-key=" + Server.API_KEY,
+                params,
+                true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of list issue : " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = jObj.getJSONObject("origin");
+                                JSONObject destinations = jObj.getJSONObject("destination");
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
+                                        if (data.getString(n).equals(i_number)) {
+                                            list_ids.add(""+ n);
+                                            list_issues.add(data.getString(n));
+                                            issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                            descs.add("Pengadaan dari " + origins.getString(data.getString(n)) + " dengan tujuan " + destinations.getString(data.getString(n)));
+                                        }
+                                    } else {
+                                        list_ids.add(""+ n);
+                                        list_issues.add(data.getString(n));
+                                        issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                        descs.add("Pengadaan dari " + origins.getString(data.getString(n)) + " dengan tujuan " + destinations.getString(data.getString(n)));
+                                    }
+                                }
+
+                                CustomListAdapter adapter2 = new CustomListAdapter(PurchaseActivity.this, list_ids, list_issues, descs, R.layout.list_view_purchase);
+
+                                ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
+                                list_available_issue.setAdapter(adapter2);
+                                DeliveryActivity.updateListViewHeight(list_available_issue, 100);
+                                // begin the trigger event
+                                itemListener(list_available_issue);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void itemListener(final ListView list) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.e(TAG, "Choosen : "+ list_issues.get(i));
+                Intent intent = new Intent(getApplicationContext(), PurchaseReportActivity.class);
+                intent.putExtra("issue_number", list_issues.get(i));
+                startActivity(intent);
+            }
+        });
     }
 }
