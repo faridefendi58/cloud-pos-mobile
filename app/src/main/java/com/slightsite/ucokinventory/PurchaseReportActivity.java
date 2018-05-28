@@ -14,6 +14,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PurchaseReportActivity extends MainActivity {
     ProgressDialog pDialog;
@@ -65,10 +84,9 @@ public class PurchaseReportActivity extends MainActivity {
             public void run() {
                 // delay build the form after tabs fully finished
                 String issue_number = getIntent().getStringExtra("issue_number");
-                String i_number = null;
                 if (!TextUtils.isEmpty(issue_number)) {
                     Log.e(TAG, "Ada kiriman nomor issue : "+ issue_number);
-                    i_number = issue_number;
+                    set_detail_issue(issue_number);
                 }
             }
         }, 1000);
@@ -110,7 +128,7 @@ public class PurchaseReportActivity extends MainActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.tab_fragment_purchase_1, container, false);
+            return inflater.inflate(R.layout.tab_fragment_p_detail_1, container, false);
         }
     }
 
@@ -118,7 +136,128 @@ public class PurchaseReportActivity extends MainActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.tab_fragment_purchase_2, container, false);
+            return inflater.inflate(R.layout.tab_fragment_p_detail_2, container, false);
         }
+    }
+
+    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.e(TAG, "Request Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(String result);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    private void set_detail_issue(String issue_number) {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+        params.put("issue_number", issue_number);
+
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "purchase/detail?api-key=" + Server.API_KEY,
+                params, true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONObject data = jObj.getJSONObject("data");
+
+                                TextView txt_po_number = (TextView) findViewById(R.id.txt_po_number);
+                                txt_po_number.setText(data.getString("po_number"));
+                                TextView txt_supplier_name = (TextView) findViewById(R.id.txt_supplier_name);
+                                txt_supplier_name.setText(data.getString("supplier_name"));
+                                TextView txt_wh_group_name = (TextView) findViewById(R.id.txt_wh_group_name);
+                                txt_wh_group_name.setText(data.getString("wh_group_name"));
+                                TextView txt_shipment_name = (TextView) findViewById(R.id.txt_shipment_name);
+                                txt_shipment_name.setText(data.getString("shipment_name"));
+                                TextView txt_created_at = (TextView) findViewById(R.id.txt_created_at);
+                                txt_created_at.setText(data.getString("created_at"));
+                                TextView txt_created_by = (TextView) findViewById(R.id.txt_created_by);
+                                txt_created_by.setText(data.getString("created_by_name"));
+
+                                JSONArray items = jObj.getJSONArray("items");
+                                ArrayList<String> po_items = new ArrayList<String>();
+
+                                for(int n = 0; n < items.length(); n++)
+                                {
+                                    JSONObject data_n = new JSONObject(items.getString(n));
+                                    String item_title = data_n.getString("title")+' '+data_n.getString("quantity")
+                                            + " " + data_n.getString("unit");
+                                    po_items.add(item_title);
+                                }
+
+                                ArrayAdapter adapter = new ArrayAdapter<String>(PurchaseReportActivity.this, R.layout.activity_list_view, po_items);
+
+                                ListView txt_list_items = (ListView) findViewById(R.id.txt_list_items);
+                                txt_list_items.setAdapter(adapter);
+                                DeliveryActivity.updateListViewHeight(txt_list_items, 20);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
