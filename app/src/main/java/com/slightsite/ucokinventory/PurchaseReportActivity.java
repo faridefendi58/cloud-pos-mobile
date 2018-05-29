@@ -252,6 +252,32 @@ public class PurchaseReportActivity extends MainActivity {
                                 ListView txt_list_items = (ListView) findViewById(R.id.txt_list_items);
                                 txt_list_items.setAdapter(adapter);
                                 DeliveryActivity.updateListViewHeight(txt_list_items, 20);
+
+                                JSONArray history = jObj.getJSONArray("history");
+                                ArrayList<String> list_timeline_ids = new ArrayList<String>();
+                                ArrayList<String> list_timeline_titles = new ArrayList<String>();
+                                ArrayList<String> list_timeline_descs = new ArrayList<String>();
+
+                                for(int m = 0; m < history.length(); m++)
+                                {
+                                    JSONObject data_n = new JSONObject(history.getString(m));
+                                    list_timeline_ids.add(data_n.getString("date"));
+                                    list_timeline_titles.add(data_n.getString("title"));
+
+                                    if (!TextUtils.isEmpty(data_n.getString("notes"))) {
+                                        list_timeline_descs.add(data_n.getString("notes"));
+                                    } else {
+                                        list_timeline_descs.add("-");
+                                    }
+                                }
+
+                                CustomListAdapter adapter2 = new CustomListAdapter(PurchaseReportActivity.this, list_timeline_ids, list_timeline_titles, list_timeline_descs, R.layout.list_view_timeline);
+
+                                ListView txt_list_timelines = (ListView) findViewById(R.id.txt_list_timelines);
+                                txt_list_timelines.setAdapter(adapter2);
+                                DeliveryActivity.updateListViewHeight(txt_list_timelines, 120);
+
+                                Log.e(TAG, "Titles : "+ list_timeline_titles.toString());
                             }
 
                         } catch (JSONException e) {
