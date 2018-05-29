@@ -236,6 +236,9 @@ public class PurchaseReportActivity extends MainActivity {
                                 TextView txt_created_by = (TextView) findViewById(R.id.txt_created_by);
                                 txt_created_by.setText(data.getString("created_by_name"));
 
+                                TextView txt_status = (TextView) findViewById(R.id.txt_status);
+                                txt_status.setText(data.getString("status"));
+
                                 JSONArray items = jObj.getJSONArray("items");
                                 ArrayList<String> po_items = new ArrayList<String>();
 

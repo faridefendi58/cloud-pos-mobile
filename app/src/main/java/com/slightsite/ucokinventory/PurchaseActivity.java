@@ -862,15 +862,16 @@ public class PurchaseActivity extends MainActivity {
     private void buildTheList(final String i_number)
     {
         Map<String, String> params = new HashMap<String, String>();
-        params.put("status", "onprocess");
+        //params.put("status", "onprocess");
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         params.put("admin_id", admin_id);
-        params.put("already_received", "0");
+        //params.put("already_received", "0");
+        params.put("all_status", "1");
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(
                 Request.Method.GET,
-                Server.URL + "receipt/list-issue-number?api-key=" + Server.API_KEY,
+                Server.URL + "purchase/list?api-key=" + Server.API_KEY,
                 params,
                 true,
                 new VolleyCallback() {
@@ -886,21 +887,23 @@ public class PurchaseActivity extends MainActivity {
                                 JSONArray data = jObj.getJSONArray("data");
                                 JSONObject origins = jObj.getJSONObject("origin");
                                 JSONObject destinations = jObj.getJSONObject("destination");
+                                JSONArray details = jObj.getJSONArray("detail");
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
+                                    JSONObject detail_n = new JSONObject(details.getString(n));
                                     if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
                                         if (data.getString(n).equals(i_number)) {
-                                            list_ids.add(""+ n);
+                                            list_ids.add(detail_n.getString("status"));
                                             list_issues.add(data.getString(n));
                                             issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
-                                            descs.add("Pengadaan dari " + origins.getString(data.getString(n)) + " dengan tujuan " + destinations.getString(data.getString(n)));
+                                            descs.add(detail_n.getString("created_at")+" : Dari " + origins.getString(data.getString(n)) + ", Tujuan " + destinations.getString(data.getString(n)));
                                         }
                                     } else {
-                                        list_ids.add(""+ n);
+                                        list_ids.add(detail_n.getString("status"));
                                         list_issues.add(data.getString(n));
                                         issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
-                                        descs.add("Pengadaan dari " + origins.getString(data.getString(n)) + " dengan tujuan " + destinations.getString(data.getString(n)));
+                                        descs.add(detail_n.getString("created_at")+" : Dari " + origins.getString(data.getString(n)) + ", Tujuan " + destinations.getString(data.getString(n)));
                                     }
                                 }
 

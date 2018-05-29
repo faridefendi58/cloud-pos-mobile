@@ -5,33 +5,52 @@
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/list_title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="Title"
-        android:textSize="16dip"
-        android:paddingVertical="5dp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/list_desc"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="Catatan"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="5dp"
-        android:textSize="15dip" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/list_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        />
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="5dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/list_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Title"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:layout_gravity="left"/>
+
+            <TextView
+                android:id="@+id/list_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_gravity="right"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/list_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Catatan"
+            android:layout_marginBottom="5dp"
+            android:textSize="15dip" />
+
+    </LinearLayout>
 
 </RelativeLayout>
