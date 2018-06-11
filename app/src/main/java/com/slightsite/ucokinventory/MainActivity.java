@@ -3,6 +3,7 @@ package com.slightsite.ucokinventory;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
@@ -70,6 +72,9 @@ public class MainActivity extends AppCompatActivity
 
         setDinamicContent(R.layout.app_bar_main);
         buildMenu();
+
+        //set the access list for dashboard menu roles
+        build_the_access();
 
         // customize dashboard according to the roles
         buildDashboard();
@@ -268,6 +273,32 @@ public class MainActivity extends AppCompatActivity
         if (className.equals(TAG)) {
             set_notification_counter();
         }
+
+        //hide the menu
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if (has_purchase_order_access <= 0) {
+            CardView dashboard_menu3_container = (CardView) findViewById(R.id.menu3_container);
+            dashboard_menu3_container.setVisibility(View.GONE);
+        }
+        if (has_purchase_receipt_access <= 0) {
+            CardView menu1_container = (CardView) findViewById(R.id.menu1_container);
+            menu1_container.setVisibility(View.GONE);
+
+            navigationView.getMenu().findItem(R.id.nav_stock_in_container).setVisible(false);
+        }
+        if (has_transfer_issue_access <= 0) {
+            CardView menu2_container = (CardView) findViewById(R.id.menu2_container);
+            menu2_container.setVisibility(View.GONE);
+
+            navigationView.getMenu().findItem(R.id.nav_transfer_out).setVisible(false);
+        }
+        if (has_inventory_issue_access <= 0) {
+            CardView menu5_container = (CardView) findViewById(R.id.menu5_container);
+            menu5_container.setVisibility(View.GONE);
+
+            navigationView.getMenu().findItem(R.id.nav_inventory_out).setVisible(false);
+        }
     }
 
     /**
@@ -449,5 +480,46 @@ public class MainActivity extends AppCompatActivity
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    Integer has_purchase_order_access = 0;
+    Integer has_purchase_receipt_access = 0;
+    Integer has_transfer_issue_access = 0;
+    Integer has_inventory_issue_access = 0;
+    Integer has_delivery_order_access = 0;
+
+    public void build_the_access() {
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                if (data_n.has("roles")) {
+                    JSONObject jsonRoles = new JSONObject(data_n.getString("roles"));
+                    if (jsonRoles.has("purchase_order")) {
+                        has_purchase_order_access = has_purchase_order_access + 1;
+                    }
+                    if (jsonRoles.has("purchase_receipt")) {
+                        has_purchase_receipt_access = has_purchase_receipt_access + 1;
+                    }
+                    if (jsonRoles.has("transfer_issue")) {
+                        has_transfer_issue_access = has_transfer_issue_access + 1;
+                    }
+                    if (jsonRoles.has("inventory_issue")) {
+                        has_inventory_issue_access = has_inventory_issue_access + 1;
+                    }
+                    if (jsonRoles.has("delivery_order")) {
+                        has_delivery_order_access = has_delivery_order_access + 1;
+                    }
+                }
+            }
+            Log.e(TAG, "Has PO Access : "+ has_purchase_order_access.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
