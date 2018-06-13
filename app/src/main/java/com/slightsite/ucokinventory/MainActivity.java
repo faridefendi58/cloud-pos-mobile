@@ -73,9 +73,6 @@ public class MainActivity extends AppCompatActivity
         setDinamicContent(R.layout.app_bar_main);
         buildMenu();
 
-        //set the access list for dashboard menu roles
-        build_the_access();
-
         // customize dashboard according to the roles
         buildDashboard();
 
@@ -179,6 +176,20 @@ public class MainActivity extends AppCompatActivity
         TextView txt_full_name = (TextView) v.findViewById(R.id.txt_full_name);
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         txt_full_name.setText( sharedpreferences.getString(TAG_NAME, null) );
+
+        //set the access list for dashboard menu roles
+        build_the_access();
+
+        //block the unnecessary menu
+        if (has_purchase_receipt_access <= 0) {
+            navigationView.getMenu().findItem(R.id.nav_stock_in_container).setVisible(false);
+        }
+        if (has_transfer_issue_access <= 0) {
+            navigationView.getMenu().findItem(R.id.nav_transfer_out).setVisible(false);
+        }
+        if (has_inventory_issue_access <= 0) {
+            navigationView.getMenu().findItem(R.id.nav_inventory_out).setVisible(false);
+        }
     }
 
     @Override
@@ -274,9 +285,6 @@ public class MainActivity extends AppCompatActivity
             set_notification_counter();
         }
 
-        //hide the menu
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
         if (has_purchase_order_access <= 0) {
             CardView dashboard_menu3_container = (CardView) findViewById(R.id.menu3_container);
             dashboard_menu3_container.setVisibility(View.GONE);
@@ -284,20 +292,18 @@ public class MainActivity extends AppCompatActivity
         if (has_purchase_receipt_access <= 0) {
             CardView menu1_container = (CardView) findViewById(R.id.menu1_container);
             menu1_container.setVisibility(View.GONE);
-
-            navigationView.getMenu().findItem(R.id.nav_stock_in_container).setVisible(false);
         }
         if (has_transfer_issue_access <= 0) {
             CardView menu2_container = (CardView) findViewById(R.id.menu2_container);
             menu2_container.setVisibility(View.GONE);
-
-            navigationView.getMenu().findItem(R.id.nav_transfer_out).setVisible(false);
         }
         if (has_inventory_issue_access <= 0) {
             CardView menu5_container = (CardView) findViewById(R.id.menu5_container);
             menu5_container.setVisibility(View.GONE);
-
-            navigationView.getMenu().findItem(R.id.nav_inventory_out).setVisible(false);
+        }
+        if (has_delivery_order_access <= 0) {
+            CardView menu7_container = (CardView) findViewById(R.id.menu7_container);
+            menu7_container.setVisibility(View.GONE);
         }
     }
 
