@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/step1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/activity_vertical_margin">
+
+            <TableLayout
+                android:layout_marginTop="10dp"
+                android:id="@+id/table_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+                <TableRow
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:id="@+id/table_row1"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/wh_name"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:text="Warehouse"/>
+                    <TextView
+                        android:id="@+id/dk_stock"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:text="DK"/>
+                    <TextView
+                        android:id="@+id/dd_stock"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:text="DD"/>
+                    <TextView
+                        android:id="@+id/pc_stock"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:text="PC"/>
+                    <TextView
+                        android:id="@+id/dc_stock"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:text="DC"/>
+
+                </TableRow>
+                <View
+                    android:layout_height="3dip"
+                    android:layout_width="match_parent"
+                    android:background="@color/lightgrey"/>
+
+            </TableLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

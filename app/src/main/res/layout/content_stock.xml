@@ -1,111 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    app:orientation="horizontal"
-    tools:context="com.slightsite.ucokinventory.ReceiptActivity"
-    tools:showIn="@layout/app_bar_stock">
+    android:background="@color/backgroundcolor"
+    tools:context="com.slightsite.ucokinventory.StockActivity"
+    tools:showIn="@layout/app_bar_stock"
+    android:fitsSystemWindows="true"
+    >
 
-    <LinearLayout
-        android:id="@+id/step1"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <TextView
-            android:id="@+id/step1_TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="0dp"
-            android:text="STOK PER WAREHOUSE"
-            android:textSize="18dip"
-            android:textStyle="bold"
-            android:background="@drawable/textlines"
-            />
-
-        <TextView
-            android:id="@+id/txt_step1_label_wh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="15dp"
-            android:textSize="16dip"
-            android:text="Pilih Warehouse :"
-            android:textStyle="bold"
-            />
-
-        <Spinner
-            android:id="@+id/step1_wh_list"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_width="fill_parent"
-            android:textColor="#fff"
-            android:layout_weight="1.0"
-            >
-        </Spinner>
-
-        <Button
-            android:id="@+id/btn_next"
-            android:layout_width="126dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:background="@color/colorPrimary"
-            android:text="SUBMIT"
-            android:textColor="#fff"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/step2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin"
-        android:visibility="invisible">
-
-        <TextView
-            android:id="@+id/TextView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
-            android:text="STOK DI WAREHOUSE"
-            android:textSize="18dip"
-            android:textStyle="bold"
-            android:background="@drawable/textlines"
-            />
-
-        <ListView
-            android:id="@+id/list"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
-        </ListView>
-
-        <Button
-            android:id="@+id/btn_back"
-            android:layout_width="126dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:background="@color/colorPrimary"
-            android:text="Kembali"
-            android:textColor="#fff"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-</android.support.v7.widget.GridLayout>
+</LinearLayout>
