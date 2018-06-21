@@ -12,4 +12,5 @@
     <string name="txt_transfer_issue">Transfer Antar Warehouse</string>
     <string name="txt_delivery">Pengiriman Barang</string>
     <string name="txt_notice_title">Info Baru di Ucok Durian</string>
+    <string name="txt_purchase_report">Detail Pengadaan</string>
 </resources>

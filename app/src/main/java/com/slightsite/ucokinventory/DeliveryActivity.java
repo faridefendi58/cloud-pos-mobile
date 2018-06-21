@@ -106,34 +106,6 @@ public class DeliveryActivity extends MainActivity {
         buildTheDeliveryOrderList();
     }
 
-    public void buildMenu() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        View v = navigationView.getHeaderView(0);
-        TextView txt_full_name = (TextView) v.findViewById(R.id.txt_full_name);
-        sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
-        txt_full_name.setText( sharedpreferences.getString(TAG_NAME, null) );
-    }
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -757,6 +729,8 @@ public class DeliveryActivity extends MainActivity {
             params.put("notes", notes);
         if (shipment_name.length() > 0 && !shipment_name.equals("-"))
             params.put("shipment_name", shipment_name);
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
 
         Log.e(TAG, "Params : " + params.toString());
         _string_request(

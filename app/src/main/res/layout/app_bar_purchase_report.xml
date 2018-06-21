@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="vertical"
-    tools:context="com.slightsite.ucokinventory.PurchaseActivity">
+    tools:context="com.slightsite.ucokinventory.PurchaseReportActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -28,19 +28,19 @@
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Daftar PO" />
+                android:text="Detail PO" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Buat PO Baru" />
+                android:text="Riwayat" />
 
         </android.support.design.widget.TabLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_purchase" />
+    <include layout="@layout/content_purchase_report" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

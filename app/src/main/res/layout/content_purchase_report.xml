@@ -8,8 +8,8 @@
     android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/backgroundcolor"
-    tools:context="com.slightsite.ucokinventory.PurchaseActivity"
-    tools:showIn="@layout/app_bar_purchase"
+    tools:context="com.slightsite.ucokinventory.PurchaseReportActivity"
+    tools:showIn="@layout/app_bar_purchase_report"
     >
 
     <android.support.v4.view.ViewPager

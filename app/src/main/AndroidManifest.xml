@@ -62,6 +62,11 @@
             android:label="@string/txt_delivery"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".PurchaseReportActivity"
+            android:label="@string/txt_purchase_report"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

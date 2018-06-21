@@ -10,7 +10,7 @@
             android:title="Home" />
     </group>
 
-    <item android:title="Stok Masuk">
+    <item android:title="Stok Masuk" android:id="@+id/nav_stock_in_container">
         <menu>
             <item
                 android:id="@+id/nav_stock_in"
