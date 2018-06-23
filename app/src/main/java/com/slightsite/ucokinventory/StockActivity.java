@@ -203,52 +203,6 @@ public class StockActivity extends MainActivity {
         return items;
     }
 
-    /*private ArrayList set_list_stock(final Context ini) {
-        Spinner step1_wh_list = (Spinner)findViewById(R.id.step1_wh_list);
-        String wh_name = step1_wh_list.getSelectedItem().toString();
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("warehouse_name", wh_name);
-        //params.put("warehouse_id", "1");
-        Log.e(TAG, "Response: " + params.toString());
-
-        final ArrayList<String> items = new ArrayList<String>();
-
-        String stock_url = Server.URL + "stock/list?api-key=" + Server.API_KEY;
-        _string_request(Request.Method.GET, stock_url, params, false,
-                new StockActivity.VolleyCallback() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Log.e(TAG, "Response: " + result.toString());
-                        try {
-                            JSONObject jObj = new JSONObject(result);
-                            success = jObj.getInt(TAG_SUCCESS);
-                            // Check for error node in json
-                            if (success == 1) {
-                                JSONArray data = jObj.getJSONArray("data");
-                                Log.e(TAG, "Response: " + data.toString());
-                                for(int n = 0; n < data.length(); n++)
-                                {
-                                    JSONObject data_n = data.getJSONObject(n);
-                                    String item = data_n.getString("product_name")+" : "
-                                            + data_n.getString("quantity") + " " + data_n.getString("unit");
-                                    items.add( item );
-                                }
-                                ArrayAdapter adapter = new ArrayAdapter<String>(ini,
-                                        R.layout.activity_list_view, items);
-
-                                ListView listView = (ListView) findViewById(R.id.list);
-                                listView.setAdapter(adapter);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-        return items;
-    }*/
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -277,7 +231,7 @@ public class StockActivity extends MainActivity {
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 2;
+            return 1;
         }
     }
 
