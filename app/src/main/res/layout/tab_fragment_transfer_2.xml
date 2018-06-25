@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/step1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <FrameLayout
+                android:id="@+id/wh_from_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/txt_label_wh_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Warehouse Asal :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <Spinner
+                    android:id="@+id/wh_list_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:layout_weight="1.0"
+                    android:layout_gravity="right"
+                    >
+                </Spinner>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/wh_group_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/txt_wh_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:textStyle="bold"
+                    android:text="Warehouse Tujuan :"
+                    android:layout_gravity="left"
+                    />
+
+                <Spinner
+                    android:id="@+id/wh_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:layout_weight="1.0"
+                    android:layout_gravity="right"
+                    >
+                </Spinner>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/date_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/txt_effective_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:textStyle="bold"
+                    android:text="Tanggal Pengeluaran :"
+                    android:layout_gravity="left"
+                    />
+
+                <FrameLayout
+                    android:id="@+id/date_value_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right">
+                    <TextView
+                        android:id="@+id/due_date"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text=""
+                        android:textSize="15dip"
+                        android:onClick="setDate"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <Button
+                        android:id="@+id/btn_change_date"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:onClick="setDate"
+                        android:text=""
+                        android:paddingVertical="0dp"
+                        android:layout_marginTop="-10dp"
+                        android:layout_gravity="right"
+                        android:drawableLeft="@drawable/ic_date_range_black_24dp"
+                        android:background="@android:color/transparent"/>
+                </FrameLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/btn_add_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/btn_add"
+                    android:text="Tambah Item Barang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:background="@color/green"
+                    android:textColor="#fff"
+                    android:textAllCaps="false"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:drawableLeft="@drawable/ic_add_24dp"
+                    />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/list_item_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible">
+
+                <ListView
+                    android:id="@+id/list_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isScrollContainer="false"
+                    />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txt_item_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16dip"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/txt_item_select_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16dip"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/txt_price_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16dip"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/txt_price_select_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16dip"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="126dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@color/colorPrimary"
+                android:text="SIMPAN"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/step2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txt_success_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16dip"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/btn_copy"
+                android:layout_width="126dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@color/colorPrimary"
+                android:text="Salin Pesan"
+                android:textColor="#fff"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

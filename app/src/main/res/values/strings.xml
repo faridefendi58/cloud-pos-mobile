@@ -14,4 +14,5 @@
     <string name="txt_notice_title">Info Baru di Ucok Durian</string>
     <string name="txt_purchase_report">Detail Pengadaan</string>
     <string name="txt_stock">Laporan Stok</string>
+    <string name="txt_transfer_report">Laporan Transfer Stok</string>
 </resources>

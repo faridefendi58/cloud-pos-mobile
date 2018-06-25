@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <FrameLayout
+                android:id="@+id/po_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_po_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Nomor Issue :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_po_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:textStyle="bold"
+                    android:layout_gravity="right"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_origin_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Warehouse Asal :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_origin_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:layout_gravity="right"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_dest_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Area Tujuan :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_wh_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:layout_gravity="right"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_list_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Detail Barang :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <ListView
+                    android:id="@+id/txt_list_items"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="30dp"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_created_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Tanggal Penerbitan :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_created_at"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:layout_gravity="right"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_created_by_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Diterbitkan Oleh :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_created_by"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:layout_gravity="right"
+                    />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginVertical="5dp">
+
+                <TextView
+                    android:id="@+id/txt_status_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:text="Status :"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dip"
+                    android:layout_gravity="right"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>
