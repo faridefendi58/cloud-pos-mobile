@@ -486,6 +486,8 @@ public class NotificationActivity extends MainActivity {
                     intent = new Intent(getApplicationContext(), PurchaseActivity.class);
                 } else if (detail_archive_activity.getText().toString().equals("DeliveryActivity")) {
                     intent = new Intent(getApplicationContext(), DeliveryActivity.class);
+                } else if (detail_archive_activity.getText().toString().equals("TransferActivity")) {
+                    intent = new Intent(getApplicationContext(), TransferActivity.class);
                 } else {
                     intent = new Intent(getApplicationContext(), MainActivity.class);
                 }

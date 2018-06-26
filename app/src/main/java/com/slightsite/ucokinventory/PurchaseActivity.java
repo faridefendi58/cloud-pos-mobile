@@ -419,6 +419,7 @@ public class PurchaseActivity extends MainActivity {
 
                     ListView listView = (ListView) findViewById(R.id.list_item);
                     listView.setAdapter(adapter2);
+                    DeliveryActivity.updateListViewHeight(listView, 50);
 
                     // and then set the list event for update and deletion
                     set_list_item_trigger(listView, ini);
