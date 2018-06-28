@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"
+                    android:stretchColumns="*"
+                    android:background="#ffffff"
+                    android:layout_marginRight="10dp">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text=""
+                            android:hint="Cari Produk"
+                            android:layout_span="1"
+                            android:paddingVertical="10dip"
+                            android:paddingLeft="0dp"
+                            android:drawableLeft="@drawable/ic_search_black_24dp"/>
+
+                    </TableRow>
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <ListView
+                            android:id="@+id/list_available_product"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </ListView>
+
+                    </TableRow>
+                </TableLayout>
+
+                <!--<RelativeLayout
+                    android:id="@+id/list_items"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                </RelativeLayout>-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:minHeight="200dp"
+                android:layout_weight="2"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"
+                    android:stretchColumns="*"
+                    android:background="#ffffff">
+
+                    <!-- Row 1 with single column -->
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="Lorem ipsum sit amet"
+                            android:layout_span="3"
+                            android:padding="10dip"/>
+
+                    </TableRow>
+
+                    <!-- Row 2 with 3 columns -->
+
+                    <TableRow
+                        android:id="@+id/tableRow1"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content">
+
+                        <TextView
+                            android:id="@+id/TextView041"
+                            android:text="No"
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:textColor="#000000"
+                            android:padding="10dip"
+                            android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView042"
+                            android:text="Nama Produk"
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:textColor="#000000"
+                            android:padding="10dip" android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView043"
+                            android:text="Jumlah Barang"
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:textColor="#000000"
+                            android:padding="10dip" android:gravity="center"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="Tidak ditemukan data"
+                            android:textStyle="italic"
+                            android:layout_span="3"
+                            android:padding="10dip"
+                            android:gravity="center"/>
+
+                    </TableRow>
+
+                    <!-- Row 3 with 2 columns
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/TextView044" android:text="Row 3 column 1"
+                            android:layout_weight="1"  android:background="#b0b0b0"
+                        android:textColor="#000000"
+                        android:padding="18dip" android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView045" android:text="Row 3 column 2"
+                            android:layout_weight="1" android:background="#a09f9f"
+                            android:textColor="#000000"
+                            android:padding="18dip" android:gravity="center"/>
+                    </TableRow> -->
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text=""
+                            android:hint="Masukkan catatan jika ada"
+                            android:layout_span="2"
+                            android:paddingVertical="10dip"
+                            android:paddingLeft="0dp"/>
+
+                        <Button
+                            android:id="@+id/btn_submit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_span="1"
+                            android:background="@color/colorPrimary"
+                            android:text="Simpan"
+                            android:textColor="#fff"
+                            android:textStyle="bold" />
+
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

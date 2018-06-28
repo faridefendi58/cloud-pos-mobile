@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ucok Durian Inventory</string>
+    <string name="app_name">UcokDurian Inventory</string>
     <string name="app_website">www.ucokdurian.id</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -15,4 +15,5 @@
     <string name="txt_purchase_report">Detail Pengadaan</string>
     <string name="txt_stock">Laporan Stok</string>
     <string name="txt_transfer_report">Laporan Transfer Stok</string>
+    <string name="txt_inventory">Transaksi Non Penjualan</string>
 </resources>
