@@ -1,5 +1,6 @@
 package com.slightsite.ucokinventory;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,17 +13,26 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +78,7 @@ public class InventoryActivity extends MainActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private EditText inputSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +107,38 @@ public class InventoryActivity extends MainActivity {
                 // define the product list
                 //ArrayList list_products = get_list_product();
                 buildTheProductList();
+                inputSearch = (EditText) findViewById(R.id.inputSearch);
             }
         }, 1000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /**
+                 * Enabling Search Filter
+                 * */
+                inputSearch.addTextChangedListener(new TextWatcher() {
+
+                    @Override
+                    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                        // When user changed the Text
+                        arrayAdapter.getFilter().filter(cs);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                  int arg3) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+            }
+        }, 2000);
     }
 
     /**
@@ -148,10 +189,6 @@ public class InventoryActivity extends MainActivity {
         }
     }
 
-    ArrayList<String> list_product_items = new ArrayList<String>();
-    Map<String, String> product_names = new HashMap<String, String>();
-    Map<String, String> product_units = new HashMap<String, String>();
-
     private ArrayList get_list_product() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
@@ -178,13 +215,6 @@ public class InventoryActivity extends MainActivity {
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
-
-                                    //RelativeLayout list_items = (RelativeLayout) findViewById(R.id.list_items);
-                                    //buildTheCardView(list_items, data_n.getString("title"), n);
-
-                                    /*list_product_items.add(data_n.getString("title"));
-                                    product_names.put(data_n.getString("title"), data_n.getString("id"));
-                                    product_units.put(data_n.getString("title"), data_n.getString("unit"));*/
                                 }
                             }
 
@@ -261,19 +291,10 @@ public class InventoryActivity extends MainActivity {
 
     private void buildTheCardView(final RelativeLayout mRelativeLayout, String title, Integer i)
     {
-        Log.e(TAG, "Loop : "+ i);
         Context mContext = InventoryActivity.this;
         // Initialize a new CardView
         CardView card = new CardView(mContext);
 
-        /*LinearLayout.LayoutParams params =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);*/
-
-        // Set the CardView layoutParams
-        //LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(160, 160);
-        //params.width = 160;
-        //params.height = 160; //ViewPager.LayoutParams.WRAP_CONTENT;
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -324,12 +345,16 @@ public class InventoryActivity extends MainActivity {
         mRelativeLayout.addView(card);
     }
 
+    // Listview Adapter
+    ArrayAdapter<String> arrayAdapter;
+    final ArrayList<String> product_items = new ArrayList<String>();
+    ArrayList<String> cart_stack = new ArrayList<String>();
+    ArrayList<String> cart_stack_qty = new ArrayList<String>();
+
     private void buildTheProductList()
     {
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
-
-        final ArrayList<String> items = new ArrayList<String>();
 
         _string_request(
                 Request.Method.GET,
@@ -349,16 +374,18 @@ public class InventoryActivity extends MainActivity {
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
-                                    items.add(data_n.getString("title"));
+                                    product_items.add(data_n.getString("title"));
                                 }
 
                                 ListView listView = (ListView)findViewById(R.id.list_available_product);
-                                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                arrayAdapter = new ArrayAdapter<String>(
                                         InventoryActivity.this,
                                         android.R.layout.simple_list_item_activated_1,
-                                        items);
+                                        product_items);
 
                                 listView.setAdapter(arrayAdapter);
+
+                                itemListener(listView);
                             }
 
                         } catch (JSONException e) {
@@ -366,5 +393,139 @@ public class InventoryActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    private void itemListener(final ListView list) {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Log.e(TAG, "Choosen : "+ product_items.get(i));
+                AlertDialog.Builder builder = new AlertDialog.Builder(InventoryActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_inventory, null);
+
+                TextView txt_product_name = (TextView) mView.findViewById(R.id.txt_product_name);
+                txt_product_name.setText(product_items.get(i));
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+
+                // submit, cancel, and delete button trigger
+                trigger_dialog_button(mView, dialog);
+
+                dialog.show();
+            }
+        });
+    }
+
+    private void trigger_dialog_button(final View mView, final AlertDialog dialog) {
+        // cancel method
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        final TextView txt_product_name = (TextView) mView.findViewById(R.id.txt_product_name);
+        final EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int has_error = 0;
+                if (txt_product_name.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                }
+                if (txt_qty.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                } else {
+                    boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                    if (digitsOnly) {
+                        int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                        if (tot_qty_val <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        has_error = has_error + 1;
+                        txt_qty.setText("");
+                        Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                if (cart_stack.contains(txt_product_name.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), txt_product_name.getText().toString()+ " pernah ditambahkan sebelumnya.", Toast.LENGTH_LONG).show();
+                    has_error = has_error + 1;
+                    dialog.hide();
+                }
+
+                if (has_error == 0) {
+                    Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + txt_product_name.getText().toString(), Toast.LENGTH_LONG).show();
+                    dialog.hide();
+
+                    cart_stack.add(txt_product_name.getText().toString());
+                    cart_stack_qty.add(txt_qty.getText().toString());
+
+                    refreshTheTable();
+
+                    Button btn_submit = (Button) findViewById(R.id.btn_submit);
+                    btn_submit.setVisibility(View.VISIBLE);
+
+                    TableLayout table_layout2 = (TableLayout) findViewById(R.id.table_layout2);
+                    table_layout2.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void refreshTheTable()
+    {
+        Integer idx = cart_stack.size();
+
+        TableLayout table_layout = (TableLayout) findViewById(R.id.table_layout);
+        TableRow row = new TableRow(InventoryActivity.this);
+
+        TextView tv1 = new TextView(InventoryActivity.this);
+        tv1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
+
+        tv1.setGravity(Gravity.CENTER_HORIZONTAL);
+        tv1.setPadding(5, 15, 0, 15);
+        tv1.setText("" + idx);
+        row.addView(tv1);
+
+        TextView wh = new TextView(InventoryActivity.this);
+        wh.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT));
+
+        wh.setGravity(Gravity.LEFT);
+        wh.setPadding(5, 15, 0, 15);
+
+        wh.setText(cart_stack.get(idx-1));
+
+        //table_layout.addView(row);
+        row.addView(wh);
+
+        TextView tv2 = new TextView(InventoryActivity.this);
+        tv2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
+
+        tv2.setGravity(Gravity.CENTER_HORIZONTAL);
+        tv2.setPadding(5, 15, 0, 15);
+        tv2.setText(cart_stack_qty.get(idx-1));
+        row.addView(tv2);
+
+        if ((idx % 2) == 0) {
+            row.setBackgroundColor(Color.parseColor("#ebebeb"));
+        }
+        table_layout.addView(row);
+
+        if (idx > 0) {
+            TableRow no_data = (TableRow) findViewById(R.id.no_data);
+            no_data.setVisibility(View.GONE);
+        }
     }
 }
