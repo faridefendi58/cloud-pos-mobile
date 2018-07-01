@@ -38,7 +38,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16dp"
                             android:text=""
-                            android:hint="Cari Produk"
+                            android:hint="@string/input_find_product"
                             android:layout_span="1"
                             android:paddingVertical="10dip"
                             android:paddingLeft="0dp"
@@ -58,12 +58,6 @@
 
                     </TableRow>
                 </TableLayout>
-
-                <!--<RelativeLayout
-                    android:id="@+id/list_items"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-                </RelativeLayout>-->
 
             </LinearLayout>
 
@@ -90,17 +84,24 @@
                         android:layout_width="fill_parent"
                         android:gravity="center_horizontal">
 
-                        <TextView
+                        <FrameLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16dp"
-                            android:text="Lorem ipsum sit amet"
-                            android:layout_span="3"
-                            android:padding="10dip"/>
+                            android:layout_span="4">
+
+                            <Spinner
+                                android:id="@+id/wh_list"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.0"
+                                android:layout_gravity="right"
+                                android:layout_marginVertical="5dp"
+                                >
+                            </Spinner>
+
+                        </FrameLayout>
 
                     </TableRow>
-
-                    <!-- Row 2 with 3 columns -->
 
                     <TableRow
                         android:id="@+id/tableRow1"
@@ -109,7 +110,7 @@
 
                         <TextView
                             android:id="@+id/TextView041"
-                            android:text="No"
+                            android:text="@string/txt_no"
                             android:layout_weight="1"
                             android:background="#dcdcdc"
                             android:textColor="#000000"
@@ -118,7 +119,7 @@
 
                         <TextView
                             android:id="@+id/TextView042"
-                            android:text="Nama Produk"
+                            android:text="@string/txt_product_name"
                             android:layout_weight="1"
                             android:background="#dcdcdc"
                             android:textColor="#000000"
@@ -126,10 +127,17 @@
 
                         <TextView
                             android:id="@+id/TextView043"
-                            android:text="Jumlah Barang"
+                            android:text="@string/txt_product_quantity"
                             android:layout_weight="1"
                             android:background="#dcdcdc"
                             android:textColor="#000000"
+                            android:padding="10dip" android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView044"
+                            android:text=""
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
                             android:padding="10dip" android:gravity="center"/>
 
                     </TableRow>
@@ -146,30 +154,11 @@
                             android:textSize="16dp"
                             android:text="Tidak ditemukan data"
                             android:textStyle="italic"
-                            android:layout_span="3"
+                            android:layout_span="4"
                             android:padding="10dip"
                             android:gravity="center"/>
 
                     </TableRow>
-
-                    <!-- Row 3 with 2 columns
-                    <TableRow
-                        android:layout_height="wrap_content"
-                        android:layout_width="fill_parent"
-                        android:gravity="center_horizontal">
-
-                        <TextView
-                            android:id="@+id/TextView044" android:text="Row 3 column 1"
-                            android:layout_weight="1"  android:background="#b0b0b0"
-                        android:textColor="#000000"
-                        android:padding="18dip" android:gravity="center"/>
-
-                        <TextView
-                            android:id="@+id/TextView045" android:text="Row 3 column 2"
-                            android:layout_weight="1" android:background="#a09f9f"
-                            android:textColor="#000000"
-                            android:padding="18dip" android:gravity="center"/>
-                    </TableRow> -->
 
                 </TableLayout>
 

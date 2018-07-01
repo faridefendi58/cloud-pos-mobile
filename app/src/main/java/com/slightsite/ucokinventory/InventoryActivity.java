@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -108,6 +111,7 @@ public class InventoryActivity extends MainActivity {
                 //ArrayList list_products = get_list_product();
                 buildTheProductList();
                 inputSearch = (EditText) findViewById(R.id.inputSearch);
+                buildTheWHList();
             }
         }, 1000);
 
@@ -403,8 +407,10 @@ public class InventoryActivity extends MainActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(InventoryActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_inventory, null);
 
+                Object listItem = list.getItemAtPosition(i);
+
                 TextView txt_product_name = (TextView) mView.findViewById(R.id.txt_product_name);
-                txt_product_name.setText(product_items.get(i));
+                txt_product_name.setText(listItem.toString());
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
@@ -464,7 +470,7 @@ public class InventoryActivity extends MainActivity {
                 }
 
                 if (has_error == 0) {
-                    Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + txt_product_name.getText().toString(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + txt_product_name.getText().toString(), Toast.LENGTH_LONG).show();
                     dialog.hide();
 
                     cart_stack.add(txt_product_name.getText().toString());
@@ -510,22 +516,83 @@ public class InventoryActivity extends MainActivity {
         //table_layout.addView(row);
         row.addView(wh);
 
-        TextView tv2 = new TextView(InventoryActivity.this);
+        EditText tv2 = new EditText(InventoryActivity.this);
         tv2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
 
         tv2.setGravity(Gravity.CENTER_HORIZONTAL);
         tv2.setPadding(5, 15, 0, 15);
         tv2.setText(cart_stack_qty.get(idx-1));
+        tv2.setInputType(InputType.TYPE_CLASS_NUMBER);
+        tv2.setImeOptions(EditorInfo.IME_ACTION_DONE);
         row.addView(tv2);
+
+        Button bt1 = new Button(InventoryActivity.this);
+        bt1.setLayoutParams(new TableRow.LayoutParams(10, TableRow.LayoutParams.WRAP_CONTENT));
+        bt1.setGravity(Gravity.CENTER);
+        bt1.setPadding(20, 0, 0, 0);
+        bt1.setBackgroundColor(Color.TRANSPARENT);
+        bt1.setId(idx-1);
+
+        Context ctx = InventoryActivity.this;
+        Drawable image = ctx.getResources().getDrawable( R.drawable.ic_delete_forever_black_24dp );
+        int h = image.getIntrinsicHeight();
+        int w = image.getIntrinsicWidth();
+        image.setBounds( 0, 0, w, h );
+        bt1.setCompoundDrawables( image, null, null, null );
+        row.addView(bt1);
 
         if ((idx % 2) == 0) {
             row.setBackgroundColor(Color.parseColor("#ebebeb"));
         }
         table_layout.addView(row);
 
+        row.setId(idx-1);
+
         if (idx > 0) {
             TableRow no_data = (TableRow) findViewById(R.id.no_data);
             no_data.setVisibility(View.GONE);
+        }
+
+        bt1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TableRow tbl_row = (TableRow) findViewById(v.getId());
+                tbl_row.setVisibility(View.GONE);
+                //cart_stack.remove(String.valueOf(v.getId()));
+                //cart_stack_qty.remove(String.valueOf(v.getId()));
+
+                cart_stack.set(v.getId(), null);
+                cart_stack_qty.set(v.getId(), null);
+                //Toast.makeText(getApplicationContext(), "Di pencet "+ cart_stack.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void buildTheWHList() {
+        ArrayList<String> assigned_whs = new ArrayList<String>();
+
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                assigned_whs.add(data_n.getString("warehouse_name"));
+
+            }
+
+            Spinner wh_list = (Spinner) findViewById(R.id.wh_list);
+            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                    InventoryActivity.this,
+                    R.layout.spinner_item, assigned_whs
+            );
+            wh_list.setAdapter(whAdapter);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

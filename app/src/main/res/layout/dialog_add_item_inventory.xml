@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -37,50 +37,54 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="0dp"
         android:hint="Masukkan jumlah barang"
-        android:text="1"/>
+        android:text="1"
+        android:inputType="number"/>
 
-    <FrameLayout
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/txt_qty">
+
         <Button
             android:id="@+id/btn_dialog_submit"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="Simpan"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/btn_tambahkan"
             android:background="@color/green"
             android:textColor="#fff"
-            android:layout_gravity="left"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/btn_dialog_cancel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Batal"
+            android:text="@string/btn_cancel"
             android:background="@color/yellow"
             android:textColor="#fff"
-            android:layout_gravity="left"
-            android:layout_marginLeft="100dp"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/btn_dialog_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Hapus"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/btn_remove"
             android:background="@color/colorAccent"
             android:textColor="#fff"
-            android:layout_gravity="left"
-            android:layout_marginLeft="100dp"
-            android:visibility="gone"/>
-    </FrameLayout>
+            android:visibility="gone"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/stack_id"

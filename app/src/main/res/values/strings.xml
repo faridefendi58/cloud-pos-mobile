@@ -16,4 +16,13 @@
     <string name="txt_stock">Laporan Stok</string>
     <string name="txt_transfer_report">Laporan Transfer Stok</string>
     <string name="txt_inventory">Transaksi Non Penjualan</string>
+    <string name="txt_no">No</string>
+    <string name="txt_product_name">Nama Produk</string>
+    <string name="txt_product_quantity">Jumlah Barang</string>
+
+    <string name="btn_tambahkan">Tambahkan</string>
+    <string name="btn_cancel">Batal</string>
+    <string name="btn_remove">Hapus</string>
+
+    <string name="input_find_product">Cari Produk</string>
 </resources>
