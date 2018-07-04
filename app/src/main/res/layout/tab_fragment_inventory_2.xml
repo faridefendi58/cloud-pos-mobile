@@ -7,6 +7,73 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent">
 
+        <ListView
+            android:id="@+id/list_available_issue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="gone">
+        </ListView>
+
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/table_arsip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            android:background="#ffffff"
+            android:layout_marginRight="10dp">
+
+            <TableRow
+                android:id="@+id/arsip_row1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+
+                <TextView
+                    android:id="@+id/arsip_no"
+                    android:text="@string/txt_no"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/arsip_origin"
+                    android:text="@string/txt_origin"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip" android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/arsip_item"
+                    android:text="@string/txt_items"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip" android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/arsip_notes"
+                    android:text="@string/txt_notes"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip" android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/arsip_date"
+                    android:text="@string/txt_date"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip" android:gravity="center"/>
+
+            </TableRow>
+        </TableLayout>
+
     </RelativeLayout>
 
 </ScrollView>

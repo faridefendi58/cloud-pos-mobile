@@ -19,6 +19,10 @@
     <string name="txt_no">No</string>
     <string name="txt_product_name">Nama Produk</string>
     <string name="txt_product_quantity">Jumlah Barang</string>
+    <string name="txt_origin">Origin</string>
+    <string name="txt_date">Tanggal</string>
+    <string name="txt_notes">Catatan</string>
+    <string name="txt_items">Barang</string>
 
     <string name="btn_tambahkan">Tambahkan</string>
     <string name="btn_cancel">Batal</string>

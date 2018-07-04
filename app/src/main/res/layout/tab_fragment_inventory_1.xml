@@ -179,11 +179,12 @@
                         android:gravity="center_horizontal">
 
                         <EditText
+                            android:id="@+id/notes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="16dp"
                             android:text=""
-                            android:hint="Masukkan catatan jika ada"
+                            android:hint="Alasan dan tujuan pengeluaran barang"
                             android:layout_span="2"
                             android:paddingVertical="10dip"
                             android:paddingLeft="0dp"/>
@@ -197,6 +198,7 @@
                             android:text="Simpan"
                             android:textColor="#fff"
                             android:textStyle="bold"
+                            android:onClick="createNewIssue"
                             android:visibility="visible"/>
 
                     </TableRow>

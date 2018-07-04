@@ -112,6 +112,7 @@ public class InventoryActivity extends MainActivity {
                 buildTheProductList();
                 inputSearch = (EditText) findViewById(R.id.inputSearch);
                 buildTheWHList();
+                buildTheList(null);
             }
         }, 1000);
 
@@ -352,8 +353,12 @@ public class InventoryActivity extends MainActivity {
     // Listview Adapter
     ArrayAdapter<String> arrayAdapter;
     final ArrayList<String> product_items = new ArrayList<String>();
+    Map<String, String> product_names = new HashMap<String, String>();
+
     ArrayList<String> cart_stack = new ArrayList<String>();
     ArrayList<String> cart_stack_qty = new ArrayList<String>();
+
+    String cart_stack_str = "";
 
     private void buildTheProductList()
     {
@@ -379,6 +384,7 @@ public class InventoryActivity extends MainActivity {
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
                                     product_items.add(data_n.getString("title"));
+                                    product_names.put(data_n.getString("title"), data_n.getString("id"));
                                 }
 
                                 ListView listView = (ListView)findViewById(R.id.list_available_product);
@@ -476,6 +482,13 @@ public class InventoryActivity extends MainActivity {
                     cart_stack.add(txt_product_name.getText().toString());
                     cart_stack_qty.add(txt_qty.getText().toString());
 
+                    String stack_str = product_names.get(txt_product_name.getText().toString()) + "," + txt_qty.getText().toString();
+                    if (cart_stack.size() > 1) {
+                        cart_stack_str += "-"+ stack_str;
+                    } else {
+                        cart_stack_str += stack_str;
+                    }
+
                     refreshTheTable();
 
                     Button btn_submit = (Button) findViewById(R.id.btn_submit);
@@ -558,11 +571,18 @@ public class InventoryActivity extends MainActivity {
             public void onClick(View v) {
                 TableRow tbl_row = (TableRow) findViewById(v.getId());
                 tbl_row.setVisibility(View.GONE);
-                //cart_stack.remove(String.valueOf(v.getId()));
-                //cart_stack_qty.remove(String.valueOf(v.getId()));
 
                 cart_stack.set(v.getId(), null);
                 cart_stack_qty.set(v.getId(), null);
+                cart_stack_str = "";
+                for(int i=0; i<cart_stack.size(); i++) {
+                    String stack_str = product_names.get(cart_stack.get(i)) +","+ cart_stack_qty.get(i);
+                    if (i == 0) {
+                        cart_stack_str += stack_str;
+                    } else {
+                        cart_stack_str += "-"+ stack_str;
+                    }
+                }
                 //Toast.makeText(getApplicationContext(), "Di pencet "+ cart_stack.toString(), Toast.LENGTH_LONG).show();
             }
         });
@@ -594,5 +614,196 @@ public class InventoryActivity extends MainActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void refresh() {
+        Intent intent = getIntent();
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+    }
+
+    public void createNewIssue(View view) {
+        final Spinner wh_list = (Spinner) findViewById(R.id.wh_list);
+        TextView txt_item_select = (TextView) findViewById(R.id.txt_item_select);
+        EditText notes = (EditText) findViewById(R.id.notes);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("items", cart_stack_str);
+        params.put("warehouse_name", wh_list.getSelectedItem().toString());
+        params.put("admin_id", sharedpreferences.getString("id", null));
+        if (notes.getText().toString().length() > 0) {
+            params.put("notes", notes.getText().toString());
+        }
+        Log.e(TAG, "Params : " + params.toString());
+
+        _string_request(
+                Request.Method.POST,
+                Server.URL + "inventory/create?api-key=" + Server.API_KEY,
+                params,
+                true,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of purchase api : " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            if (success == 1) {
+                                String issue_number = jObj.getString("issue_number");
+                                String success_msg = "Transaksi berhasil disimpan";
+
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                            refresh();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    final ArrayList<String> list_ids = new ArrayList<String>();
+    final ArrayList<String> list_issues = new ArrayList<String>();
+    final Map<String, String> issue_origins = new HashMap<String, String>();
+
+    private void buildTheList(final String i_number)
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+        params.put("all_status", "1");
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "inventory/list?api-key=" + Server.API_KEY,
+                params,
+                true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of list issue : " + result.toString());
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = jObj.getJSONObject("origin");
+                                JSONArray details = jObj.getJSONArray("detail");
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject detail_n = new JSONObject(details.getString(n));
+                                    String msg = detail_n.getString("created_at")+" : Dikeluarkan oleh " + origins.getString(data.getString(n)) + ".";
+                                    String notes = "-";
+                                    if (detail_n.getString("notes").length() > 0) {
+                                        msg += " Alasan dan tujuan "+ detail_n.getString("notes");
+                                        notes = detail_n.getString("notes");
+                                    }
+                                    if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
+                                        if (data.getString(n).equals(i_number)) {
+                                            list_ids.add(detail_n.getString("status"));
+                                            list_issues.add(data.getString(n));
+                                            issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                            descs.add(msg);
+                                        }
+                                    } else {
+                                        list_ids.add(detail_n.getString("status"));
+                                        list_issues.add(data.getString(n));
+                                        issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
+                                        descs.add(msg);
+                                    }
+
+                                    TableLayout table_layout = (TableLayout) findViewById(R.id.table_arsip);
+                                    TableRow row = new TableRow(InventoryActivity.this);
+
+                                    TextView tv1 = new TextView(InventoryActivity.this);
+                                    tv1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
+
+                                    tv1.setGravity(Gravity.CENTER_HORIZONTAL);
+                                    tv1.setPadding(5, 15, 0, 15);
+                                    tv1.setText("" + (n+1));
+                                    row.addView(tv1);
+
+                                    TextView wh = new TextView(InventoryActivity.this);
+                                    wh.setLayoutParams(new TableRow.LayoutParams(
+                                            TableRow.LayoutParams.WRAP_CONTENT,
+                                            TableRow.LayoutParams.WRAP_CONTENT));
+
+                                    wh.setGravity(Gravity.LEFT);
+                                    wh.setPadding(5, 15, 0, 15);
+
+                                    wh.setText(origins.getString(data.getString(n)));
+
+                                    row.addView(wh);
+
+                                    TextView it = new TextView(InventoryActivity.this);
+                                    it.setLayoutParams(new TableRow.LayoutParams(
+                                            TableRow.LayoutParams.WRAP_CONTENT,
+                                            TableRow.LayoutParams.WRAP_CONTENT));
+
+                                    it.setGravity(Gravity.LEFT);
+                                    it.setPadding(5, 15, 0, 15);
+
+                                    it.setText("-");
+
+                                    row.addView(it);
+
+                                    TextView tv2 = new TextView(InventoryActivity.this);
+                                    tv2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
+
+                                    tv2.setGravity(Gravity.CENTER_HORIZONTAL);
+                                    tv2.setPadding(5, 15, 0, 15);
+                                    tv2.setText(notes);
+                                    tv2.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                    tv2.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                                    row.addView(tv2);
+
+                                    TextView tv3 = new TextView(InventoryActivity.this);
+                                    tv3.setLayoutParams(new TableRow.LayoutParams(
+                                            TableRow.LayoutParams.WRAP_CONTENT,
+                                            TableRow.LayoutParams.WRAP_CONTENT));
+
+                                    tv3.setGravity(Gravity.LEFT);
+                                    tv3.setPadding(5, 15, 0, 15);
+
+                                    tv3.setText(detail_n.getString("created_at"));
+
+                                    row.addView(tv3);
+
+                                    if ((n % 2) > 0) {
+                                        row.setBackgroundColor(Color.parseColor("#ebebeb"));
+                                    }
+                                    table_layout.addView(row);
+
+                                    row.setId(n);
+                                }
+
+                                /*CustomListAdapter adapter2 = new CustomListAdapter(InventoryActivity.this, list_ids, list_issues, descs, R.layout.list_view_purchase);
+
+                                ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
+                                list_available_issue.setAdapter(adapter2);
+                                DeliveryActivity.updateListViewHeight(list_available_issue, 100);
+                                // begin the trigger event
+                                //itemListener(list_available_issue);*/
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
