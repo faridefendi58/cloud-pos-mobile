@@ -55,7 +55,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="0dp"
         android:hint="Masukkan jumlah barang"
-        android:text=""/>
+        android:text=""
+        android:inputType="number"/>
 
     <TextView
         android:id="@+id/txt_label_price"
@@ -75,7 +76,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="0dp"
         android:hint="Masukkan harga per item"
-        android:text=""/>
+        android:text=""
+        android:inputType="number" />
 
     <FrameLayout
         android:layout_width="fill_parent"

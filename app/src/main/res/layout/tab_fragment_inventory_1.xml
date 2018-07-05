@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"
+                    android:stretchColumns="*"
+                    android:background="#ffffff"
+                    android:layout_marginRight="10dp">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <EditText
+                            android:id="@+id/inputSearch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text=""
+                            android:hint="@string/input_find_product"
+                            android:layout_span="1"
+                            android:paddingVertical="10dip"
+                            android:paddingLeft="0dp"
+                            android:drawableLeft="@drawable/ic_search_black_24dp"/>
+
+                    </TableRow>
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <ListView
+                            android:id="@+id/list_available_product"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </ListView>
+
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:layout_weight="2"
+                android:orientation="vertical" >
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/table_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"
+                    android:stretchColumns="*"
+                    android:background="#ffffff"
+                    android:layout_weight="1">
+
+                    <!-- Row 1 with single column -->
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_span="4">
+
+                            <Spinner
+                                android:id="@+id/wh_list"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.0"
+                                android:layout_gravity="right"
+                                android:layout_marginVertical="5dp"
+                                >
+                            </Spinner>
+
+                        </FrameLayout>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/tableRow1"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content">
+
+                        <TextView
+                            android:id="@+id/TextView041"
+                            android:text="@string/txt_no"
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:textColor="#000000"
+                            android:padding="10dip"
+                            android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView042"
+                            android:text="@string/txt_product_name"
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:textColor="#000000"
+                            android:padding="10dip" android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView043"
+                            android:text="@string/txt_product_quantity"
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:textColor="#000000"
+                            android:padding="10dip" android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/TextView044"
+                            android:text=""
+                            android:layout_weight="1"
+                            android:background="#dcdcdc"
+                            android:padding="10dip" android:gravity="center"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/no_data"
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="Tidak ditemukan data"
+                            android:textStyle="italic"
+                            android:layout_span="4"
+                            android:padding="10dip"
+                            android:gravity="center"/>
+
+                    </TableRow>
+
+                </TableLayout>
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/table_layout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"
+                    android:stretchColumns="*"
+                    android:layout_weight="2"
+                    android:layout_marginVertical="20dp"
+                    android:visibility="gone">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:gravity="center_horizontal">
+
+                        <EditText
+                            android:id="@+id/notes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text=""
+                            android:hint="@string/txt_reason"
+                            android:layout_span="2"
+                            android:paddingVertical="10dip"
+                            android:paddingLeft="0dp"/>
+
+                        <Button
+                            android:id="@+id/btn_submit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_span="1"
+                            android:background="@color/colorPrimary"
+                            android:text="Simpan"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:onClick="createNewIssue"
+                            android:visibility="visible"/>
+
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

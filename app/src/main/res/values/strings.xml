@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ucok Durian Inventory</string>
+    <string name="app_name">UcokDurian Inventory</string>
     <string name="app_website">www.ucokdurian.id</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -15,4 +15,19 @@
     <string name="txt_purchase_report">Detail Pengadaan</string>
     <string name="txt_stock">Laporan Stok</string>
     <string name="txt_transfer_report">Laporan Transfer Stok</string>
+    <string name="txt_inventory">Transaksi Non Penjualan</string>
+    <string name="txt_no">No</string>
+    <string name="txt_product_name">Nama Produk</string>
+    <string name="txt_product_quantity">Jumlah Barang</string>
+    <string name="txt_origin">Origin</string>
+    <string name="txt_date">Tanggal</string>
+    <string name="txt_notes">Catatan</string>
+    <string name="txt_items">Barang</string>
+    <string name="txt_reason">Alasan dan tujuan</string>
+
+    <string name="btn_tambahkan">Tambahkan</string>
+    <string name="btn_cancel">Batal</string>
+    <string name="btn_remove">Hapus</string>
+
+    <string name="input_find_product">Cari Produk</string>
 </resources>
