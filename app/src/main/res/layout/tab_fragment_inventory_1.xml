@@ -184,7 +184,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16dp"
                             android:text=""
-                            android:hint="Alasan dan tujuan pengeluaran barang"
+                            android:hint="@string/txt_reason"
                             android:layout_span="2"
                             android:paddingVertical="10dip"
                             android:paddingLeft="0dp"/>

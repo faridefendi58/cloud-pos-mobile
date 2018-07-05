@@ -503,7 +503,7 @@ public class InventoryActivity extends MainActivity {
 
     private void refreshTheTable()
     {
-        Integer idx = cart_stack.size();
+        final Integer idx = cart_stack.size();
 
         TableLayout table_layout = (TableLayout) findViewById(R.id.table_layout);
         TableRow row = new TableRow(InventoryActivity.this);
@@ -537,6 +537,36 @@ public class InventoryActivity extends MainActivity {
         tv2.setText(cart_stack_qty.get(idx-1));
         tv2.setInputType(InputType.TYPE_CLASS_NUMBER);
         tv2.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        tv2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                //Toast.makeText(getApplicationContext(), "Di pencet "+ i, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                System.out.println("afterTextChanged " + new String(editable.toString()));
+                String new_value = new String(editable.toString());
+                if (new_value.length() > 0) {
+                    cart_stack_qty.set((idx-1), new String(editable.toString()));
+                    cart_stack_str = "";
+                    for(int i=0; i<cart_stack.size(); i++) {
+                        String stack_str = product_names.get(cart_stack.get(i)) +","+ cart_stack_qty.get(i);
+                        if (i == 0) {
+                            cart_stack_str += stack_str;
+                        } else {
+                            cart_stack_str += "-"+ stack_str;
+                        }
+                    }
+                    Log.e(TAG, "New stack become : "+ cart_stack_str);
+                }
+            }
+        });
         row.addView(tv2);
 
         Button bt1 = new Button(InventoryActivity.this);
@@ -702,6 +732,7 @@ public class InventoryActivity extends MainActivity {
                                 JSONArray data = jObj.getJSONArray("data");
                                 JSONObject origins = jObj.getJSONObject("origin");
                                 JSONArray details = jObj.getJSONArray("detail");
+                                JSONObject items = jObj.getJSONObject("items");
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
@@ -756,9 +787,8 @@ public class InventoryActivity extends MainActivity {
 
                                     it.setGravity(Gravity.LEFT);
                                     it.setPadding(5, 15, 0, 15);
-
-                                    it.setText("-");
-
+                                    it.setText(items.getString(data.getString(n)));
+                                    it.setMaxWidth(200);
                                     row.addView(it);
 
                                     TextView tv2 = new TextView(InventoryActivity.this);
@@ -767,8 +797,7 @@ public class InventoryActivity extends MainActivity {
                                     tv2.setGravity(Gravity.CENTER_HORIZONTAL);
                                     tv2.setPadding(5, 15, 0, 15);
                                     tv2.setText(notes);
-                                    tv2.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                    tv2.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                                    tv2.setMaxWidth(200);
                                     row.addView(tv2);
 
                                     TextView tv3 = new TextView(InventoryActivity.this);

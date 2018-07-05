@@ -23,6 +23,7 @@
     <string name="txt_date">Tanggal</string>
     <string name="txt_notes">Catatan</string>
     <string name="txt_items">Barang</string>
+    <string name="txt_reason">Alasan dan tujuan</string>
 
     <string name="btn_tambahkan">Tambahkan</string>
     <string name="btn_cancel">Batal</string>
