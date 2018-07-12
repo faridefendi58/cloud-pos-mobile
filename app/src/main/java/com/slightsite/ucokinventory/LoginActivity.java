@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         full_name = sharedpreferences.getString(TAG_NAME, null);
 
         if (session) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, SplashScreenActivity.class);
             intent.putExtra(TAG_ID, id);
             intent.putExtra(TAG_USERNAME, username);
             intent.putExtra(TAG_NAME, full_name);

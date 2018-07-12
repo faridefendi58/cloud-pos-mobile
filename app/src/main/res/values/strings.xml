@@ -2,6 +2,8 @@
     <string name="app_name">UcokDurian Inventory</string>
     <string name="app_website">www.ucokdurian.id</string>
 
+    <string name="greeting">Welcome To UcokDurian Inventory</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

@@ -651,6 +651,7 @@ public class ReceiptActivity extends MainActivity {
                 txt_item_container.setVisibility(View.GONE);
                 TextView show_items = (TextView) findViewById(R.id.show_items);
                 show_items.setVisibility(View.VISIBLE);*/
+                Log.e(TAG, "list_product_items : "+ list_product_items.toString());
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
