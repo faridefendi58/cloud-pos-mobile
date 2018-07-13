@@ -282,6 +282,7 @@ public class DeliveryActivity extends MainActivity {
                 LinearLayout layout_1_detail = (LinearLayout) findViewById(R.id.layout_1_detail);
                 layout_1_detail.setVisibility(View.VISIBLE);
                 Log.e(TAG, "id : " + id.getText().toString());
+
                 setListPOItems(view);
                 buildTheShipment();
             }
@@ -578,7 +579,7 @@ public class DeliveryActivity extends MainActivity {
         final AlertDialog dialog = builder.create();
 
         // update, cancel, and delete button trigger
-        trigger_dialog_button(mView, ini, dialog);
+        trigger_dialog_button(mView, ini, dialog, view);
 
         dialog.show();
     }
@@ -594,7 +595,7 @@ public class DeliveryActivity extends MainActivity {
      * @param ini
      * @param dialog
      */
-    private void trigger_dialog_button(final View mView, final Context ini, final AlertDialog dialog) {
+    private void trigger_dialog_button(final View mView, final Context ini, final AlertDialog dialog, final View parentView) {
         // cancel method
         Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
         btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
@@ -647,6 +648,9 @@ public class DeliveryActivity extends MainActivity {
                     update_params.put("po_item_id", po_item_id.getText().toString());
                     update_params.put("quantity", txt_qty.getText().toString());
                     _modify_po_item("update", update_params);
+
+                    rebuildListPOItems(parentView, update_params);
+
                     dialog.hide();
                 }
             }
@@ -1060,5 +1064,31 @@ public class DeliveryActivity extends MainActivity {
                 }
             }
         });
+    }
+
+    private void rebuildListPOItems(final View parentView, Map<String, String> params) {
+        /*Log.e(TAG, "Updated bro "+ params.get("po_item_id"));
+        Log.e(TAG, "list_item_ids "+ list_item_ids.toString());
+        Log.e(TAG, "list_po_items "+ list_po_items.toString());
+        Log.e(TAG, "list_product_items "+ list_product_items.toString());
+        Log.e(TAG, "product_qtys "+ product_qtys.toString());
+        Log.e(TAG, "product_ids "+ product_ids.toString());
+        Log.e(TAG, "product_units "+ product_units.toString());
+        Log.e(TAG, "Product : "+ list_item_ids.indexOf(params.get("po_item_id")));*/
+        String product_name = list_product_items.get(list_item_ids.indexOf(params.get("po_item_id")));
+        //Log.e(TAG, "Product name : "+ product_name);
+        String product_id = product_ids.get(product_name);
+        String product_unit = product_units.get(product_id);
+        //Log.e(TAG, "product_unit : "+ product_unit);
+
+        product_qtys.put(product_name, params.get("quantity"));
+
+        String items_id_string = product_name +" "+ params.get("quantity") + " " + product_unit;
+        list_po_items.set(list_item_ids.indexOf(params.get("po_item_id")), items_id_string);
+        CustomListAdapter adapter_po = new CustomListAdapter(DeliveryActivity.this, list_item_ids, list_po_items, list_product_items, R.layout.list_view_delivery);
+
+        ListView list_po_item = (ListView) parentView.getRootView().findViewById(R.id.list_po_item);
+        list_po_item.setAdapter(adapter_po);
+        updateListViewHeight(list_po_item, 0);
     }
 }
