@@ -40,6 +40,11 @@
     <string name="btn_tambahkan">Tambahkan</string>
     <string name="btn_cancel">Batal</string>
     <string name="btn_remove">Hapus</string>
+    <string name="btn_back_to_list">Kembali Ke Daftar</string>
+
+    <string name="tab_archive">Arsip</string>
+    <string name="tab_list_issue">Barang Masuk</string>
+    <string name="tab_delivery_order">Pengiriman</string>
 
     <string name="input_find_product">Cari Produk</string>
 </resources>

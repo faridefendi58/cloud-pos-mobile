@@ -84,6 +84,7 @@ public class ReceiptActivity extends MainActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    static final int NUM_TAB_ITEMS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,7 @@ public class ReceiptActivity extends MainActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(NUM_TAB_ITEMS);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -116,6 +118,7 @@ public class ReceiptActivity extends MainActivity {
 
         buildTheIssueList(i_number);
         buildTheReceiptList();
+        buildTheDeliveryOrderList();
     }
 
     private void btn_confirm_trigger(Button btn, Context ini) {
@@ -893,6 +896,8 @@ public class ReceiptActivity extends MainActivity {
         txt_issue_number.setThreshold(1);
     }
 
+    ArrayList<String> descs = new ArrayList<String>();
+
     private void buildTheIssueList(final String i_number) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("status", "onprocess");
@@ -900,12 +905,11 @@ public class ReceiptActivity extends MainActivity {
         params.put("admin_id", admin_id);
         params.put("already_received", "1");
 
-        final ArrayList<String> descs = new ArrayList<String>();
         _string_request(Request.Method.GET, issue_list_url, params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of list issue : " + result.toString());
+                        //Log.e(TAG, "Response of list issue : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -932,17 +936,9 @@ public class ReceiptActivity extends MainActivity {
                                         descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
                                     }
                                 }
-                                Log.e(TAG, "List available issue : " + list_issues.toString());
-                                Log.e(TAG, "List issue origin : " + issue_origins.toString());
-                                /*ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
-                                        R.layout.list_view_receipt, R.id.list_title, list_issues);*/
-                                CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_ids, list_issues, descs, R.layout.list_view_receipt);
-
-                                ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
-                                list_available_issue.setAdapter(adapter2);
-                                DeliveryActivity.updateListViewHeight(list_available_issue, 10);
-                                // begin the trigger event
-                                itemListener();
+                                //Log.e(TAG, "List available issue : " + list_issues.toString());
+                                //Log.e(TAG, "List issue origin : " + issue_origins.toString());
+                                fetchTheIssues();
                             }
 
                         } catch (JSONException e) {
@@ -950,6 +946,21 @@ public class ReceiptActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    private void fetchTheIssues()
+    {
+        //Log.e(TAG, "list_ids : "+ list_ids.toString());
+        //Log.e(TAG, "list_issues : "+ list_issues.toString());
+        //Log.e(TAG, "descs : "+ descs.toString());
+
+        CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_ids, list_issues, descs, R.layout.list_view_receipt);
+
+        ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
+        list_available_issue.setAdapter(adapter2);
+        DeliveryActivity.updateListViewHeight(list_available_issue, 10);
+        // begin the trigger event
+        itemListener();
     }
 
     final Map<String, String> max_quantities = new HashMap<String, String>();
@@ -1147,7 +1158,6 @@ public class ReceiptActivity extends MainActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Log.e(TAG, "Position : " + position);
             // getItem is called to instantiate the fragment for the given page.
             switch (position) {
                 case 0:
@@ -1156,6 +1166,9 @@ public class ReceiptActivity extends MainActivity {
                 case 1:
                     TabFragment2 tab2 = new TabFragment2();
                     return tab2;
+                case 2:
+                    TabFragment3 tab3 = new TabFragment3();
+                    return tab3;
                 default:
                     return null;
             }
@@ -1163,8 +1176,7 @@ public class ReceiptActivity extends MainActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 2;
+            return NUM_TAB_ITEMS;
         }
     }
 
@@ -1184,118 +1196,17 @@ public class ReceiptActivity extends MainActivity {
         }
     }
 
+    public static class TabFragment3 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_receipt_3, container, false);
+        }
+    }
+
     private void itemListener() {
         final Context ini = ReceiptActivity.this;
-        /*Button btn_next = (Button) findViewById(R.id.btn_next);
-        btn_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideKeyboardFrom(ini, v);
 
-                AutoCompleteTextView issue_number = (AutoCompleteTextView) findViewById(R.id.txt_issue_no);
-
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("issue_number", issue_number.getText().toString());
-
-                _string_request(Request.Method.GET, get_issue_url, params, true,
-                        new VolleyCallback() {
-                            @Override
-                            public void onSuccess(String result) {
-                                Log.e(TAG, "Response: " + result.toString());
-                                hideDialog();
-                                try {
-                                    JSONObject jObj = new JSONObject(result);
-                                    success = jObj.getInt(TAG_SUCCESS);
-                                    // Check for error node in json
-                                    if (success == 1) {
-                                        JSONObject data = jObj.getJSONObject("data");
-                                        String data_status = data.getString("status");
-                                        String data_type = data.getString("type");
-
-                                        Log.e("Successfully Request!", data.toString());
-
-                                        LinearLayout step1 = (LinearLayout) findViewById(R.id.step1);
-                                        step1.setVisibility(View.GONE);
-                                        if (data_status.equals("onprocess") || data_status.equals("pending") || data_status.equals("processed")) {
-                                            //set notes
-                                            EditText txt_receipt_notes = (EditText) findViewById(R.id.txt_receipt_notes);
-                                            //get session
-                                            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
-                                            //get issue numb
-                                            TextView txt_step2_label1 = (TextView) findViewById(R.id.txt_step2_label1);
-                                            String fin_issue_number, fin_from;
-                                            if (data_type.equals("purchase_order")) {
-                                                fin_issue_number = data.getString("po_number");
-                                                fin_from = data.getString("supplier_name");
-                                            } else if (data_type.equals("transfer_issue")) {
-                                                fin_issue_number = data.getString("ti_number");
-                                                fin_from = data.getString("warehouse_from_name");
-                                                txt_receipt_notes.setVisibility(View.GONE);
-                                                txt_step2_label1.setVisibility(View.GONE);
-                                                Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
-                                                btn_confirm.setVisibility(View.GONE);
-                                                Spinner step2_receipt_type = (Spinner) findViewById(R.id.step2_receipt_type);
-                                                step2_receipt_type.setVisibility(View.GONE);
-                                                TextView txt_step2_label_type = (TextView) findViewById(R.id.txt_step2_label_type);
-                                                txt_step2_label_type.setVisibility(View.GONE);
-                                            } else {
-                                                fin_issue_number = data.getString("po_number");
-                                                fin_from = data.getString("supplier_name");
-                                            }
-                                            TextView txt_step2_issue_no = (TextView) findViewById(R.id.txt_step2_issue_no);
-                                            txt_step2_issue_no.setText(fin_issue_number);
-                                            TextView txt_step2_from = (TextView) findViewById(R.id.txt_step2_from);
-                                            txt_step2_from.setText(fin_from);
-                                            TextView txt_step2_type = (TextView) findViewById(R.id.txt_step2_type);
-                                            txt_step2_type.setText(data.getString("type"));
-
-                                            LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
-                                            step2.setVisibility(View.VISIBLE);
-
-                                            //set the list
-                                            JSONArray items_data = data.getJSONArray("items");
-                                            for(int n = 0; n < items_data.length(); n++)
-                                            {
-                                                JSONObject json_obj_n = items_data.getJSONObject(n);
-                                                list_items.add(
-                                                        json_obj_n.getString("product_name")+" " +
-                                                                json_obj_n.getString("quantity")+" " +
-                                                                json_obj_n.getString("unit"));
-                                                // check the items still available to be received
-                                                int available_qty = json_obj_n.getInt("available_qty");
-                                                if (available_qty > 0)
-                                                    list_product_items.add(json_obj_n.getString("product_name"));
-                                                product_ids.put(json_obj_n.getString("product_name"), json_obj_n.getString("product_id"));
-                                                product_units.put(json_obj_n.getString("product_id"), json_obj_n.getString("unit"));
-                                            }
-                                            ArrayAdapter adapter2 = new ArrayAdapter<String>(ini,
-                                                    R.layout.activity_list_view, list_items);
-
-                                            ListView listView = (ListView) findViewById(R.id.list);
-                                            listView.setAdapter(adapter2);
-                                            // hide the event due to conflict with add button
-                                            //setListEvent(listView, ini, items_data);
-
-                                            // build spinner wh
-                                            Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
-                                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(ini, R.layout.spinner_item, get_list_warehouse());
-                                            whAdapter.notifyDataSetChanged();
-                                            step2_receipt_wh.setAdapter(whAdapter);
-                                        } else {
-
-                                        }
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-        });*/
         // second button action
         Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
         btn_confirm_trigger(btn_confirm, ini);
@@ -1474,5 +1385,69 @@ public class ReceiptActivity extends MainActivity {
                 });
             }
         });
+    }
+
+    final ArrayList<String> list_do_items = new ArrayList<String>();
+    final ArrayList<String> list_do_descs = new ArrayList<String>();
+    final ArrayList<String> list_do_ids = new ArrayList<String>();
+
+    final Map<String, String> list_do_details = new HashMap<String, String>();
+
+    public void buildTheDeliveryOrderList() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "delivery/list?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "Response of delivery: " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject po_data = new JSONObject(jObj.getString("po_data"));
+                                JSONObject origins = new JSONObject(jObj.getString("po_origin"));
+                                JSONObject destinations = new JSONObject(jObj.getString("po_destination"));
+                                JSONObject details = new JSONObject(jObj.getString("detail"));
+
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    list_do_items.add(data.getString(n));
+                                    list_do_ids.add(data.getString(n));
+                                    JSONObject detail_n = new JSONObject(details.getString(data.getString(n)));
+
+                                    String desc = "Nomor PO "+ detail_n.getString("po_number") +", Dari " + origins.getString(data.getString(n)) +
+                                            " Tujuan " + destinations.getString(data.getString(n));
+                                    list_do_descs.add(desc);
+                                    list_do_details.put(data.getString(n), details.getString(data.getString(n)));
+                                }
+
+                                fetchTheDOIssues();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void fetchTheDOIssues()
+    {
+        CustomListAdapter adapter3 = new CustomListAdapter(ReceiptActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
+
+        ListView list_do_status = (ListView) findViewById(R.id.list_do);
+        list_do_status.setAdapter(adapter3);
+        DeliveryActivity.updateListViewHeight(list_do_status, 120);
+        //itemStatusListener(list_do_status);
     }
 }

@@ -26,15 +26,21 @@
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Terima Stok" />
+                android:text="@string/tab_list_issue" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Arsip Penerimaan" />
+                android:text="@string/tab_delivery_order" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tabItem3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_archive" />
 
         </android.support.design.widget.TabLayout>
 
