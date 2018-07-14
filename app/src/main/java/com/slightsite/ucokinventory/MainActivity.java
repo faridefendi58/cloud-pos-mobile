@@ -71,7 +71,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setDinamicContent(R.layout.app_bar_main);
+        sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        Boolean is_admin = Boolean.valueOf(sharedpreferences.getString(TAG_IS_ADMIN, null));
+        Boolean is_pic = Boolean.valueOf(sharedpreferences.getString(TAG_IS_PIC, null));
+
+        if (is_admin) {
+            setDinamicContent(R.layout.app_bar_main);
+        } else {
+            setDinamicContent(R.layout.app_bar_main_staff);
+        }
+
         buildMenu();
 
         // customize dashboard according to the roles
@@ -175,6 +184,7 @@ public class MainActivity extends AppCompatActivity
 
         View v = navigationView.getHeaderView(0);
         TextView txt_full_name = (TextView) v.findViewById(R.id.txt_full_name);
+
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         txt_full_name.setText( sharedpreferences.getString(TAG_NAME, null) );
 
@@ -276,9 +286,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         // just dump
-        Log.e(TAG, "Is Admin : " + is_admin );
-        Log.e(TAG, "PIC : " + is_pic );
-        Log.e(TAG, "List Assigned WH : " + get_list_assigned_wh().toString());
+        //Log.e(TAG, "Is Admin : " + is_admin );
+        //Log.e(TAG, "PIC : " + is_pic );
+        //Log.e(TAG, "List Assigned WH : " + get_list_assigned_wh().toString());
 
         // notif counter
         String className = this.getClass().getSimpleName();
@@ -524,7 +534,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }
-            Log.e(TAG, "Has PO Access : "+ has_purchase_order_access.toString());
+            //Log.e(TAG, "Has PO Access : "+ has_purchase_order_access.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }

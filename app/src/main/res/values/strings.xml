@@ -4,6 +4,12 @@
 
     <string name="greeting">Welcome To UcokDurian Inventory</string>
 
+    <string name="login_welcome">Masukkan Detail Login Anda</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_btn_enter">Login</string>
+    <string name="login_btn_register">Mendaftar</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -16,6 +22,21 @@
     <string name="left_menu_profile">Profil</string>
     <string name="left_menu_change_profile">Ubah Profil</string>
     <string name="left_menu_logout">Logout</string>
+
+    <string name="home_menu_receipt">Receipt</string>
+    <string name="home_menu_receipt_desc">Penerimaan Barang</string>
+    <string name="home_menu_transfer_issue">Transfer Issue</string>
+    <string name="home_menu_transfer_issue_desc">Move Antar Warehouse</string>
+    <string name="home_menu_inventory_issue">Inventory Issue</string>
+    <string name="home_menu_inventory_issue_desc">Trans. Non Penjualan</string>
+    <string name="home_menu_notification">Pemberitahuan</string>
+    <string name="home_menu_notification_desc">Notifikasi Untuk Anda</string>
+    <string name="home_menu_purchase_order">Purchase Order</string>
+    <string name="home_menu_purchase_order_desc">Pengadaan Barang</string>
+    <string name="home_menu_delivery_order">Delivery Order</string>
+    <string name="home_menu_delivery_order_desc">Pengiriman Barang</string>
+    <string name="home_menu_stock_report">Laporan Stock</string>
+    <string name="home_menu_stock_report_desc">Persedian di Warehouse</string>
 
     <string name="action_settings">Settings</string>
     <string name="txt_purchase_order">Pengadaan Barang</string>
