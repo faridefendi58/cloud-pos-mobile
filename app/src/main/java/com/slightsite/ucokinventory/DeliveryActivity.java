@@ -252,7 +252,6 @@ public class DeliveryActivity extends MainActivity {
 
                                 ListView list_pre_order = (ListView) findViewById(R.id.list_pre_order);
                                 list_pre_order.setAdapter(adapter2);
-                                updateListViewHeight(list_pre_order, 100);
                                 itemListener(list_pre_order);
                             }
 
@@ -327,7 +326,7 @@ public class DeliveryActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of delivery: " + result.toString());
+                        //Log.e(TAG, "Response of delivery: " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -352,18 +351,16 @@ public class DeliveryActivity extends MainActivity {
                                     list_do_details.put(data.getString(n), details.getString(data.getString(n)));
                                 }
 
-                                Log.e(TAG, "List do items: " + list_do_items.toString());
-                                Log.e(TAG, "List do ids: " + list_do_ids.toString());
-                                Log.e(TAG, "List do descs: " + list_do_descs.toString());
-                                Log.e(TAG, "List do details: " + list_do_details.toString());
+                                //Log.e(TAG, "List do items: " + list_do_items.toString());
+                                //Log.e(TAG, "List do ids: " + list_do_ids.toString());
+                                //Log.e(TAG, "List do descs: " + list_do_descs.toString());
+                                //Log.e(TAG, "List do details: " + list_do_details.toString());
 
                                 CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
-                                /*ArrayAdapter adapter3 = new ArrayAdapter<String>(DeliveryActivity.this,
-                                        R.layout.activity_list_view, list_do_items);*/
 
                                 ListView list_do_status = (ListView) findViewById(R.id.list_do_status);
                                 list_do_status.setAdapter(adapter3);
-                                updateListViewHeight(list_do_status, 120);
+                                //updateListViewHeight(list_do_status, 120);
                                 itemStatusListener(list_do_status);
                             }
 

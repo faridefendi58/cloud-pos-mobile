@@ -912,7 +912,7 @@ public class PurchaseActivity extends MainActivity {
 
                                 ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
                                 list_available_issue.setAdapter(adapter2);
-                                DeliveryActivity.updateListViewHeight(list_available_issue, 100);
+                                //DeliveryActivity.updateListViewHeight(list_available_issue, 100);
                                 // begin the trigger event
                                 itemListener(list_available_issue);
                             }

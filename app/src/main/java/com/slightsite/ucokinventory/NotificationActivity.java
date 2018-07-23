@@ -184,7 +184,6 @@ public class NotificationActivity extends MainActivity {
                                 ListView list_notification = (ListView) findViewById(R.id.list_notification);
                                 list_notification.setAdapter(adapter2);
                                 itemListener(list_notification);
-                                DeliveryActivity.updateListViewHeight(list_notification, 150);
                             }
 
                         } catch (JSONException e) {
@@ -422,7 +421,6 @@ public class NotificationActivity extends MainActivity {
                                 ListView list_archive_notification = (ListView) findViewById(R.id.list_archive_notification);
                                 list_archive_notification.setAdapter(adapter2);
                                 itemArchiveListener(list_archive_notification);
-                                DeliveryActivity.updateListViewHeight(list_archive_notification, 150);
                             }
 
                         } catch (JSONException e) {

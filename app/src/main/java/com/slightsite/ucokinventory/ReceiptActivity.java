@@ -761,7 +761,7 @@ public class ReceiptActivity extends MainActivity {
                     list_receipts.setAdapter(adapter2);
                     list_receipts.setVisibility(View.VISIBLE);
 
-                    DeliveryActivity.updateListViewHeight(list_receipts, 10);
+                    //DeliveryActivity.updateListViewHeight(list_receipts, 10);
 
                     // Then show the labels
                     TextView txt_step2_label_receipts = (TextView) findViewById(R.id.txt_step2_label_receipts);
@@ -936,8 +936,6 @@ public class ReceiptActivity extends MainActivity {
                                         descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
                                     }
                                 }
-                                //Log.e(TAG, "List available issue : " + list_issues.toString());
-                                //Log.e(TAG, "List issue origin : " + issue_origins.toString());
                                 fetchTheIssues();
                             }
 
@@ -950,15 +948,11 @@ public class ReceiptActivity extends MainActivity {
 
     private void fetchTheIssues()
     {
-        //Log.e(TAG, "list_ids : "+ list_ids.toString());
-        //Log.e(TAG, "list_issues : "+ list_issues.toString());
-        //Log.e(TAG, "descs : "+ descs.toString());
-
         CustomListAdapter adapter2 = new CustomListAdapter(ReceiptActivity.this, list_ids, list_issues, descs, R.layout.list_view_receipt);
 
         ListView list_available_issue = (ListView) findViewById(R.id.list_available_issue);
         list_available_issue.setAdapter(adapter2);
-        DeliveryActivity.updateListViewHeight(list_available_issue, 10);
+        //DeliveryActivity.updateListViewHeight(list_available_issue, 10);
         // begin the trigger event
         itemListener();
     }
@@ -1070,7 +1064,7 @@ public class ReceiptActivity extends MainActivity {
                                     ListView list_issue_items = (ListView) findViewById(R.id.list);
                                     list_issue_items.setAdapter(adapter3);
                                     list_issue_items.setVisibility(View.VISIBLE);
-                                    DeliveryActivity.updateListViewHeight(list_issue_items, 10);
+                                    //DeliveryActivity.updateListViewHeight(list_issue_items, 10);
 
                                     // build spinner wh
                                     Spinner step2_receipt_wh = (Spinner)findViewById(R.id.step2_receipt_wh);
@@ -1267,7 +1261,6 @@ public class ReceiptActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of receipts : " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -1295,13 +1288,13 @@ public class ReceiptActivity extends MainActivity {
                                     list_receipt_detail_items.put(data.getString(n), items.getString(data.getString(n)));
                                 }
 
-                                Log.e(TAG, "List receipt details: " + list_receipt_details.toString());
+                                //Log.e(TAG, "List receipt details: " + list_receipt_details.toString());
 
                                 CustomListAdapter adapter3 = new CustomListAdapter(ReceiptActivity.this, list_receipt_ids, list_receipt_items, list_receipt_descs, R.layout.list_view_notification);
 
                                 ListView list_receipts = (ListView) findViewById(R.id.list_archive_receipts);
                                 list_receipts.setAdapter(adapter3);
-                                DeliveryActivity.updateListViewHeight(list_receipts, 400);
+                                //DeliveryActivity.updateListViewHeight(list_receipts, 400);
                                 itemReceiptListener(list_receipts);
                             }
 
@@ -1333,8 +1326,8 @@ public class ReceiptActivity extends MainActivity {
                     TextView txt_issue_number = (TextView) findViewById(R.id.txt_issue_number);
                     txt_issue_number.setText(detail.getString("issue_number"));
 
-                    TextView txt_origin = (TextView) findViewById(R.id.txt_origin);
-                    TextView txt_destination = (TextView) findViewById(R.id.txt_destination);
+                    TextView txt_origin = (TextView) findViewById(R.id.txt_origin_archive);
+                    TextView txt_destination = (TextView) findViewById(R.id.txt_destination_archive);
                     if (detail.has("supplier_name")) {
                         txt_origin.setText(detail.getString("supplier_name"));
                     }
@@ -1366,7 +1359,7 @@ public class ReceiptActivity extends MainActivity {
 
                     ListView receipt_item_list = (ListView) findViewById(R.id.receipt_item_list);
                     receipt_item_list.setAdapter(adapter_r_items);
-                    DeliveryActivity.updateListViewHeight(receipt_item_list, 0);
+                    //DeliveryActivity.updateListViewHeight(receipt_item_list, 0);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1450,7 +1443,7 @@ public class ReceiptActivity extends MainActivity {
 
         ListView list_do_status = (ListView) findViewById(R.id.list_do);
         list_do_status.setAdapter(adapter3);
-        DeliveryActivity.updateListViewHeight(list_do_status, 120);
+        //DeliveryActivity.updateListViewHeight(list_do_status, 120);
         itemDOListener(list_do_status);
     }
 
