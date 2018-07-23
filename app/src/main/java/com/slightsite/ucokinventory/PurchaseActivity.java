@@ -195,7 +195,7 @@ public class PurchaseActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of supplier request : " + result.toString());
+                        //Log.e(TAG, "Response of supplier request : " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -231,7 +231,7 @@ public class PurchaseActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of shipment request : " + result.toString());
+                        //Log.e(TAG, "Response of shipment request : " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -267,7 +267,7 @@ public class PurchaseActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of product request : " + result.toString());
+                        //Log.e(TAG, "Response of product request : " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -928,7 +928,7 @@ public class PurchaseActivity extends MainActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.e(TAG, "Choosen : "+ list_issues.get(i));
+                //Log.e(TAG, "Choosen : "+ list_issues.get(i));
                 Intent intent = new Intent(getApplicationContext(), PurchaseReportActivity.class);
                 intent.putExtra("issue_number", list_issues.get(i));
                 startActivity(intent);

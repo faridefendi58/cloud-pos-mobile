@@ -45,7 +45,7 @@
     <string name="txt_transfer_issue">Transfer Antar Warehouse</string>
     <string name="txt_delivery">Pengiriman Barang</string>
     <string name="txt_notice_title">Info Baru di Ucok Durian</string>
-    <string name="txt_purchase_report">Detail Pengadaan</string>
+    <string name="txt_purchase_report">Rincian Pengadaan</string>
     <string name="txt_stock">Laporan Stok</string>
     <string name="txt_transfer_report">Laporan Transfer Stok</string>
     <string name="txt_inventory">Transaksi Non Penjualan</string>
@@ -58,14 +58,30 @@
     <string name="txt_items">Barang</string>
     <string name="txt_reason">Alasan dan tujuan</string>
 
+    <string name="po_number">Nomor PO</string>
+    <string name="supplier_name">Nama Suplier</string>
+    <string name="destination">Tujuan</string>
+    <string name="shipment_method">Cara Pengiriman</string>
+    <string name="shipment_date">Tanggal Pengiriman</string>
+
     <string name="btn_tambahkan">Tambahkan</string>
     <string name="btn_cancel">Batal</string>
     <string name="btn_remove">Hapus</string>
+    <string name="btn_update">Ubah</string>
     <string name="btn_back_to_list">Kembali Ke Daftar</string>
+    <string name="btn_save">Simpan</string>
+    <string name="btn_submit">Kirim</string>
 
     <string name="tab_archive">Arsip</string>
     <string name="tab_list_issue">Barang Masuk</string>
     <string name="tab_delivery_order">Pengiriman</string>
+    <string name="tab_po_detail">Rincian PO</string>
+    <string name="tab_po_history">Riwayat</string>
+    <string name="tab_po_update">Ubah PO</string>
 
     <string name="input_find_product">Cari Produk</string>
+
+    <string name="dialog_remove_po">Anda yakin ingin MENGHAPUS PO ini?</string>
+
+    <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
 </resources>

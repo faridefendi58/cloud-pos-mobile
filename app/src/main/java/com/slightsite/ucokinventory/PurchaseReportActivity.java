@@ -1,7 +1,10 @@
 package com.slightsite.ucokinventory;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +41,8 @@ import java.util.Map;
 public class PurchaseReportActivity extends MainActivity {
     ProgressDialog pDialog;
     int success;
+    JSONObject po_detail;
+    static final int NUM_TAB_ITEMS = 3;
 
     private static final String TAG = PurchaseReportActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
@@ -70,6 +76,7 @@ public class PurchaseReportActivity extends MainActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(NUM_TAB_ITEMS);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -85,8 +92,8 @@ public class PurchaseReportActivity extends MainActivity {
                 // delay build the form after tabs fully finished
                 String issue_number = getIntent().getStringExtra("issue_number");
                 if (!TextUtils.isEmpty(issue_number)) {
-                    Log.e(TAG, "Ada kiriman nomor issue : "+ issue_number);
                     set_detail_issue(issue_number);
+                    initUi();
                 }
             }
         }, 1000);
@@ -112,6 +119,9 @@ public class PurchaseReportActivity extends MainActivity {
                 case 1:
                     TabFragment2 tab2 = new TabFragment2();
                     return tab2;
+                case 2:
+                    TabFragment3 tab3 = new TabFragment3();
+                    return tab3;
                 default:
                     return null;
             }
@@ -119,8 +129,7 @@ public class PurchaseReportActivity extends MainActivity {
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            return NUM_TAB_ITEMS;
         }
     }
 
@@ -137,6 +146,14 @@ public class PurchaseReportActivity extends MainActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.tab_fragment_p_detail_2, container, false);
+        }
+    }
+
+    public static class TabFragment3 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_p_detail_3, container, false);
         }
     }
 
@@ -221,23 +238,23 @@ public class PurchaseReportActivity extends MainActivity {
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
-                                JSONObject data = jObj.getJSONObject("data");
+                                po_detail = jObj.getJSONObject("data");
 
                                 TextView txt_po_number = (TextView) findViewById(R.id.txt_po_number);
-                                txt_po_number.setText(data.getString("po_number"));
+                                txt_po_number.setText(po_detail.getString("po_number"));
                                 TextView txt_supplier_name = (TextView) findViewById(R.id.txt_supplier_name);
-                                txt_supplier_name.setText(data.getString("supplier_name"));
+                                txt_supplier_name.setText(po_detail.getString("supplier_name"));
                                 TextView txt_wh_group_name = (TextView) findViewById(R.id.txt_wh_group_name);
-                                txt_wh_group_name.setText(data.getString("wh_group_name"));
+                                txt_wh_group_name.setText(po_detail.getString("wh_group_name"));
                                 TextView txt_shipment_name = (TextView) findViewById(R.id.txt_shipment_name);
-                                txt_shipment_name.setText(data.getString("shipment_name"));
+                                txt_shipment_name.setText(po_detail.getString("shipment_name"));
                                 TextView txt_created_at = (TextView) findViewById(R.id.txt_created_at);
-                                txt_created_at.setText(data.getString("created_at"));
+                                txt_created_at.setText(po_detail.getString("created_at"));
                                 TextView txt_created_by = (TextView) findViewById(R.id.txt_created_by);
-                                txt_created_by.setText(data.getString("created_by_name"));
+                                txt_created_by.setText(po_detail.getString("created_by_name"));
 
                                 TextView txt_status = (TextView) findViewById(R.id.txt_status);
-                                txt_status.setText(data.getString("status"));
+                                txt_status.setText(po_detail.getString("status"));
 
                                 JSONArray items = jObj.getJSONArray("items");
                                 ArrayList<String> po_items = new ArrayList<String>();
@@ -280,7 +297,7 @@ public class PurchaseReportActivity extends MainActivity {
                                 txt_list_timelines.setAdapter(adapter2);
                                 DeliveryActivity.updateListViewHeight(txt_list_timelines, 120);
 
-                                Log.e(TAG, "Titles : "+ list_timeline_titles.toString());
+                                //Log.e(TAG, "Titles : "+ list_timeline_titles.toString());
                             }
 
                         } catch (JSONException e) {
@@ -288,5 +305,228 @@ public class PurchaseReportActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    public void cancelPO(View view) {
+        Log.e(TAG, "Detail : " + po_detail.toString());
+        String po_status = null;
+        try {
+            po_status = po_detail.getString("status");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (po_status.equals("pending")) {
+            AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                    PurchaseReportActivity.this);
+            quitDialog.setTitle(getResources().getString(R.string.dialog_remove_po));
+            quitDialog.setPositiveButton(getResources().getString(R.string.btn_remove), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    Intent newActivity = new Intent(PurchaseReportActivity.this,
+                            PurchaseActivity.class);
+                    startActivity(newActivity);
+                }
+            });
+
+            quitDialog.setNegativeButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            quitDialog.show();
+        } else {
+            Toast.makeText(
+                    getApplicationContext(),
+                    getResources().getString(R.string.msg_unable_remove_po),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private TextView update_po_number;
+    private Spinner supplier_name;
+    private Spinner shipment_name;
+    private Spinner wh_group_name;
+
+    private ArrayList supplier_list;
+    private ArrayList shipment_list;
+    private ArrayList<String> shipment_list_id = new ArrayList<String>();
+    private ArrayList<String> group_whs = new ArrayList<String>();
+
+    private void initUi() {
+        update_po_number = (TextView) findViewById(R.id.update_po_number);
+        supplier_name = (Spinner) findViewById(R.id.supplier_name);
+        shipment_name = (Spinner) findViewById(R.id.shipment_name);
+        wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
+
+        supplier_list = get_list_supplier();
+        shipment_list = get_list_shipment();
+        list_assigned_wh();
+    }
+
+    private ArrayList get_list_supplier() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
+
+        final ArrayList<String> items = new ArrayList<String>();
+        items.add("-");
+
+        String wh_url = Server.URL + "supplier/list?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, wh_url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    items.add(data_n.getString("title"));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        return items;
+    }
+
+    private ArrayList get_list_shipment() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
+
+        final ArrayList<String> items = new ArrayList<String>();
+        items.add("-");
+
+        String wh_url = Server.URL + "shipment/list?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, wh_url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    items.add(data_n.getString("title"));
+                                    shipment_list_id.add(data_n.getString("id"));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        return items;
+    }
+
+    private void list_assigned_wh() {
+
+        String roles = sharedpreferences.getString(TAG_ROLES, null);
+        try {
+            JSONObject jsonObject = new JSONObject(roles);
+            JSONArray keys = jsonObject.names();
+
+            for (int i = 0; i < keys.length (); ++i) {
+                String key = keys.getString (i); // Here's your key
+                String value = jsonObject.getString (key); // Here's your value
+                JSONObject data_n = jsonObject.getJSONObject(key);
+                if (!group_whs.contains(data_n.getString("warehouse_group_name"))) {
+                    group_whs.add(data_n.getString("warehouse_group_name"));
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ArrayList get_list_product() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
+
+        final ArrayList<String> items = new ArrayList<String>();
+        items.add("-");
+
+        String wh_url = Server.URL + "product/list?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, wh_url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        //Log.e(TAG, "Response of product request : " + result.toString());
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                //Log.e(TAG, "List Product : " + data.toString());
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    items.add(data_n.getString("title"));
+                                    //list_product_items.add(data_n.getString("title"));
+                                    //product_names.put(data_n.getString("title"), data_n.getString("id"));
+                                    //product_units.put(data_n.getString("title"), data_n.getString("unit"));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        return items;
+    }
+
+    public void updatePO(View view) {
+        mViewPager.setCurrentItem(2, true);
+
+        try {
+            update_po_number.setText(po_detail.getString("po_number"));
+
+            // init the spinner of list supplier
+            ArrayAdapter<String> spAdapter = new ArrayAdapter<String>(
+                    PurchaseReportActivity.this,
+                    R.layout.spinner_item, supplier_list);
+            supplier_name.setAdapter(spAdapter);
+            supplier_name.setSelection(supplier_list.indexOf(po_detail.getString("supplier_name")));
+
+            // init the spinner of list shipment
+            ArrayAdapter<String> shAdapter = new ArrayAdapter<String>(
+                    PurchaseReportActivity.this,
+                    R.layout.spinner_item, shipment_list);
+            shipment_name.setAdapter(shAdapter);
+            shipment_name.setSelection(shipment_list_id.indexOf(po_detail.getString("shipment_id")));
+
+            // init the spinner of list wh group
+            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                    PurchaseReportActivity.this,
+                    R.layout.spinner_item, group_whs);
+            wh_group_name.setAdapter(whAdapter);
+            wh_group_name.setSelection(group_whs.indexOf(po_detail.getString("wh_group_name")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
