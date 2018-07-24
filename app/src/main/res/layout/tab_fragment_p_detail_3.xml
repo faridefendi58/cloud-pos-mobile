@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:fillViewport="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/po_number_container"
@@ -151,6 +152,7 @@
                 android:layout_weight="1"
                 />
 
+            <!-- start of date -->
             <FrameLayout
                 android:id="@+id/date_value_container"
                 android:layout_width="0dp"
@@ -182,105 +184,69 @@
             </FrameLayout>
 
         </LinearLayout>
+        <!-- end of date -->
+
+        <!-- start of list items -->
+        <LinearLayout
+            android:id="@+id/list_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_below="@+id/date_container">
+
+            <TextView
+                android:id="@+id/txt_list_po"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="@string/list_po_items"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <ListView
+                android:id="@+id/po_list_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:isScrollContainer="false"
+                android:layout_below="@+id/txt_list_po"
+                />
+
+        </LinearLayout>
+        <!-- end of list items -->
 
         <LinearLayout
-            android:id="@+id/update_step1"
+            android:id="@+id/update_button_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/activity_vertical_margin"
-            android:visibility="gone">
-
-            <FrameLayout
-                android:id="@+id/btn_add_container"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:visibility="gone">
-
-                <Button
-                    android:id="@+id/btn_add"
-                    android:text="Tambah Item Barang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:background="@color/green"
-                    android:textColor="#fff"
-                    android:textAllCaps="false"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:drawableLeft="@drawable/ic_add_24dp"
-                    />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/list_item_container"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:visibility="visible">
-
-                <ListView
-                    android:id="@+id/list_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:isScrollContainer="false"
-                    />
-
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/txt_item_select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:textSize="16dip"
-                android:visibility="gone"
-                />
-            <TextView
-                android:id="@+id/txt_item_select_str"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:textSize="16dip"
-                android:visibility="gone"
-                />
-
-            <TextView
-                android:id="@+id/txt_price_select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:textSize="16dip"
-                android:visibility="gone"
-                />
-            <TextView
-                android:id="@+id/txt_price_select_str"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:textSize="16dip"
-                android:visibility="gone"
-                />
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:layout_alignParentBottom="true">
 
             <Button
-                android:id="@+id/btn_submit"
-                android:layout_width="126dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:background="@color/colorPrimary"
-                android:text="@string/btn_save"
-                android:textColor="#fff"
-                android:textStyle="bold"
-                android:visibility="gone"/>
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_cancel"
+                android:textColor="@color/colorGrey"
+                android:drawableTop="@drawable/ic_left_back"
+                android:clickable="true"
+                android:onClick="cancelUpdate" />
 
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_save"
+                android:textColor="@color/colorGrey"
+                android:drawableTop="@drawable/ic_btn_save"
+                android:clickable="true"
+                android:onClick="executingUpdatePO" />
         </LinearLayout>
 
     </RelativeLayout>

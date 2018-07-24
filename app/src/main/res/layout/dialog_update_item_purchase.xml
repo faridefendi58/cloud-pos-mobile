@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_add_item_po"
+        android:text="@string/dialog_update_item_po"
         android:paddingLeft="0dp"
         android:textSize="16dip"
         android:textStyle="bold"
@@ -28,14 +28,13 @@
         android:textStyle="bold"
         />
 
-    <Spinner
-        android:id="@+id/list_product"
+    <TextView
+        android:id="@+id/txt_product_name"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_marginTop="5dp"
-        android:textColor="#fff"
         >
-    </Spinner>
+    </TextView>
 
     <TextView
         android:id="@+id/txt_label_qty"

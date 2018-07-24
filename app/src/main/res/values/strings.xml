@@ -63,6 +63,7 @@
     <string name="destination">Tujuan</string>
     <string name="shipment_method">Cara Pengiriman</string>
     <string name="shipment_date">Tanggal Pengiriman</string>
+    <string name="list_po_items">Daftar Barang</string>
 
     <string name="btn_tambahkan">Tambahkan</string>
     <string name="btn_cancel">Batal</string>
@@ -82,6 +83,12 @@
     <string name="input_find_product">Cari Produk</string>
 
     <string name="dialog_remove_po">Anda yakin ingin MENGHAPUS PO ini?</string>
+    <string name="dialog_add_item_po">Jumlah Pengadaan Barang</string>
+    <string name="dialog_update_item_po">Ubah Item PO</string>
+
+    <string name="label_product_name">Nama Barang :</string>
+    <string name="label_item_quantity">Jumlah Barang :</string>
+    <string name="label_purchase_price">Harga Pembelian :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
 </resources>

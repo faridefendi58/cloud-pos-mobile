@@ -1,6 +1,8 @@
 package com.slightsite.ucokinventory;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +19,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,6 +39,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,6 +49,7 @@ public class PurchaseReportActivity extends MainActivity {
     int success;
     JSONObject po_detail;
     static final int NUM_TAB_ITEMS = 3;
+    private ArrayList<String> po_items = new ArrayList<String>();
 
     private static final String TAG = PurchaseReportActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
@@ -257,7 +264,6 @@ public class PurchaseReportActivity extends MainActivity {
                                 txt_status.setText(po_detail.getString("status"));
 
                                 JSONArray items = jObj.getJSONArray("items");
-                                ArrayList<String> po_items = new ArrayList<String>();
 
                                 for(int n = 0; n < items.length(); n++)
                                 {
@@ -353,21 +359,32 @@ public class PurchaseReportActivity extends MainActivity {
     private Spinner supplier_name;
     private Spinner shipment_name;
     private Spinner wh_group_name;
+    private ListView po_list_items;
 
     private ArrayList supplier_list;
     private ArrayList shipment_list;
     private ArrayList<String> shipment_list_id = new ArrayList<String>();
     private ArrayList<String> group_whs = new ArrayList<String>();
+    private ArrayList<String> po_update_items = new ArrayList<String>();
 
+    /**
+     * Initialize ui expecially for tab update PO
+     */
     private void initUi() {
         update_po_number = (TextView) findViewById(R.id.update_po_number);
         supplier_name = (Spinner) findViewById(R.id.supplier_name);
         shipment_name = (Spinner) findViewById(R.id.shipment_name);
         wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
+        po_list_items = (ListView) findViewById(R.id.po_list_items);
 
         supplier_list = get_list_supplier();
         shipment_list = get_list_shipment();
         list_assigned_wh();
+        initDatePicker();
+
+        po_update_items = po_items;
+        reloadListItems();
+        listItemListener();
     }
 
     private ArrayList get_list_supplier() {
@@ -499,6 +516,50 @@ public class PurchaseReportActivity extends MainActivity {
         return items;
     }
 
+    private DatePicker datePicker;
+    private Calendar calendar;
+    private TextView dateView;
+    private int year, month, day;
+
+    private void initDatePicker()
+    {
+        dateView = (TextView) findViewById(R.id.due_date);
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        //showDate(year, month + 1, day);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setDate(View view) {
+        showDialog(999);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this, myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+            // arg1 = year, arg2 = month, arg3 = day
+            showDate(arg1, arg2+1, arg3);
+        }
+    };
+
+    private void showDate(int year, int month, int day) {
+        dateView.setText(new StringBuilder().append(day).append("-")
+                .append(month).append("-").append(year));
+    }
+
     public void updatePO(View view) {
         mViewPager.setCurrentItem(2, true);
 
@@ -525,8 +586,69 @@ public class PurchaseReportActivity extends MainActivity {
                     R.layout.spinner_item, group_whs);
             wh_group_name.setAdapter(whAdapter);
             wh_group_name.setSelection(group_whs.indexOf(po_detail.getString("wh_group_name")));
+
+            // po date
+            dateView.setText(AppController.parseDate(po_detail.getString("due_date"),"d-M-yyyy"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Reloading list po items on update fragment
+     */
+    private void reloadListItems() {
+        ArrayAdapter adapter = new ArrayAdapter<String>(
+                PurchaseReportActivity.this,
+                R.layout.activity_list_view,
+                po_update_items);
+
+        po_list_items.setAdapter(adapter);
+    }
+
+    private void listItemListener() {
+        po_list_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String title = po_list_items.getItemAtPosition(i).toString();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PurchaseReportActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_update_item_purchase, null);
+
+                TextView txt_product_name = (TextView) mView.findViewById(R.id.txt_product_name);
+                txt_product_name.setText(title);
+
+                TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
+                txt_qty.setText("1");
+
+                TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
+                stack_id.setText(""+ i);
+
+                TextView txt_price = (TextView) mView.findViewById(R.id.txt_price);
+                txt_price.setText("0");
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+
+                // submit, cancel, and delete button trigger
+                //trigger_dialog_button(mView, ini, list_product, dialog);
+
+                // show button delete
+                Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+                btn_dialog_delete.setVisibility(View.VISIBLE);
+                Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+                btn_dialog_cancel.setVisibility(View.GONE);
+
+                dialog.show();
+            }
+        });
+    }
+
+    public void cancelUpdate(View view) {
+        mViewPager.setCurrentItem(0, true);
+    }
+
+    public void executingUpdatePO(View view) {
+
     }
 }
