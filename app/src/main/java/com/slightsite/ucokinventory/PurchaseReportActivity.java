@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -50,7 +51,10 @@ public class PurchaseReportActivity extends MainActivity {
     JSONObject po_detail;
     static final int NUM_TAB_ITEMS = 3;
     private ArrayList<String> po_items = new ArrayList<String>();
+    // po items data contain id, po_id, product_id, title, etc
     private JSONArray po_items_data = new JSONArray();
+    // stack of deleted po items, contain the table id
+    private ArrayList<String> po_item_deleted = new ArrayList<String>();
 
     private static final String TAG = PurchaseReportActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
@@ -386,6 +390,8 @@ public class PurchaseReportActivity extends MainActivity {
         po_update_items = po_items;
         reloadListItems();
         listItemListener();
+
+        get_product_list();
     }
 
     private ArrayList get_list_supplier() {
@@ -478,33 +484,32 @@ public class PurchaseReportActivity extends MainActivity {
         }
     }
 
-    private ArrayList get_list_product() {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("simply", "1");
+    // product list in json format [{"id":"13","title":"Durian Cup","unit":"box"}]
+    private JSONArray product_list_data = new JSONArray();
+    private ArrayList<String> product_list = new ArrayList<String>();
 
+    private void get_product_list() {
         final ArrayList<String> items = new ArrayList<String>();
         items.add("-");
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
 
         String wh_url = Server.URL + "product/list?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, wh_url, params, false,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        //Log.e(TAG, "Response of product request : " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
-                                JSONArray data = jObj.getJSONArray("data");
-                                //Log.e(TAG, "List Product : " + data.toString());
-                                for(int n = 0; n < data.length(); n++)
+                                product_list_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < product_list_data.length(); n++)
                                 {
-                                    JSONObject data_n = data.getJSONObject(n);
-                                    items.add(data_n.getString("title"));
-                                    //list_product_items.add(data_n.getString("title"));
-                                    //product_names.put(data_n.getString("title"), data_n.getString("id"));
-                                    //product_units.put(data_n.getString("title"), data_n.getString("unit"));
+                                    JSONObject data_n = product_list_data.getJSONObject(n);
+                                    product_list.add(data_n.getString("title"));
                                 }
                             }
 
@@ -513,8 +518,6 @@ public class PurchaseReportActivity extends MainActivity {
                         }
                     }
                 });
-
-        return items;
     }
 
     private DatePicker datePicker;
@@ -596,6 +599,24 @@ public class PurchaseReportActivity extends MainActivity {
     }
 
     /**
+     * Rebuilding the PO items list
+     */
+    private void reBuildThePOItems() {
+        po_update_items.clear();
+        try {
+            for(int n = 0; n < po_items_data.length(); n++)
+            {
+                JSONObject data_n = new JSONObject(po_items_data.getString(n));
+                String item_title = data_n.getString("title")+' '+data_n.getString("quantity")
+                        + " " + data_n.getString("unit");
+                po_update_items.add(item_title);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Reloading list po items on update fragment
      */
     private void reloadListItems() {
@@ -607,20 +628,24 @@ public class PurchaseReportActivity extends MainActivity {
         po_list_items.setAdapter(adapter);
     }
 
+    // text view on dialog
     private TextView dialog_txt_qty;
     private TextView dialog_txt_price;
     private TextView dialog_stack_id;
+
+    // current value of the selected item
+    Integer current_item_qty = 0;
+    Integer current_item_price = 0;
 
     private void listItemListener() {
         po_list_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String title = po_list_items.getItemAtPosition(i).toString();
-                Integer qty = 0;
-                Integer price = 0;
+
                 try {
-                    qty = po_items_data.getJSONObject(i).getInt("quantity");
-                    price = po_items_data.getJSONObject(i).getInt("price");
+                    current_item_qty = po_items_data.getJSONObject(i).getInt("quantity");
+                    current_item_price = po_items_data.getJSONObject(i).getInt("price");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -629,13 +654,13 @@ public class PurchaseReportActivity extends MainActivity {
                 View mView = getLayoutInflater().inflate(R.layout.dialog_update_item_purchase, null);
 
                 dialog_txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
-                dialog_txt_qty.setText(""+ qty);
+                dialog_txt_qty.setText(""+ current_item_qty);
 
                 dialog_stack_id = (TextView) mView.findViewById(R.id.stack_id);
                 dialog_stack_id.setText(""+ i);
 
                 dialog_txt_price = (TextView) mView.findViewById(R.id.txt_price);
-                dialog_txt_price.setText(""+ price);
+                dialog_txt_price.setText(""+ current_item_price);
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
@@ -656,13 +681,61 @@ public class PurchaseReportActivity extends MainActivity {
         });
     }
 
+    /**
+     * Handle submision of the update dialog form
+     * @param view
+     * @param dialog
+     */
     private void trigger_dialog_button(View view, final Dialog dialog) {
         Button btn_dialog_submit = (Button) view.findViewById(R.id.btn_dialog_submit);
+        Button btn_dialog_delete = (Button) view.findViewById(R.id.btn_dialog_delete);
+
         btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(TAG, "qty value : "+ dialog_txt_qty.getText().toString());
-                Log.e(TAG, "price value : "+ dialog_txt_price.getText().toString());
+                Integer index = Integer.parseInt(dialog_stack_id.getText().toString());
+                Integer post_qty = Integer.parseInt(dialog_txt_qty.getText().toString());
+                Integer post_price = Integer.parseInt(dialog_txt_price.getText().toString());
+                Boolean change_qty = false;
+                Boolean change_price = false;
+                if (!current_item_qty.equals(post_qty)) {
+                    change_qty = true;
+                }
+                if (!current_item_price.equals(post_price)) {
+                    change_price = true;
+                }
+                if (change_qty || change_price) {
+                    try {
+                        po_items_data.getJSONObject(index).put("quantity", post_qty);
+                        po_items_data.getJSONObject(index).put("price", post_price);
+
+                        reBuildThePOItems();
+
+                        // then reloading the item list
+                        reloadListItems();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                dialog.hide();
+            }
+        });
+
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Integer index = Integer.parseInt(dialog_stack_id.getText().toString());
+                try {
+                    po_item_deleted.add(po_items_data.getJSONObject(index).getString("id"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                po_items_data.remove(index);
+                reBuildThePOItems();
+
+                // then reloading the item list
+                reloadListItems();
                 dialog.hide();
             }
         });
@@ -670,6 +743,115 @@ public class PurchaseReportActivity extends MainActivity {
 
     public void cancelUpdate(View view) {
         mViewPager.setCurrentItem(0, true);
+    }
+
+    /**
+     * Adding the PO items
+     * @param view
+     */
+    public void addItem(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(PurchaseReportActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_purchase, null);
+
+        Spinner spinner_list_product =  (Spinner) mView.findViewById(R.id.list_product);
+        // init the spinner of list product
+        ArrayAdapter<String> pAdapter = new ArrayAdapter<String>(
+                PurchaseReportActivity.this,
+                R.layout.spinner_item, product_list);
+        spinner_list_product.setAdapter(pAdapter);
+
+        builder.setView(mView);
+        AlertDialog dialog = builder.create();
+
+        // submit, cancel, and delete button trigger
+        trigger_add_dialog_button(mView, dialog);
+
+        dialog.show();
+    }
+
+    /**
+     * Handle add item dialog button
+     * @param mView
+     * @param dialog
+     */
+    private void trigger_add_dialog_button(final View mView, final Dialog dialog) {
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        btn_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+            }
+        });
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Spinner spinner_list_product = (Spinner) mView.findViewById(R.id.list_product);
+                EditText txt_qty = (EditText) mView.findViewById(R.id.txt_qty);
+                EditText txt_price = (EditText) mView.findViewById(R.id.txt_price);
+
+                int has_error = 0;
+                if (spinner_list_product.getSelectedItem().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Produk tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                }
+                if (txt_qty.getText().toString().length() <= 0) {
+                    has_error = has_error + 1;
+                    Toast.makeText(getApplicationContext(), "Jumlah barang tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+                } else {
+                    boolean digitsOnly = TextUtils.isDigitsOnly(txt_qty.getText().toString());
+                    if (digitsOnly) {
+                        int tot_qty_val = Integer.parseInt(txt_qty.getText().toString());
+                        if (tot_qty_val <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Jumlah barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        has_error = has_error + 1;
+                        txt_qty.setText("");
+                        Toast.makeText(getApplicationContext(), "Jumlah barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+                }
+                // validation for price form
+                if (txt_price.getText().toString().length() > 0) {
+                    boolean pdigitsOnly = TextUtils.isDigitsOnly(txt_price.getText().toString());
+                    if (pdigitsOnly) {
+                        int tot_price_val = Integer.parseInt(txt_price.getText().toString());
+                        if (tot_price_val <= 0) {
+                            has_error = has_error + 1;
+                            Toast.makeText(getApplicationContext(), "Harga barang harus lebih dari 0.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        has_error = has_error + 1;
+                        txt_price.setText("");
+                        Toast.makeText(getApplicationContext(), "Harga barang harus dalam format angka.", Toast.LENGTH_LONG).show();
+                    }
+
+                    if (has_error == 0) {
+                        JSONObject additional_data = new JSONObject();
+                        try {
+                            int index = spinner_list_product.getSelectedItemPosition();
+
+                            additional_data.put("id", 0);
+                            additional_data.put("product_id", product_list_data.getJSONObject(index).getString("id"));
+                            additional_data.put("title", spinner_list_product.getSelectedItem().toString());
+                            additional_data.put("quantity", Integer.parseInt(txt_qty.getText().toString()));
+                            additional_data.put("unit", product_list_data.getJSONObject(index).getString("unit"));
+                            additional_data.put("price", Integer.parseInt(txt_price.getText().toString()));
+                            additional_data.put("product_name", spinner_list_product.getSelectedItem().toString());
+
+                            po_items_data.put(additional_data);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        reBuildThePOItems();
+                    }
+                    dialog.hide();
+                }
+            }
+        });
     }
 
     public void executingUpdatePO(View view) {
