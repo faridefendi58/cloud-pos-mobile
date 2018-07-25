@@ -50,6 +50,7 @@ public class PurchaseReportActivity extends MainActivity {
     JSONObject po_detail;
     static final int NUM_TAB_ITEMS = 3;
     private ArrayList<String> po_items = new ArrayList<String>();
+    private JSONArray po_items_data = new JSONArray();
 
     private static final String TAG = PurchaseReportActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
@@ -263,11 +264,11 @@ public class PurchaseReportActivity extends MainActivity {
                                 TextView txt_status = (TextView) findViewById(R.id.txt_status);
                                 txt_status.setText(po_detail.getString("status"));
 
-                                JSONArray items = jObj.getJSONArray("items");
+                                po_items_data = jObj.getJSONArray("items");
 
-                                for(int n = 0; n < items.length(); n++)
+                                for(int n = 0; n < po_items_data.length(); n++)
                                 {
-                                    JSONObject data_n = new JSONObject(items.getString(n));
+                                    JSONObject data_n = new JSONObject(po_items_data.getString(n));
                                     String item_title = data_n.getString("title")+' '+data_n.getString("quantity")
                                             + " " + data_n.getString("unit");
                                     po_items.add(item_title);
@@ -606,40 +607,63 @@ public class PurchaseReportActivity extends MainActivity {
         po_list_items.setAdapter(adapter);
     }
 
+    private TextView dialog_txt_qty;
+    private TextView dialog_txt_price;
+    private TextView dialog_stack_id;
+
     private void listItemListener() {
         po_list_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String title = po_list_items.getItemAtPosition(i).toString();
+                Integer qty = 0;
+                Integer price = 0;
+                try {
+                    qty = po_items_data.getJSONObject(i).getInt("quantity");
+                    price = po_items_data.getJSONObject(i).getInt("price");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(PurchaseReportActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_update_item_purchase, null);
 
-                TextView txt_product_name = (TextView) mView.findViewById(R.id.txt_product_name);
-                txt_product_name.setText(title);
+                dialog_txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
+                dialog_txt_qty.setText(""+ qty);
 
-                TextView txt_qty = (TextView) mView.findViewById(R.id.txt_qty);
-                txt_qty.setText("1");
+                dialog_stack_id = (TextView) mView.findViewById(R.id.stack_id);
+                dialog_stack_id.setText(""+ i);
 
-                TextView stack_id = (TextView) mView.findViewById(R.id.stack_id);
-                stack_id.setText(""+ i);
-
-                TextView txt_price = (TextView) mView.findViewById(R.id.txt_price);
-                txt_price.setText("0");
+                dialog_txt_price = (TextView) mView.findViewById(R.id.txt_price);
+                dialog_txt_price.setText(""+ price);
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
 
                 // submit, cancel, and delete button trigger
-                //trigger_dialog_button(mView, ini, list_product, dialog);
+                trigger_dialog_button(mView, dialog);
 
                 // show button delete
                 Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
                 btn_dialog_delete.setVisibility(View.VISIBLE);
                 Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
                 btn_dialog_cancel.setVisibility(View.GONE);
+                TextView dialog_title = (TextView) mView.findViewById(R.id.dialog_title);
+                dialog_title.setText(title);
 
                 dialog.show();
+            }
+        });
+    }
+
+    private void trigger_dialog_button(View view, final Dialog dialog) {
+        Button btn_dialog_submit = (Button) view.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "qty value : "+ dialog_txt_qty.getText().toString());
+                Log.e(TAG, "price value : "+ dialog_txt_price.getText().toString());
+                dialog.hide();
             }
         });
     }
