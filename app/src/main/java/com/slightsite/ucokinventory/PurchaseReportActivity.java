@@ -319,7 +319,7 @@ public class PurchaseReportActivity extends MainActivity {
     }
 
     public void cancelPO(View view) {
-        Log.e(TAG, "Detail : " + po_detail.toString());
+        //Log.e(TAG, "Detail : " + po_detail.toString());
         String po_status = null;
         try {
             po_status = po_detail.getString("status");
@@ -364,6 +364,7 @@ public class PurchaseReportActivity extends MainActivity {
     private Spinner supplier_name;
     private Spinner shipment_name;
     private Spinner wh_group_name;
+    private TextView due_date;
     private ListView po_list_items;
 
     private ArrayList supplier_list;
@@ -380,6 +381,7 @@ public class PurchaseReportActivity extends MainActivity {
         supplier_name = (Spinner) findViewById(R.id.supplier_name);
         shipment_name = (Spinner) findViewById(R.id.shipment_name);
         wh_group_name = (Spinner) findViewById(R.id.wh_group_name);
+        due_date = (TextView) findViewById(R.id.due_date);
         po_list_items = (ListView) findViewById(R.id.po_list_items);
 
         supplier_list = get_list_supplier();
@@ -394,12 +396,13 @@ public class PurchaseReportActivity extends MainActivity {
         get_product_list();
     }
 
+    private JSONArray supplier_list_data = new JSONArray();
+
     private ArrayList get_list_supplier() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
 
         final ArrayList<String> items = new ArrayList<String>();
-        items.add("-");
 
         String wh_url = Server.URL + "supplier/list?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, wh_url, params, false,
@@ -411,10 +414,10 @@ public class PurchaseReportActivity extends MainActivity {
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
-                                JSONArray data = jObj.getJSONArray("data");
-                                for(int n = 0; n < data.length(); n++)
+                                supplier_list_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < supplier_list_data.length(); n++)
                                 {
-                                    JSONObject data_n = data.getJSONObject(n);
+                                    JSONObject data_n = supplier_list_data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
                                 }
                             }
@@ -427,6 +430,8 @@ public class PurchaseReportActivity extends MainActivity {
 
         return items;
     }
+
+    private JSONArray shipment_list_data = new JSONArray();
 
     private ArrayList get_list_shipment() {
         Map<String, String> params = new HashMap<String, String>();
@@ -445,10 +450,10 @@ public class PurchaseReportActivity extends MainActivity {
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
-                                JSONArray data = jObj.getJSONArray("data");
-                                for(int n = 0; n < data.length(); n++)
+                                shipment_list_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < shipment_list_data.length(); n++)
                                 {
-                                    JSONObject data_n = data.getJSONObject(n);
+                                    JSONObject data_n = shipment_list_data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
                                     shipment_list_id.add(data_n.getString("id"));
                                 }
@@ -468,10 +473,10 @@ public class PurchaseReportActivity extends MainActivity {
         String roles = sharedpreferences.getString(TAG_ROLES, null);
         try {
             JSONObject jsonObject = new JSONObject(roles);
-            JSONArray keys = jsonObject.names();
+            JSONArray names = jsonObject.names();
 
-            for (int i = 0; i < keys.length (); ++i) {
-                String key = keys.getString (i); // Here's your key
+            for (int i = 0; i < names.length (); ++i) {
+                String key = names.getString (i); // Here's your key
                 String value = jsonObject.getString (key); // Here's your value
                 JSONObject data_n = jsonObject.getJSONObject(key);
                 if (!group_whs.contains(data_n.getString("warehouse_group_name"))) {
@@ -490,7 +495,6 @@ public class PurchaseReportActivity extends MainActivity {
 
     private void get_product_list() {
         final ArrayList<String> items = new ArrayList<String>();
-        items.add("-");
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
@@ -828,6 +832,23 @@ public class PurchaseReportActivity extends MainActivity {
                         Toast.makeText(getApplicationContext(), "Harga barang harus dalam format angka.", Toast.LENGTH_LONG).show();
                     }
 
+                    // checking whether the item already on stack
+                    try {
+                        for (int n = 0; n < po_items_data.length(); n++) {
+                            JSONObject data_n = new JSONObject(po_items_data.getString(n));
+                            String item_title = data_n.getString("title");
+                            if (item_title.equals(spinner_list_product.getSelectedItem().toString())) {
+                                has_error = has_error + 1;
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        spinner_list_product.getSelectedItem().toString() +" sudah ada di daftar barang.",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     if (has_error == 0) {
                         JSONObject additional_data = new JSONObject();
                         try {
@@ -854,7 +875,53 @@ public class PurchaseReportActivity extends MainActivity {
         });
     }
 
+    Map<String, String> post_params = new HashMap<String, String>();
+
     public void executingUpdatePO(View view) {
+        int supplier_index = supplier_name.getSelectedItemPosition();
+
+        try {
+            post_params.put("id", po_detail.getString("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        post_params.put("supplier_name", supplier_name.getSelectedItem().toString());
+        post_params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
+        post_params.put("shipment_name", shipment_name.getSelectedItem().toString());
+        post_params.put("due_date", due_date.getText().toString());
+
+        String str_qtys = "";
+        String str_prices = "";
+        try {
+            for(int n = 0; n < po_items_data.length(); n++)
+            {
+                JSONObject data_n = new JSONObject(po_items_data.getString(n));
+                String str_qty = data_n.getString("product_id")+ "," + data_n.get("quantity");
+                String str_price = data_n.getString("product_id")+ "," + data_n.get("price");
+
+                if (str_qtys.length() > 0)
+                    str_qtys += "-" + str_qty;
+                else
+                    str_qtys += str_qty;
+
+                if (str_prices.length() > 0)
+                    str_prices += "-" + str_price;
+                else
+                    str_prices += str_price;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (str_qtys.length() > 0) {
+            post_params.put("items", str_qtys);
+        }
+
+        if (str_prices.length() > 0) {
+            post_params.put("prices", str_prices);
+        }
+
+        Log.e(TAG, "post_params : "+ post_params.toString());
 
     }
 }
