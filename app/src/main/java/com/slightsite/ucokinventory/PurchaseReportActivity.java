@@ -889,6 +889,7 @@ public class PurchaseReportActivity extends MainActivity {
         post_params.put("wh_group_name", wh_group_name.getSelectedItem().toString());
         post_params.put("shipment_name", shipment_name.getSelectedItem().toString());
         post_params.put("due_date", due_date.getText().toString());
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
 
         String str_qtys = "";
         String str_prices = "";
@@ -923,5 +924,28 @@ public class PurchaseReportActivity extends MainActivity {
 
         Log.e(TAG, "post_params : "+ post_params.toString());
 
+        String url = Server.URL + "purchase/update?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.POST,
+                url,
+                post_params, true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
