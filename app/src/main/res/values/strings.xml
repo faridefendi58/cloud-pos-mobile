@@ -59,6 +59,8 @@
     <string name="txt_notes">Catatan</string>
     <string name="txt_items">Barang</string>
     <string name="txt_reason">Alasan dan tujuan</string>
+    <string name="txt_profile">Profil</string>
+    <string name="txt_master_data">Master Data</string>
 
     <string name="po_number">Nomor PO</string>
     <string name="supplier_name">Nama Suplier</string>
@@ -83,6 +85,12 @@
     <string name="tab_po_detail">Rincian PO</string>
     <string name="tab_po_history">Riwayat</string>
     <string name="tab_po_update">Ubah PO</string>
+    <string name="tab_profile_detail">Ubah Profil</string>
+    <string name="tab_change_password">Ubah Password</string>
+    <string name="tab_product">Produk</string>
+    <string name="tab_shipment">Pengiriman</string>
+    <string name="tab_supplier">Supplier</string>
+    <string name="tab_warehouse">Warehouse</string>
 
     <string name="input_find_product">Cari Produk</string>
 

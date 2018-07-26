@@ -83,6 +83,16 @@
             android:label="@string/txt_transfer_report"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/txt_profile"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".MasterDataActivity"
+            android:label="@string/txt_master_data"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
