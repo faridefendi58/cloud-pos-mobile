@@ -230,6 +230,20 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_logout) {
+            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(LoginActivity.session_status, false);
+            editor.putString(TAG_ID, null);
+            editor.putString(TAG_USERNAME, null);
+            editor.commit();
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            finish();
+            startActivity(intent);
+
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

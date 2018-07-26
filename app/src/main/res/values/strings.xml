@@ -22,6 +22,8 @@
     <string name="left_menu_profile">Profil</string>
     <string name="left_menu_change_profile">Ubah Profil</string>
     <string name="left_menu_logout">Logout</string>
+    <string name="left_menu_master">Master Data</string>
+    <string name="left_menu_manage_master_data">Kelola Master Data</string>
 
     <string name="home_menu_receipt">Receipt</string>
     <string name="home_menu_receipt_desc">Penerimaan Barang</string>

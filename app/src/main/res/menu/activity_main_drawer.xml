@@ -32,6 +32,15 @@
         </menu>
     </item>
 
+    <item android:title="@string/left_menu_master">
+        <menu>
+            <item
+                android:id="@+id/nav_master_data"
+                android:icon="@drawable/ic_perm_data_setting_black_24dp"
+                android:title="@string/left_menu_manage_master_data" />
+        </menu>
+    </item>
+
     <item android:title="@string/left_menu_profile">
         <menu>
             <item
