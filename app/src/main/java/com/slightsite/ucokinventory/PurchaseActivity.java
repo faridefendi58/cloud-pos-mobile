@@ -377,7 +377,7 @@ public class PurchaseActivity extends MainActivity {
                         list_prices.put(list_product.getSelectedItem().toString(), txt_price.getText().toString());
                     }
                     Toast.makeText(getApplicationContext(), "Berhasil menambahkan " + list_product.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "List price : " + list_prices.toString());
+                    //Log.e(TAG, "List price : " + list_prices.toString());
                     dialog.hide();
                     // show the added item
                     Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
@@ -440,8 +440,8 @@ public class PurchaseActivity extends MainActivity {
                         txt_price_select_str.setText(list_price_str);
                     }
 
-                    Log.e(TAG, "Price stack : " + price_stack_str);
-                    Log.e(TAG, "List price : " + list_price_str);
+                    //Log.e(TAG, "Price stack : " + price_stack_str);
+                    //Log.e(TAG, "List price : " + list_price_str);
 
                     Button btn_submit = (Button) findViewById(R.id.btn_submit);
                     btn_submit.setVisibility(View.VISIBLE);
@@ -531,7 +531,7 @@ public class PurchaseActivity extends MainActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String title = list.getItemAtPosition(i).toString();
-                Log.e(TAG, "List items : " + list_items.toString());
+                //Log.e(TAG, "List items : " + list_items.toString());
                 Iterator<Map.Entry<String, String>> iterator = list_items.entrySet().iterator();
                 Integer j = 0;
                 String current_val = "";
@@ -550,7 +550,7 @@ public class PurchaseActivity extends MainActivity {
                     }
                     j ++;
                 }
-                Log.e(TAG, "Current key :" + current_key);
+                //Log.e(TAG, "Current key :" + current_key);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_purchase, null);
@@ -558,7 +558,8 @@ public class PurchaseActivity extends MainActivity {
                 final Spinner list_product = (Spinner) mView.findViewById(R.id.list_product);
                 ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(mView.getContext(), R.layout.spinner_item, list_product_items);
                 list_product.setAdapter(productAdapter);
-                Log.e(TAG, "List product items : " + list_product_items.toString());
+
+                //Log.e(TAG, "List product items : " + list_product_items.toString());
                 Integer index_p_items = list_product_items.indexOf(current_key);
                 list_product.setSelection(index_p_items);
 
@@ -611,7 +612,7 @@ public class PurchaseActivity extends MainActivity {
                 // default to pre order due to every po should have approval
                 params.put("is_pre_order", "1");
                 params.put("admin_id", sharedpreferences.getString("id", null));
-                Log.e(TAG, "Params : " + params.toString());
+               // Log.e(TAG, "Params : " + params.toString());
 
                 String transfer_url = Server.URL + "purchase/create?api-key=" + Server.API_KEY;
                 _string_request(
@@ -622,7 +623,7 @@ public class PurchaseActivity extends MainActivity {
                         new VolleyCallback(){
                             @Override
                             public void onSuccess(String result) {
-                                Log.e(TAG, "Response of purchase api : " + result.toString());
+                                //Log.e(TAG, "Response of purchase api : " + result.toString());
                                 hideDialog();
                                 try {
                                     JSONObject jObj = new JSONObject(result);
@@ -649,6 +650,9 @@ public class PurchaseActivity extends MainActivity {
 
                                         LinearLayout step2 = (LinearLayout) findViewById(R.id.step2);
                                         step2.setVisibility(View.VISIBLE);
+
+                                        LinearLayout button_container = (LinearLayout) findViewById(R.id.button_container);
+                                        button_container.setVisibility(View.VISIBLE);
 
                                         Toast.makeText(getApplicationContext(),
                                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
@@ -854,6 +858,20 @@ public class PurchaseActivity extends MainActivity {
                 Toast.makeText(getApplicationContext(),"Pesan berhasil disalin.", Toast.LENGTH_LONG).show();
             }
         });
+
+        Button btn_back = (Button) findViewById(R.id.backButton);
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(0);
+                Intent intent = getIntent();
+                overridePendingTransition(0, 0);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(intent);
+            }
+        });
     }
 
     final ArrayList<String> list_ids = new ArrayList<String>();
@@ -878,7 +896,7 @@ public class PurchaseActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of list issue : " + result.toString());
+                        //Log.e(TAG, "Response of list issue : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -928,7 +946,6 @@ public class PurchaseActivity extends MainActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Log.e(TAG, "Choosen : "+ list_issues.get(i));
                 Intent intent = new Intent(getApplicationContext(), PurchaseReportActivity.class);
                 intent.putExtra("issue_number", list_issues.get(i));
                 startActivity(intent);

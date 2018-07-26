@@ -73,6 +73,7 @@
     <string name="btn_save">Simpan</string>
     <string name="btn_submit">Kirim</string>
     <string name="btn_add_item">Tambah Barang</string>
+    <string name="btn_copy_message">Salin Pesan</string>
 
     <string name="tab_archive">Arsip</string>
     <string name="tab_list_issue">Barang Masuk</string>

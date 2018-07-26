@@ -93,7 +93,26 @@ public class PurchaseReportActivity extends MainActivity {
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        //tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+                if (tab.getPosition() == 2) {
+                    updatePO(tab.getCustomView());
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         final Context ini = this;
 
@@ -334,7 +353,7 @@ public class PurchaseReportActivity extends MainActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
-
+                        executingCancelPO();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -929,6 +948,43 @@ public class PurchaseReportActivity extends MainActivity {
                 Request.Method.POST,
                 url,
                 post_params, true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void executingCancelPO() {
+        Map<String, String> delete_params = new HashMap<String, String>();
+
+        try {
+            delete_params.put("id", po_detail.getString("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        delete_params.put("admin_id", sharedpreferences.getString("id", null));
+        //Log.e(TAG, "delete_params : "+ delete_params.toString());
+
+        String url = Server.URL + "purchase/delete?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.POST,
+                url,
+                delete_params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
