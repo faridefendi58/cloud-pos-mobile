@@ -61,6 +61,8 @@
     <string name="txt_reason">Alasan dan tujuan</string>
     <string name="txt_profile">Profil</string>
     <string name="txt_master_data">Master Data</string>
+    <string name="txt_profile_setup">Ubah Data Profil</string>
+    <string name="txt_form_requirement">Silakan lengkapi beberapa isian berikut:</string>
 
     <string name="po_number">Nomor PO</string>
     <string name="supplier_name">Nama Suplier</string>
@@ -101,6 +103,10 @@
     <string name="label_product_name">Nama Barang :</string>
     <string name="label_item_quantity">Jumlah Barang :</string>
     <string name="label_purchase_price">Harga Pembelian :</string>
+    <string name="label_profile_name">Nama Lengkap :</string>
+    <string name="label_profile_email">Alamat Email :</string>
+    <string name="label_profile_username">Username :</string>
+    <string name="label_profile_phone">Telepon/WA :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
 </resources>

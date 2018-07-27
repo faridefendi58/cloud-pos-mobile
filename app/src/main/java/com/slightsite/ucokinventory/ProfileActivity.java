@@ -9,9 +9,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class ProfileActivity extends MainActivity {
     ProgressDialog pDialog;
@@ -52,7 +54,7 @@ public class ProfileActivity extends MainActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
+                initUi();
             }
         }, 1000);
     }
@@ -116,5 +118,19 @@ public class ProfileActivity extends MainActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private EditText input_name;
+    private EditText input_email;
+    private EditText input_username;
+
+    private void initUi() {
+        input_name = (EditText) findViewById(R.id.input_name);
+        input_email = (EditText) findViewById(R.id.input_email);
+        input_username = (EditText) findViewById(R.id.input_username);
+
+        input_name.setText(sharedpreferences.getString("name", null));
+        input_email.setText(sharedpreferences.getString("email", null));
+        input_username.setText(sharedpreferences.getString("username", null));
     }
 }

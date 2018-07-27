@@ -52,6 +52,8 @@ public class LoginActivity extends AppCompatActivity {
     public final static String TAG_IS_ADMIN = "is_admin";
     public final static String TAG_IS_PIC = "is_pic";
     public final static String TAG_ROLES = "roles";
+    public final static String TAG_EMAIL = "email";
+    public final static String TAG_PHONE = "phone";
 
     String tag_json_obj = "json_obj_req";
 
@@ -146,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(String response) {
-                Log.e(TAG, "Login Response: " + response.toString());
+                //Log.e(TAG, "Login Response: " + response.toString());
                 hideDialog();
 
                 try {
@@ -161,8 +163,10 @@ public class LoginActivity extends AppCompatActivity {
                         String is_admin = jObj.getString(TAG_IS_ADMIN);
                         String is_pic = jObj.getString(TAG_IS_PIC);
                         String roles = jObj.getString(TAG_ROLES);
+                        String email = jObj.getString(TAG_EMAIL);
+                        String phone = jObj.getString(TAG_PHONE);
 
-                        Log.e("Successfully Login!", jObj.toString());
+                        //Log.e("Successfully Login!", jObj.toString());
 
                         Toast.makeText(getApplicationContext(), jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
@@ -175,6 +179,8 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString(TAG_IS_ADMIN, is_admin);
                         editor.putString(TAG_IS_PIC, is_pic);
                         editor.putString(TAG_ROLES, roles);
+                        editor.putString(TAG_EMAIL, email);
+                        editor.putString(TAG_PHONE, phone);
                         editor.commit();
 
                         // Memanggil main activity
@@ -185,6 +191,8 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra(TAG_IS_ADMIN, is_admin);
                         intent.putExtra(TAG_IS_PIC, is_pic);
                         intent.putExtra(TAG_ROLES, roles);
+                        intent.putExtra(TAG_EMAIL, email);
+                        intent.putExtra(TAG_PHONE, phone);
                         finish();
                         startActivity(intent);
                     } else {
