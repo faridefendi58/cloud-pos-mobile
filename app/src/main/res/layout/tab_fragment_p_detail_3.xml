@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/po_number_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/lightgrey"
+            android:padding="10dp"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/txt_label_po_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="@string/po_number"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/update_po_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:layout_gravity="right"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/supplier_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="2"
+            android:layout_below="@+id/po_number_container">
+
+            <TextView
+                android:id="@+id/txt_label_supplier"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="@string/supplier_name"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                />
+
+            <Spinner
+                android:id="@+id/supplier_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="right"
+                >
+            </Spinner>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wh_group_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@color/lightgrey"
+            android:weightSum="2"
+            android:layout_below="@+id/supplier_container">
+
+            <TextView
+                android:id="@+id/txt_wh_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:text="@string/destination"
+                android:layout_weight="1"
+                />
+
+            <Spinner
+                android:id="@+id/wh_group_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_weight="1"
+                >
+            </Spinner>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/shipment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="2"
+            android:layout_below="@+id/wh_group_container">
+
+            <TextView
+                android:id="@+id/txt_shipment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="@string/shipment_method"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                />
+
+            <Spinner
+                android:id="@+id/shipment_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="right"
+                >
+            </Spinner>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/date_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@color/lightgrey"
+            android:weightSum="2"
+            android:layout_below="@+id/shipment_container">
+
+            <TextView
+                android:id="@+id/txt_effective_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:text="@string/shipment_date"
+                android:layout_weight="1"
+                />
+
+            <!-- start of date -->
+            <FrameLayout
+                android:id="@+id/date_value_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/due_date"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text=""
+                    android:textSize="15dip"
+                    android:onClick="setDate"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Button
+                    android:id="@+id/btn_change_date"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="setDate"
+                    android:text=""
+                    android:paddingVertical="0dp"
+                    android:layout_marginTop="-10dp"
+                    android:layout_gravity="right"
+                    android:drawableLeft="@drawable/ic_date_range_black_24dp"
+                    android:background="@android:color/transparent"/>
+            </FrameLayout>
+
+        </LinearLayout>
+        <!-- end of date -->
+
+        <!-- start of list items -->
+        <LinearLayout
+            android:id="@+id/list_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_below="@+id/date_container"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/txt_list_po"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="@string/list_po_items"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <ListView
+                android:id="@+id/po_list_items"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/txt_list_po" />
+
+        </LinearLayout>
+        <!-- end of list items -->
+
+        <LinearLayout
+            android:id="@+id/update_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent">
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:drawableTop="@drawable/ic_left_back"
+                android:onClick="cancelUpdate"
+                android:text="@string/btn_cancel"
+                android:textColor="@color/colorGrey"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/addItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_add_item"
+                android:textColor="@color/colorGrey"
+                android:textSize="10sp"
+                android:drawableTop="@drawable/ic_btn_add"
+                android:clickable="true"
+                android:onClick="addItem" />
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_save"
+                android:textColor="@color/colorGrey"
+                android:textSize="10sp"
+                android:drawableTop="@drawable/ic_btn_save"
+                android:clickable="true"
+                android:onClick="executingUpdatePO" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.slightsite.ucokinventory.MainActivity"
+    tools:showIn="@layout/app_bar_main_staff"
+    >
+
+    <LinearLayout
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/menu1_container"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:padding="10dp">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgroundprimary"
+                                android:src="@drawable/ic_receipt_black_24dp"
+                                android:padding="10dp"/>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_receipt"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_receipt_desc"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/menu2_container"
+            android:layout_weight="1"
+            android:layout_below="@id/menu1_container">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgroundgreen"
+                                android:src="@drawable/ic_menu_move_warehouse_white"
+                                android:padding="10dp"/>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_transfer_issue"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_transfer_issue_desc"
+                                android:padding="5dp"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/menu5_container"
+            android:layout_weight="1"
+            android:layout_below="@id/menu2_container">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgoundpurple"
+                                android:src="@drawable/ic_remove_shopping_cart"
+                                android:padding="10dp"/>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_inventory_issue"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_inventory_issue_desc"
+                                android:padding="5dp"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/notification_menu_wrapper"
+            android:layout_weight="1"
+            android:layout_below="@id/menu5_container">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu6"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:id="@+id/tableRow1"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:id="@+id/notification_icon"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgroundaccent"
+                                android:src="@drawable/ic_notifications_24dp"
+                                android:padding="10dp"/>
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_notification" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_notification_desc"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/badge_notification_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="@drawable/item_count"
+                android:text="0"
+                android:textColor="#FFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="8dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"/>
+
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/menu3_container"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgroundyellow"
+                                android:src="@drawable/ic_attach_money_24dp"
+                                android:padding="10dp"/>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_purchase_order"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_purchase_order_desc"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/menu7_container"
+            android:layout_weight="1"
+            android:layout_below="@id/menu3_container">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu7"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgroundprimarydark"
+                                android:src="@drawable/ic_shipping_24dp"
+                                android:padding="10dp"/>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_delivery_order"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_delivery_order_desc"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/stock_menu_wrapper"
+            android:layout_weight="1"
+            android:layout_below="@id/menu7_container">
+
+            <LinearLayout
+                android:id="@+id/dashboard_menu4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TableLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:shrinkColumns="*"  android:stretchColumns="*">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:background="@drawable/circlebackgroundgreen"
+                                android:src="@drawable/ic_card_travel_black_24dp"
+                                android:padding="10dp"/>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/home_menu_stock_report"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightgrey"
+                                android:layout_marginTop="25dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/home_menu_stock_report_desc"
+                                android:layout_marginTop="30dp"
+                                android:textColor="#ababab"/>
+
+                        </FrameLayout>
+
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>

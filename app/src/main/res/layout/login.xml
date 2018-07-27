@@ -29,21 +29,16 @@
             android:textSize="18dip"
             android:textStyle="bold" />
 
-        <View
-            android:id="@+id/View1"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="center"
-            android:background="@color/colorPrimary" />
-
         <TextView
             android:id="@+id/TextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="30dip"
-            android:text="SELAMAT DATANG, LOGIN DI SINI"
-            android:textSize="16dip" />
+            android:text="@string/login_welcome"
+            android:textStyle="bold"
+            android:textSize="16dip"
+            android:textAllCaps="true"/>
 
         <EditText
             android:id="@+id/txt_username"
@@ -51,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:hint="Username"
+            android:hint="@string/login_username"
             android:inputType="textEmailAddress"
             android:singleLine="true" />
 
@@ -61,30 +56,41 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:hint="Password"
+            android:hint="@string/login_password"
             android:password="true"
             android:singleLine="true" />
 
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="15dp"
-            android:text="Login"
-            android:background="@color/colorPrimary"
-            android:textColor="#fff"
-            android:textStyle="bold" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:weightSum="1">
 
-        <Button
-            android:id="@+id/btn_register"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="15dp"
-            android:background="#00555555"
-            android:text="Register"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="15dp"
+                android:background="#00555555"
+                android:text="@string/login_btn_register"
+                android:textStyle="bold"
+                android:layout_weight="0.5" />
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginBottom="15dp"
+                android:text="@string/login_btn_enter"
+                android:background="@color/colorPrimary"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:layout_weight="0.5"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 

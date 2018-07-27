@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,9 +13,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_centerVertical="false"
             android:orientation="vertical"
-            android:padding="@dimen/activity_vertical_margin">
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="visible">
 
             <FrameLayout
                 android:id="@+id/supplier_container"
@@ -267,7 +269,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_centerVertical="false"
             android:orientation="vertical"
             android:padding="@dimen/activity_vertical_margin"
             android:visibility="gone">
@@ -280,18 +282,47 @@
                 android:layout_marginTop="10dp"
                 android:textSize="16dip"
                 android:visibility="gone"
+                android:text=""
+                android:background="@color/green"
+                android:textColor="@color/lightgrey"
+                android:padding="10dp"
                 />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:drawableTop="@drawable/ic_back_to_the_list"
+                android:drawablePadding="5dp"
+                android:text="@string/btn_back_to_list"
+                android:textColor="@color/colorGrey"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_copy"
-                android:layout_width="126dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:background="@color/colorPrimary"
-                android:text="Salin Pesan"
-                android:textColor="#fff"
-                android:textStyle="bold" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_copy_message"
+                android:textColor="@color/colorGrey"
+                android:textSize="12sp"
+                android:drawableTop="@drawable/ic_btn_copy"
+                android:drawablePadding="5dp"/>
         </LinearLayout>
 
     </RelativeLayout>
