@@ -28,6 +28,8 @@
         <EditText
             android:ems="10"
             android:id="@+id/input_name"
+            android:inputType="textPersonName"
+            android:singleLine="true"
             />
 
         <TextView
@@ -39,6 +41,8 @@
         <EditText
             android:ems="10"
             android:id="@+id/input_email"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
             />
 
         <TextView
@@ -50,6 +54,7 @@
         <EditText
             android:ems="10"
             android:id="@+id/input_username"
+            android:singleLine="true"
             />
 
         <TextView
@@ -61,6 +66,9 @@
         <EditText
             android:ems="10"
             android:id="@+id/input_phone"
+            android:inputType="textPhonetic"
+            android:singleLine="true"
+            android:text=""
             />
 
         <Space
@@ -76,6 +84,8 @@
             android:layout_row="6"
             android:layout_column="3"
             android:background="@android:color/transparent"
+            android:onClick="updateProfile"
+            android:clickable="true"
             />
     </GridLayout>
 

@@ -14,6 +14,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ProfileActivity extends MainActivity {
     ProgressDialog pDialog;
@@ -123,14 +136,162 @@ public class ProfileActivity extends MainActivity {
     private EditText input_name;
     private EditText input_email;
     private EditText input_username;
+    private EditText input_phone;
+
+    private EditText input_old_password;
+    private EditText input_new_password;
+    private EditText input_new_password_confirm;
 
     private void initUi() {
         input_name = (EditText) findViewById(R.id.input_name);
         input_email = (EditText) findViewById(R.id.input_email);
         input_username = (EditText) findViewById(R.id.input_username);
+        input_phone = (EditText) findViewById(R.id.input_phone);
 
         input_name.setText(sharedpreferences.getString("name", null));
         input_email.setText(sharedpreferences.getString("email", null));
         input_username.setText(sharedpreferences.getString("username", null));
+        if (sharedpreferences.getString("phone", null) != null) {
+            input_phone.setText(sharedpreferences.getString("phone", null));
+        }
+
+        input_old_password = (EditText) findViewById(R.id.input_old_password);
+        input_new_password = (EditText) findViewById(R.id.input_new_password);
+        input_new_password_confirm = (EditText) findViewById(R.id.input_new_password_confirm);
+    }
+
+    public void updateProfile(View view) {
+        Map<String, String> post_params = new HashMap<String, String>();
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
+        post_params.put("name", input_name.getText().toString());
+        post_params.put("email", input_email.getText().toString());
+        post_params.put("username", input_username.getText().toString());
+        post_params.put("phone", input_phone.getText().toString());
+
+        int error = 0;
+        if (post_params.get("name").length() <= 0
+                || post_params.get("email").length() <= 0
+                || post_params.get("username").length() <= 0) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.msg_password_empty_field), Toast.LENGTH_LONG).show();
+            error = error + 1;
+        }
+
+        Log.e(TAG, "post_params : "+ post_params.toString());
+
+        if (error == 0) {
+            String url = Server.URL + "user/update?api-key=" + Server.API_KEY;
+            _string_request(
+                    Request.Method.POST,
+                    url,
+                    post_params, true,
+                    new VolleyCallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                            hideDialog();
+                            try {
+                                JSONObject jObj = new JSONObject(result);
+                                success = jObj.getInt(TAG_SUCCESS);
+                                // Check for error node in json
+                                if (success == 1) {
+                                    Toast.makeText(getApplicationContext(),
+                                            jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+    }
+
+    public void updatePassword(View view) {
+        Map<String, String> post_params = new HashMap<String, String>();
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
+        post_params.put("old_password", input_old_password.getText().toString());
+        post_params.put("new_password", input_new_password.getText().toString());
+
+        Log.e(TAG, "post_params : "+ post_params.toString());
+
+        int error = 0;
+        if (!input_new_password_confirm.getText().toString().equals(input_new_password.getText().toString())) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.msg_password_different), Toast.LENGTH_LONG).show();
+            error = error + 1;
+        }
+
+        if (error == 0) {
+            String url = Server.URL + "user/change-password?api-key=" + Server.API_KEY;
+            _string_request(
+                    Request.Method.POST,
+                    url,
+                    post_params, true,
+                    new VolleyCallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                            hideDialog();
+                            try {
+                                JSONObject jObj = new JSONObject(result);
+                                success = jObj.getInt(TAG_SUCCESS);
+                                // Check for error node in json
+                                if (success == 1) {
+                                    Toast.makeText(getApplicationContext(),
+                                            jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        }
     }
 }
