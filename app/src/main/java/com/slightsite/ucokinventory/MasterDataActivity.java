@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -295,7 +297,7 @@ public class MasterDataActivity extends MainActivity {
         input_product_unit = (EditText) mView.findViewById(R.id.input_product_unit);
         input_product_description = (EditText) mView.findViewById(R.id.input_product_description);
 
-        trigger_product_dialog_button(mView);
+        trigger_product_dialog_button(mView, false);
 
         dialog.show();
     }
@@ -304,7 +306,15 @@ public class MasterDataActivity extends MainActivity {
      * Submit and delete button execution for product dialog
      * @param mView
      */
-    private void trigger_product_dialog_button(final View mView) {
+    private void trigger_product_dialog_button(final View mView, final Boolean is_update) {
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+
+        if (is_update) {
+            btn_dialog_cancel.setVisibility(View.GONE);
+            btn_dialog_delete.setVisibility(View.VISIBLE);
+        }
+
         Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
         btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -328,7 +338,40 @@ public class MasterDataActivity extends MainActivity {
                     post_params.put("unit", input_product_unit.getText().toString());
                     post_params.put("description", input_product_description.getText().toString());
 
-                    product_items.add(post_params.get("title"));
+                    if (!is_update) {
+                        product_items.add(post_params.get("title"));
+                        // build the product data
+                        JSONObject additional_data = new JSONObject();
+                        try {
+                            additional_data.put("id", 0);
+                            additional_data.put("code", post_params.get("code"));
+                            additional_data.put("title", post_params.get("title"));
+                            additional_data.put("unit", post_params.get("unit"));
+                            additional_data.put("description", post_params.get("description"));
+
+                            product_data.put(additional_data);
+                            // execute create data on server
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        product_items.set(selected_list_product, post_params.get("title"));
+                        try {
+                            product_data.getJSONObject(selected_list_product).put("code", post_params.get("code"));
+                            product_data.getJSONObject(selected_list_product).put("title", post_params.get("title"));
+                            product_data.getJSONObject(selected_list_product).put("unit", post_params.get("unit"));
+                            product_data.getJSONObject(selected_list_product).put("description", post_params.get("description"));
+                            if (product_data.getJSONObject(selected_list_product).getInt("id") > 0) {
+                                post_params.put("id", product_data.getJSONObject(selected_list_product).getString("id"));
+                                // execute update on server
+                                //Boolean update = _execute();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     reloadProductList();
 
                     dialog.hide();
@@ -336,15 +379,41 @@ public class MasterDataActivity extends MainActivity {
             }
         });
 
-        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
         btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog.hide();
+                AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                        MasterDataActivity.this);
+                quitDialog.setTitle(getResources().getString(R.string.dialog_remove_po));
+                quitDialog.setPositiveButton(getResources().getString(R.string.btn_remove), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            executingDeleteProduct();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        reloadProductList();
+                    }
+                });
 
+                quitDialog.setNegativeButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface mdialog, int which) {
+                        dialog.show();
+                    }
+                });
+                quitDialog.show();
             }
         });
     }
 
+    private int selected_list_product;
+
+    /**
+     * Onclick product items
+     */
     private void productItemListener() {
         list_product.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -353,6 +422,7 @@ public class MasterDataActivity extends MainActivity {
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_product, null);
 
                 //String title = list_product.getItemAtPosition(i).toString();
+                selected_list_product = i;
 
                 builder.setView(mView);
                 dialog = builder.create();
@@ -365,16 +435,73 @@ public class MasterDataActivity extends MainActivity {
 
                 dialog_title.setText(getResources().getString(R.string.dialog_update_product));
                 try {
-                    input_product_title.setText(product_data.getJSONObject(i).getString("title"));
-                    input_product_code.setText(product_data.getJSONObject(i).getString("code"));
-                    input_product_unit.setText(product_data.getJSONObject(i).getString("unit"));
-                    input_product_description.setText(product_data.getJSONObject(i).getString("description"));
+                    JSONObject product_detail = product_data.getJSONObject(i);
+                    input_product_title.setText(product_detail.getString("title"));
+                    input_product_code.setText(product_detail.getString("code"));
+                    input_product_unit.setText(product_detail.getString("unit"));
+                    input_product_description.setText(product_detail.getString("description"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
+                trigger_product_dialog_button(mView, true);
+
                 dialog.show();
             }
         });
+    }
+
+    /**
+     * Delete product execution
+     */
+    private void executingDeleteProduct() {
+        Map<String, String> post_params = new HashMap<String, String>();
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
+        try {
+            post_params.put("id", product_data.getJSONObject(selected_list_product).getString("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (Integer.parseInt(post_params.get("id")) > 0) {
+            // execute delete in server
+        }
+
+        product_data.remove(selected_list_product);
+        product_items.remove(selected_list_product);
+    }
+
+    /**
+     * Create, Update, Delete execution
+     * @param url
+     * @param params
+     * @return
+     */
+    private boolean _execute(String url, Map params) {
+        _string_request(
+                Request.Method.POST,
+                url,
+                params,
+                true,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        hideDialog();
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        return (success > 0)? true : false;
     }
 }
