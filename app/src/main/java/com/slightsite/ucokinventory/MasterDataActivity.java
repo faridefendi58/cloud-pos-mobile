@@ -1,5 +1,7 @@
 package com.slightsite.ucokinventory;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,8 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,7 +48,15 @@ public class MasterDataActivity extends MainActivity {
     private static final String TAG_MESSAGE = "message";
 
     private ListView list_product;
+    private JSONArray product_data;
     private ArrayList<String> product_items = new ArrayList<String>();
+    private AlertDialog dialog;
+
+    // for dialog form
+    private EditText input_product_title;
+    private EditText input_product_code;
+    private EditText input_product_unit;
+    private EditText input_product_description;
 
     private MasterDataActivity.SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -75,7 +89,8 @@ public class MasterDataActivity extends MainActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                initProductList();
+                intUi();
+                getProductList();
             }
         }, 1000);
     }
@@ -199,39 +214,42 @@ public class MasterDataActivity extends MainActivity {
         AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
     }
 
-    private void initProductList() {
+    private void intUi() {
         list_product = (ListView) findViewById(R.id.list_product);
+    }
+
+    /**
+     * Building the list of the product
+     */
+    private void getProductList() {
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("simply", "1");
+        //params.put("simply", "1");
 
         product_items.clear();
 
         String wh_url = Server.URL + "product/list?api-key=" + Server.API_KEY;
         _string_request(
                 Request.Method.GET,
-                wh_url, params, false,
+                wh_url, params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
+                        hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
-                                JSONArray data = jObj.getJSONArray("data");
-                                for(int n = 0; n < data.length(); n++)
+                                product_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < product_data.length(); n++)
                                 {
-                                    JSONObject data_n = data.getJSONObject(n);
+                                    JSONObject data_n = product_data.getJSONObject(n);
                                     product_items.add(data_n.getString("title"));
                                 }
 
-                                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(
-                                        MasterDataActivity.this,
-                                        android.R.layout.simple_list_item_activated_1,
-                                        product_items);
-
-                                list_product.setAdapter(productAdapter);
+                                reloadProductList();
+                                productItemListener();
                             }
 
                         } catch (JSONException e) {
@@ -239,5 +257,124 @@ public class MasterDataActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * Reloading listview of the product
+     */
+    private void reloadProductList() {
+        ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(
+                MasterDataActivity.this,
+                android.R.layout.simple_list_item_activated_1,
+                product_items);
+
+        list_product.setAdapter(productAdapter);
+    }
+
+    /**
+     * action closing the active dialog
+     * @param view
+     */
+    public void closeDialog(View view) {
+        dialog.hide();
+    }
+
+    /**
+     * Add product dialog
+     * @param view
+     */
+    public void addProduct(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_add_product, null);
+
+        builder.setView(mView);
+        dialog = builder.create();
+
+        input_product_title = (EditText) mView.findViewById(R.id.input_product_title);
+        input_product_code = (EditText) mView.findViewById(R.id.input_product_code);
+        input_product_unit = (EditText) mView.findViewById(R.id.input_product_unit);
+        input_product_description = (EditText) mView.findViewById(R.id.input_product_description);
+
+        trigger_product_dialog_button(mView);
+
+        dialog.show();
+    }
+
+    /**
+     * Submit and delete button execution for product dialog
+     * @param mView
+     */
+    private void trigger_product_dialog_button(final View mView) {
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int error = 0;
+                if (input_product_title.getText().toString().length() == 0
+                        && input_product_code.getText().toString().length() == 0
+                        && input_product_unit.getText().toString().length() == 0) {
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.msg_product_empty_field),
+                            Toast.LENGTH_LONG).show();
+                    error = error + 1;
+                }
+
+                if (error == 0) {
+                    // submision
+                    Map<String, String> post_params = new HashMap<String, String>();
+                    post_params.put("admin_id", sharedpreferences.getString("id", null));
+                    post_params.put("title", input_product_title.getText().toString());
+                    post_params.put("code", input_product_code.getText().toString());
+                    post_params.put("unit", input_product_unit.getText().toString());
+                    post_params.put("description", input_product_description.getText().toString());
+
+                    product_items.add(post_params.get("title"));
+                    reloadProductList();
+
+                    dialog.hide();
+                }
+            }
+        });
+
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    private void productItemListener() {
+        list_product.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_product, null);
+
+                //String title = list_product.getItemAtPosition(i).toString();
+
+                builder.setView(mView);
+                dialog = builder.create();
+
+                input_product_title = (EditText) mView.findViewById(R.id.input_product_title);
+                input_product_code = (EditText) mView.findViewById(R.id.input_product_code);
+                input_product_unit = (EditText) mView.findViewById(R.id.input_product_unit);
+                input_product_description = (EditText) mView.findViewById(R.id.input_product_description);
+                TextView dialog_title = (TextView) mView.findViewById(R.id.dialog_title);
+
+                dialog_title.setText(getResources().getString(R.string.dialog_update_product));
+                try {
+                    input_product_title.setText(product_data.getJSONObject(i).getString("title"));
+                    input_product_code.setText(product_data.getJSONObject(i).getString("code"));
+                    input_product_unit.setText(product_data.getJSONObject(i).getString("unit"));
+                    input_product_description.setText(product_data.getJSONObject(i).getString("description"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                dialog.show();
+            }
+        });
     }
 }

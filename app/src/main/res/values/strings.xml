@@ -62,7 +62,8 @@
     <string name="txt_profile">Profil</string>
     <string name="txt_master_data">Master Data</string>
     <string name="txt_profile_setup">Ubah Data Profil</string>
-    <string name="txt_form_requirement">Silakan lengkapi beberapa isian berikut:</string>
+    <string name="txt_form_requirement">Silakan lengkapi beberapa isian berikut :</string>
+    <string name="txt_header_list_product">Daftar Produk :</string>
 
     <string name="po_number">Nomor PO</string>
     <string name="supplier_name">Nama Suplier</string>
@@ -80,6 +81,7 @@
     <string name="btn_submit">Kirim</string>
     <string name="btn_add_item">Tambah Barang</string>
     <string name="btn_copy_message">Salin Pesan</string>
+    <string name="btn_add_product">Tambah Produk</string>
 
     <string name="tab_archive">Arsip</string>
     <string name="tab_list_issue">Barang Masuk</string>
@@ -99,6 +101,8 @@
     <string name="dialog_remove_po">Anda yakin ingin MENGHAPUS PO ini?</string>
     <string name="dialog_add_item_po">Jumlah Pengadaan Barang</string>
     <string name="dialog_update_item_po">Ubah Item PO</string>
+    <string name="dialog_add_product">Form Tambah Produk</string>
+    <string name="dialog_update_product">Form Ubah Produk</string>
 
     <string name="label_product_name">Nama Barang :</string>
     <string name="label_item_quantity">Jumlah Barang :</string>
@@ -110,9 +114,14 @@
     <string name="label_old_password">Password Lama :</string>
     <string name="label_new_password">Password Baru :</string>
     <string name="label_new_password_confirm">Password Baru (diulang) :</string>
+    <string name="label_product_title">Nama Produk :</string>
+    <string name="label_product_code">Kode Produk :</string>
+    <string name="label_product_unit">Unit Produk :</string>
+    <string name="label_description">Deskripsi :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
     <string name="msg_password_different">Ulangi password baru dengan benar.</string>
     <string name="msg_password_empty_field">Nama, email, username tidak boleh dikosongi.</string>
     <string name="msg_require_all_field">Semua kolom wajib diisi.</string>
+    <string name="msg_product_empty_field">Nama, kode, dan unit produk tidak boleh dikosongi.</string>
 </resources>
