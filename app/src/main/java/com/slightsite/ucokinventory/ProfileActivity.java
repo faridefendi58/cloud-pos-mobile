@@ -262,6 +262,14 @@ public class ProfileActivity extends MainActivity {
         Log.e(TAG, "post_params : "+ post_params.toString());
 
         int error = 0;
+        if (post_params.get("old_password").length() <= 0
+                || post_params.get("old_password").length() <= 0
+                || post_params.get("old_password").length() <= 0) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.msg_require_all_field), Toast.LENGTH_LONG).show();
+            error = error + 1;
+        }
+
         if (!input_new_password_confirm.getText().toString().equals(input_new_password.getText().toString())) {
             Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.msg_password_different), Toast.LENGTH_LONG).show();

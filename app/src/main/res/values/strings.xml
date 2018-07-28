@@ -114,4 +114,5 @@
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
     <string name="msg_password_different">Ulangi password baru dengan benar.</string>
     <string name="msg_password_empty_field">Nama, email, username tidak boleh dikosongi.</string>
+    <string name="msg_require_all_field">Semua kolom wajib diisi.</string>
 </resources>

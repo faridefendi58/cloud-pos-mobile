@@ -9,9 +9,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class MasterDataActivity extends MainActivity {
     ProgressDialog pDialog;
@@ -21,6 +40,9 @@ public class MasterDataActivity extends MainActivity {
     private static final String TAG = MasterDataActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
+    private ListView list_product;
+    private ArrayList<String> product_items = new ArrayList<String>();
 
     private MasterDataActivity.SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -53,7 +75,7 @@ public class MasterDataActivity extends MainActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
+                initProductList();
             }
         }, 1000);
     }
@@ -128,5 +150,94 @@ public class MasterDataActivity extends MainActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+    }
+
+    private void initProductList() {
+        list_product = (ListView) findViewById(R.id.list_product);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("simply", "1");
+
+        product_items.clear();
+
+        String wh_url = Server.URL + "product/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                wh_url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    product_items.add(data_n.getString("title"));
+                                }
+
+                                ArrayAdapter<String> productAdapter = new ArrayAdapter<String>(
+                                        MasterDataActivity.this,
+                                        android.R.layout.simple_list_item_activated_1,
+                                        product_items);
+
+                                list_product.setAdapter(productAdapter);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
