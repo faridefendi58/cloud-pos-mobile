@@ -56,6 +56,11 @@ public class MasterDataActivity extends MainActivity {
     private ListView list_supplier;
     private JSONArray supplier_data;
     private ArrayList<String> supplier_items = new ArrayList<String>();
+
+    private ListView list_shipment;
+    private JSONArray shipment_data;
+    private ArrayList<String> shipment_items = new ArrayList<String>();
+
     private AlertDialog dialog;
 
     // for dialog form
@@ -67,6 +72,8 @@ public class MasterDataActivity extends MainActivity {
     private EditText input_supplier_address;
     private EditText input_supplier_phone;
     private EditText input_supplier_notes;
+    private EditText input_shipment_title;
+    private EditText input_shipment_description;
 
     private MasterDataActivity.SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -102,6 +109,7 @@ public class MasterDataActivity extends MainActivity {
                 intUi();
                 getProductList();
                 getSupplierList();
+                getShipmentList();
             }
         }, 1000);
     }
@@ -228,6 +236,7 @@ public class MasterDataActivity extends MainActivity {
     private void intUi() {
         list_product = (ListView) findViewById(R.id.list_product);
         list_supplier = (ListView) findViewById(R.id.list_supplier);
+        list_shipment = (ListView) findViewById(R.id.list_shipment);
     }
 
     /**
@@ -755,5 +764,232 @@ public class MasterDataActivity extends MainActivity {
 
         supplier_data.remove(selected_list_supplier);
         supplier_items.remove(selected_list_supplier);
+    }
+
+    /**
+     * Geting shipment data
+     */
+    private void getShipmentList() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        //params.put("simply", "1");
+
+        shipment_items.clear();
+
+        String url = Server.URL + "shipment/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                shipment_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < shipment_data.length(); n++)
+                                {
+                                    JSONObject data_n = shipment_data.getJSONObject(n);
+                                    shipment_items.add(data_n.getString("title"));
+                                }
+
+                                reloadShipmentList();
+                                shipmentItemListener();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Reloading listview of the shipment
+     */
+    private void reloadShipmentList() {
+        ArrayAdapter<String> shipmentAdapter = new ArrayAdapter<String>(
+                MasterDataActivity.this,
+                android.R.layout.simple_list_item_activated_1,
+                shipment_items);
+
+        list_shipment.setAdapter(shipmentAdapter);
+    }
+
+    /**
+     * Add shipment dialog
+     * @param view
+     */
+    public void addShipment(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_add_shipment, null);
+
+        builder.setView(mView);
+        dialog = builder.create();
+
+        input_shipment_title = (EditText) mView.findViewById(R.id.input_shipment_title);
+        input_shipment_description = (EditText) mView.findViewById(R.id.input_shipment_description);
+
+        trigger_shipment_dialog_button(mView, false);
+
+        dialog.show();
+    }
+
+    /**
+     * Submit and delete button execution for shipment dialog
+     * @param mView
+     */
+    private void trigger_shipment_dialog_button(final View mView, final Boolean is_update) {
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+
+        if (is_update) {
+            btn_dialog_cancel.setVisibility(View.GONE);
+            btn_dialog_delete.setVisibility(View.VISIBLE);
+        }
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int error = 0;
+                if (input_shipment_title.getText().toString().length() == 0) {
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.msg_shipment_empty_field),
+                            Toast.LENGTH_LONG).show();
+                    error = error + 1;
+                }
+
+                if (error == 0) {
+                    // submision
+                    Map<String, String> post_params = new HashMap<String, String>();
+                    post_params.put("admin_id", sharedpreferences.getString("id", null));
+                    post_params.put("title", input_shipment_title.getText().toString());
+                    post_params.put("description", input_shipment_description.getText().toString());
+
+                    if (!is_update) {
+                        shipment_items.add(post_params.get("title"));
+                        // build the product data
+                        JSONObject additional_data = new JSONObject();
+                        try {
+                            additional_data.put("id", 0);
+                            additional_data.put("title", post_params.get("title"));
+                            additional_data.put("description", post_params.get("description"));
+
+                            shipment_data.put(additional_data);
+                            // execute create data on server
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        shipment_items.set(selected_list_shipment, post_params.get("title"));
+                        try {
+                            shipment_data.getJSONObject(selected_list_shipment).put("title", post_params.get("title"));
+                            shipment_data.getJSONObject(selected_list_shipment).put("description", post_params.get("description"));
+                            if (shipment_data.getJSONObject(selected_list_shipment).getInt("id") > 0) {
+                                post_params.put("id", shipment_data.getJSONObject(selected_list_shipment).getString("id"));
+                                // execute update on server
+                                //Boolean update = _execute();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    reloadShipmentList();
+
+                    dialog.hide();
+                }
+            }
+        });
+
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+                AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                        MasterDataActivity.this);
+                quitDialog.setTitle(getResources().getString(R.string.dialog_remove_confirm));
+                quitDialog.setPositiveButton(getResources().getString(R.string.btn_remove), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            executingDeleteShipment();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        reloadShipmentList();
+                    }
+                });
+
+                quitDialog.setNegativeButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface mdialog, int which) {
+                        dialog.show();
+                    }
+                });
+                quitDialog.show();
+            }
+        });
+    }
+
+    private int selected_list_shipment;
+
+    /**
+     * Onclick shipment items
+     */
+    private void shipmentItemListener() {
+        list_shipment.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_shipment, null);
+
+                selected_list_shipment = i;
+
+                builder.setView(mView);
+                dialog = builder.create();
+
+                input_shipment_title = (EditText) mView.findViewById(R.id.input_shipment_title);
+                input_shipment_description = (EditText) mView.findViewById(R.id.input_shipment_description);
+                TextView dialog_title = (TextView) mView.findViewById(R.id.dialog_title);
+
+                dialog_title.setText(getResources().getString(R.string.dialog_update_shipment));
+                try {
+                    JSONObject shipment_detail = shipment_data.getJSONObject(i);
+                    input_shipment_title.setText(shipment_detail.getString("title"));
+                    input_shipment_description.setText(shipment_detail.getString("description"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                trigger_shipment_dialog_button(mView, true);
+
+                dialog.show();
+            }
+        });
+    }
+
+    /**
+     * Delete shipment execution
+     */
+    private void executingDeleteShipment() {
+        Map<String, String> post_params = new HashMap<String, String>();
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
+        try {
+            post_params.put("id", shipment_data.getJSONObject(selected_list_shipment).getString("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (Integer.parseInt(post_params.get("id")) > 0) {
+            // execute delete in server
+        }
+
+        shipment_data.remove(selected_list_shipment);
+        shipment_items.remove(selected_list_shipment);
     }
 }

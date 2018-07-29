@@ -4,9 +4,46 @@
     android:layout_height="wrap_content"
     android:fillViewport="true">
 
-    <RelativeLayout
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
-    </RelativeLayout>
+        android:layout_height="match_parent"
+        android:useDefaultMargins="true"
+        android:alignmentMode="alignBounds"
+        android:columnOrderPreserved="false"
+        android:columnCount="3" >
+
+        <TextView
+            android:text="@string/txt_header_list_shipment"
+            android:textSize="16dip"
+            android:layout_columnSpan="3"
+            android:layout_gravity="left"
+            android:textStyle="bold"
+            />
+
+        <ListView
+            android:id="@+id/list_shipment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_column="0">
+        </ListView>
+
+        <Space
+            android:layout_row="3"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill"
+            />
+
+        <Button
+            android:drawableTop="@drawable/ic_btn_add"
+            android:text="@string/btn_add_shipment"
+            android:layout_row="4"
+            android:layout_column="2"
+            android:background="@android:color/transparent"
+            android:onClick="addShipment"
+            android:clickable="true"
+            android:textColor="@color/colorGrey"
+            />
+    </GridLayout>
 
 </ScrollView>
