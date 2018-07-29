@@ -2,6 +2,7 @@ package com.slightsite.ucokinventory;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -161,7 +162,7 @@ public class ProfileActivity extends MainActivity {
     }
 
     public void updateProfile(View view) {
-        Map<String, String> post_params = new HashMap<String, String>();
+        final Map<String, String> post_params = new HashMap<String, String>();
         post_params.put("admin_id", sharedpreferences.getString("id", null));
         post_params.put("name", input_name.getText().toString());
         post_params.put("email", input_email.getText().toString());
@@ -194,9 +195,15 @@ public class ProfileActivity extends MainActivity {
                                 success = jObj.getInt(TAG_SUCCESS);
                                 // Check for error node in json
                                 if (success == 1) {
-                                    Toast.makeText(getApplicationContext(),
-                                            jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                    editor.putString(TAG_USERNAME, post_params.get("username"));
+                                    editor.putString(TAG_NAME, post_params.get("name"));
+                                    editor.putString(TAG_EMAIL, post_params.get("email"));
+                                    editor.putString(TAG_PHONE, post_params.get("phone"));
+                                    editor.commit();
                                 }
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -286,14 +293,14 @@ public class ProfileActivity extends MainActivity {
                         @Override
                         public void onSuccess(String result) {
                             hideDialog();
+                            Log.e(TAG, "Result : "+ result.toString());
                             try {
                                 JSONObject jObj = new JSONObject(result);
                                 success = jObj.getInt(TAG_SUCCESS);
                                 // Check for error node in json
-                                if (success == 1) {
-                                    Toast.makeText(getApplicationContext(),
-                                            jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
-                                }
+                                //if (success == 1) { }
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
