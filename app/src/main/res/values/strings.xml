@@ -64,6 +64,7 @@
     <string name="txt_profile_setup">Ubah Data Profil</string>
     <string name="txt_form_requirement">Silakan lengkapi beberapa isian berikut :</string>
     <string name="txt_header_list_product">Daftar Produk :</string>
+    <string name="txt_header_list_supplier">Daftar Suplier :</string>
 
     <string name="po_number">Nomor PO</string>
     <string name="supplier_name">Nama Suplier</string>
@@ -82,6 +83,7 @@
     <string name="btn_add_item">Tambah Barang</string>
     <string name="btn_copy_message">Salin Pesan</string>
     <string name="btn_add_product">Tambah Produk</string>
+    <string name="btn_add_supplier">Tambah Pelanggan</string>
 
     <string name="tab_archive">Arsip</string>
     <string name="tab_list_issue">Barang Masuk</string>
@@ -93,7 +95,7 @@
     <string name="tab_change_password">Ubah Password</string>
     <string name="tab_product">Produk</string>
     <string name="tab_shipment">Pengiriman</string>
-    <string name="tab_supplier">Supplier</string>
+    <string name="tab_supplier">Suplier</string>
     <string name="tab_warehouse">Warehouse</string>
 
     <string name="input_find_product">Cari Produk</string>
@@ -103,6 +105,9 @@
     <string name="dialog_update_item_po">Ubah Item PO</string>
     <string name="dialog_add_product">Form Tambah Produk</string>
     <string name="dialog_update_product">Form Ubah Produk</string>
+    <string name="dialog_add_supplier">Form Tambah Suplier</string>
+    <string name="dialog_update_supplier">Form Ubah Suplier</string>
+    <string name="dialog_remove_confirm">Anda yakin ingin menghapus item ini?</string>
 
     <string name="label_product_name">Nama Barang :</string>
     <string name="label_item_quantity">Jumlah Barang :</string>
@@ -118,10 +123,15 @@
     <string name="label_product_code">Kode Produk :</string>
     <string name="label_product_unit">Unit Produk :</string>
     <string name="label_description">Deskripsi :</string>
+    <string name="label_supplier_name">Nama Suplier :</string>
+    <string name="label_supplier_address">Alamat :</string>
+    <string name="label_supplier_phone">No Telpon :</string>
+    <string name="label_notes">Catatan :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
     <string name="msg_password_different">Ulangi password baru dengan benar.</string>
     <string name="msg_password_empty_field">Nama, email, username tidak boleh dikosongi.</string>
     <string name="msg_require_all_field">Semua kolom wajib diisi.</string>
     <string name="msg_product_empty_field">Nama, kode, dan unit produk tidak boleh dikosongi.</string>
+    <string name="msg_supplier_empty_field">Nama, alamat, dan telepon tidak boleh dikosongi.</string>
 </resources>

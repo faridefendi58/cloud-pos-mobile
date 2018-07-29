@@ -52,6 +52,10 @@ public class MasterDataActivity extends MainActivity {
     private ListView list_product;
     private JSONArray product_data;
     private ArrayList<String> product_items = new ArrayList<String>();
+
+    private ListView list_supplier;
+    private JSONArray supplier_data;
+    private ArrayList<String> supplier_items = new ArrayList<String>();
     private AlertDialog dialog;
 
     // for dialog form
@@ -59,6 +63,10 @@ public class MasterDataActivity extends MainActivity {
     private EditText input_product_code;
     private EditText input_product_unit;
     private EditText input_product_description;
+    private EditText input_supplier_name;
+    private EditText input_supplier_address;
+    private EditText input_supplier_phone;
+    private EditText input_supplier_notes;
 
     private MasterDataActivity.SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -93,6 +101,7 @@ public class MasterDataActivity extends MainActivity {
             public void run() {
                 intUi();
                 getProductList();
+                getSupplierList();
             }
         }, 1000);
     }
@@ -218,6 +227,7 @@ public class MasterDataActivity extends MainActivity {
 
     private void intUi() {
         list_product = (ListView) findViewById(R.id.list_product);
+        list_supplier = (ListView) findViewById(R.id.list_supplier);
     }
 
     /**
@@ -385,7 +395,7 @@ public class MasterDataActivity extends MainActivity {
                 dialog.hide();
                 AlertDialog.Builder quitDialog = new AlertDialog.Builder(
                         MasterDataActivity.this);
-                quitDialog.setTitle(getResources().getString(R.string.dialog_remove_po));
+                quitDialog.setTitle(getResources().getString(R.string.dialog_remove_confirm));
                 quitDialog.setPositiveButton(getResources().getString(R.string.btn_remove), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -503,5 +513,247 @@ public class MasterDataActivity extends MainActivity {
                 });
 
         return (success > 0)? true : false;
+    }
+
+    /**
+     * Geting suplier data
+     */
+    private void getSupplierList() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        //params.put("simply", "1");
+
+        supplier_items.clear();
+
+        String url = Server.URL + "supplier/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                supplier_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < supplier_data.length(); n++)
+                                {
+                                    JSONObject data_n = supplier_data.getJSONObject(n);
+                                    supplier_items.add(data_n.getString("name"));
+                                }
+
+                                reloadSupplierList();
+                                supplierItemListener();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Reloading listview of the supplier
+     */
+    private void reloadSupplierList() {
+        ArrayAdapter<String> supplierAdapter = new ArrayAdapter<String>(
+                MasterDataActivity.this,
+                android.R.layout.simple_list_item_activated_1,
+                supplier_items);
+
+        list_supplier.setAdapter(supplierAdapter);
+    }
+
+    /**
+     * Add supplier dialog
+     * @param view
+     */
+    public void addSupplier(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_add_supplier, null);
+
+        builder.setView(mView);
+        dialog = builder.create();
+
+        input_supplier_name = (EditText) mView.findViewById(R.id.input_supplier_name);
+        input_supplier_address = (EditText) mView.findViewById(R.id.input_supplier_address);
+        input_supplier_phone = (EditText) mView.findViewById(R.id.input_supplier_phone);
+        input_supplier_notes = (EditText) mView.findViewById(R.id.input_supplier_notes);
+
+        trigger_supplier_dialog_button(mView, false);
+
+        dialog.show();
+    }
+
+    /**
+     * Submit and delete button execution for product dialog
+     * @param mView
+     */
+    private void trigger_supplier_dialog_button(final View mView, final Boolean is_update) {
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+
+        if (is_update) {
+            btn_dialog_cancel.setVisibility(View.GONE);
+            btn_dialog_delete.setVisibility(View.VISIBLE);
+        }
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int error = 0;
+                if (input_supplier_name.getText().toString().length() == 0
+                        && input_supplier_address.getText().toString().length() == 0
+                        && input_supplier_phone.getText().toString().length() == 0) {
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.msg_supplier_empty_field),
+                            Toast.LENGTH_LONG).show();
+                    error = error + 1;
+                }
+
+                if (error == 0) {
+                    // submision
+                    Map<String, String> post_params = new HashMap<String, String>();
+                    post_params.put("admin_id", sharedpreferences.getString("id", null));
+                    post_params.put("name", input_supplier_name.getText().toString());
+                    post_params.put("address", input_supplier_address.getText().toString());
+                    post_params.put("phone", input_supplier_phone.getText().toString());
+                    post_params.put("notes", input_supplier_notes.getText().toString());
+
+                    if (!is_update) {
+                        supplier_items.add(post_params.get("name"));
+                        // build the product data
+                        JSONObject additional_data = new JSONObject();
+                        try {
+                            additional_data.put("id", 0);
+                            additional_data.put("name", post_params.get("name"));
+                            additional_data.put("address", post_params.get("address"));
+                            additional_data.put("phone", post_params.get("phone"));
+                            additional_data.put("notes", post_params.get("notes"));
+
+                            supplier_data.put(additional_data);
+                            // execute create data on server
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        supplier_items.set(selected_list_supplier, post_params.get("name"));
+                        try {
+                            supplier_data.getJSONObject(selected_list_supplier).put("name", post_params.get("name"));
+                            supplier_data.getJSONObject(selected_list_supplier).put("address", post_params.get("address"));
+                            supplier_data.getJSONObject(selected_list_supplier).put("phone", post_params.get("phone"));
+                            supplier_data.getJSONObject(selected_list_supplier).put("notes", post_params.get("notes"));
+                            if (supplier_data.getJSONObject(selected_list_supplier).getInt("id") > 0) {
+                                post_params.put("id", supplier_data.getJSONObject(selected_list_supplier).getString("id"));
+                                // execute update on server
+                                //Boolean update = _execute();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    reloadSupplierList();
+
+                    dialog.hide();
+                }
+            }
+        });
+
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+                AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                        MasterDataActivity.this);
+                quitDialog.setTitle(getResources().getString(R.string.dialog_remove_confirm));
+                quitDialog.setPositiveButton(getResources().getString(R.string.btn_remove), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            executingDeleteSupplier();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        reloadSupplierList();
+                    }
+                });
+
+                quitDialog.setNegativeButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface mdialog, int which) {
+                        dialog.show();
+                    }
+                });
+                quitDialog.show();
+            }
+        });
+    }
+
+    private int selected_list_supplier;
+
+    /**
+     * Onclick product items
+     */
+    private void supplierItemListener() {
+        list_supplier.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_supplier, null);
+
+                //String title = list_product.getItemAtPosition(i).toString();
+                selected_list_supplier = i;
+
+                builder.setView(mView);
+                dialog = builder.create();
+
+                input_supplier_name = (EditText) mView.findViewById(R.id.input_supplier_name);
+                input_supplier_address = (EditText) mView.findViewById(R.id.input_supplier_address);
+                input_supplier_phone = (EditText) mView.findViewById(R.id.input_supplier_phone);
+                input_supplier_notes = (EditText) mView.findViewById(R.id.input_supplier_notes);
+                TextView dialog_title = (TextView) mView.findViewById(R.id.dialog_title);
+
+                dialog_title.setText(getResources().getString(R.string.dialog_update_supplier));
+                try {
+                    JSONObject supplier_detail = supplier_data.getJSONObject(i);
+                    input_supplier_name.setText(supplier_detail.getString("name"));
+                    input_supplier_address.setText(supplier_detail.getString("address"));
+                    input_supplier_phone.setText(supplier_detail.getString("phone"));
+                    input_supplier_notes.setText(supplier_detail.getString("notes"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                trigger_supplier_dialog_button(mView, true);
+
+                dialog.show();
+            }
+        });
+    }
+
+    /**
+     * Delete supplier execution
+     */
+    private void executingDeleteSupplier() {
+        Map<String, String> post_params = new HashMap<String, String>();
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
+        try {
+            post_params.put("id", supplier_data.getJSONObject(selected_list_supplier).getString("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (Integer.parseInt(post_params.get("id")) > 0) {
+            // execute delete in server
+        }
+
+        supplier_data.remove(selected_list_supplier);
+        supplier_items.remove(selected_list_supplier);
     }
 }
