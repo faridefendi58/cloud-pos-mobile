@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -230,6 +231,10 @@ public class MasterDataActivity extends MainActivity {
                 return params;
             }
         };
+
+        strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
     }
 
@@ -370,6 +375,9 @@ public class MasterDataActivity extends MainActivity {
 
                             product_data.put(additional_data);
                             // execute create data on server
+                            Boolean create = _execute(
+                                    Server.URL + "product/create?api-key=" + Server.API_KEY,
+                                    post_params);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -384,7 +392,9 @@ public class MasterDataActivity extends MainActivity {
                             if (product_data.getJSONObject(selected_list_product).getInt("id") > 0) {
                                 post_params.put("id", product_data.getJSONObject(selected_list_product).getString("id"));
                                 // execute update on server
-                                //Boolean update = _execute();
+                                Boolean update = _execute(
+                                        Server.URL + "product/update?api-key=" + Server.API_KEY,
+                                        post_params);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -482,12 +492,18 @@ public class MasterDataActivity extends MainActivity {
             e.printStackTrace();
         }
 
+        Boolean delete = true;
         if (Integer.parseInt(post_params.get("id")) > 0) {
             // execute delete in server
+            delete = _execute(
+                    Server.URL + "product/delete?api-key=" + Server.API_KEY,
+                    post_params);
         }
 
-        product_data.remove(selected_list_product);
-        product_items.remove(selected_list_product);
+        if (delete) {
+            product_data.remove(selected_list_product);
+            product_items.remove(selected_list_product);
+        }
     }
 
     /**
@@ -506,14 +522,15 @@ public class MasterDataActivity extends MainActivity {
                     @Override
                     public void onSuccess(String result) {
                         hideDialog();
+                        Log.e(TAG, "Execution : "+ result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
-                            if (success == 1) {
+                            //if (success == 1) {
                                 Toast.makeText(getApplicationContext(),
                                         jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
-                            }
+                            //}
 
                         } catch (JSONException e) {
                             e.printStackTrace();
