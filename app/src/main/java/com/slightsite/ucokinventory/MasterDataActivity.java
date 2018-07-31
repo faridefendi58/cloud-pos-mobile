@@ -908,6 +908,9 @@ public class MasterDataActivity extends MainActivity {
 
                             shipment_data.put(additional_data);
                             // execute create data on server
+                            Boolean create = _execute(
+                                    Server.URL + "shipment/create?api-key=" + Server.API_KEY,
+                                    post_params);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -920,7 +923,9 @@ public class MasterDataActivity extends MainActivity {
                             if (shipment_data.getJSONObject(selected_list_shipment).getInt("id") > 0) {
                                 post_params.put("id", shipment_data.getJSONObject(selected_list_shipment).getString("id"));
                                 // execute update on server
-                                //Boolean update = _execute();
+                                Boolean update = _execute(
+                                        Server.URL + "shipment/update?api-key=" + Server.API_KEY,
+                                        post_params);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1013,11 +1018,17 @@ public class MasterDataActivity extends MainActivity {
             e.printStackTrace();
         }
 
+        Boolean delete = true;
         if (Integer.parseInt(post_params.get("id")) > 0) {
             // execute delete in server
+            delete = _execute(
+                    Server.URL + "shipment/delete?api-key=" + Server.API_KEY,
+                    post_params);
         }
 
-        shipment_data.remove(selected_list_shipment);
-        shipment_items.remove(selected_list_shipment);
+        if (delete) {
+            shipment_data.remove(selected_list_shipment);
+            shipment_items.remove(selected_list_shipment);
+        }
     }
 }
