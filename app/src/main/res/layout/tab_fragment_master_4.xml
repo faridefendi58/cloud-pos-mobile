@@ -13,7 +13,7 @@
         android:columnCount="3" >
 
         <TextView
-            android:text="@string/txt_header_list_shipment"
+            android:text="@string/txt_header_list_warehouse"
             android:textSize="16dip"
             android:layout_columnSpan="3"
             android:layout_gravity="left"
@@ -21,7 +21,7 @@
             />
 
         <ListView
-            android:id="@+id/list_shipment"
+            android:id="@+id/list_warehouse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_column="0">
@@ -40,7 +40,7 @@
             android:layout_row="4"
             android:layout_column="2"
             android:background="@android:color/transparent"
-            android:onClick="addShipment"
+            android:onClick="addWarehouse"
             android:clickable="true"
             android:textColor="@color/colorGrey"
             android:visibility="gone"

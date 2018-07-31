@@ -145,7 +145,7 @@ public class NotificationActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response: " + result.toString());
+                        //Log.e(TAG, "Response: " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);

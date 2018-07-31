@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingBottom="20dp">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:useDefaultMargins="true"
+        android:alignmentMode="alignBounds"
+        android:columnOrderPreserved="false"
+        android:columnCount="3">
+
+        <TextView
+            android:id="@+id/dialog_title"
+            android:text="@string/dialog_add_supplier"
+            android:textSize="16dip"
+            android:layout_columnSpan="3"
+            android:layout_gravity="left"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:background="@drawable/textlines"
+            android:layout_width="match_parent"
+            />
+
+        <TextView
+            android:text="@string/label_supplier_name"
+            android:layout_gravity="right"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_supplier_name"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            />
+
+        <TextView
+            android:text="@string/label_supplier_address"
+            android:layout_gravity="right"
+            android:layout_column="0"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_supplier_address"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            />
+
+        <TextView
+            android:text="@string/label_supplier_phone"
+            android:layout_gravity="right"
+            android:layout_column="0"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_supplier_phone"
+            android:inputType="phone"
+            android:singleLine="true"
+            />
+
+        <TextView
+            android:text="@string/label_notes"
+            android:layout_gravity="right"
+            android:layout_column="0"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_supplier_notes"
+            android:inputType="text"
+            />
+
+        <Space
+            android:layout_row="6"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill"
+            />
+
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/btn_dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/btn_cancel"
+            android:background="@color/yellow"
+            android:textColor="#fff"
+            android:visibility="visible"
+            android:onClick="closeDialog"
+            android:clickable="true"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btn_dialog_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/btn_remove"
+            android:background="@color/colorAccent"
+            android:textColor="#fff"
+            android:visibility="gone"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btn_dialog_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:text="@string/btn_save"
+            android:background="@color/green"
+            android:textColor="#fff"
+            android:visibility="visible"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>
