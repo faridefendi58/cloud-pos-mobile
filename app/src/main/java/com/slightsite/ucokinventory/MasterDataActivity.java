@@ -663,6 +663,9 @@ public class MasterDataActivity extends MainActivity {
 
                             supplier_data.put(additional_data);
                             // execute create data on server
+                            Boolean create = _execute(
+                                    Server.URL + "supplier/create?api-key=" + Server.API_KEY,
+                                    post_params);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -677,7 +680,9 @@ public class MasterDataActivity extends MainActivity {
                             if (supplier_data.getJSONObject(selected_list_supplier).getInt("id") > 0) {
                                 post_params.put("id", supplier_data.getJSONObject(selected_list_supplier).getString("id"));
                                 // execute update on server
-                                //Boolean update = _execute();
+                                Boolean update = _execute(
+                                        Server.URL + "supplier/update?api-key=" + Server.API_KEY,
+                                        post_params);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -775,12 +780,18 @@ public class MasterDataActivity extends MainActivity {
             e.printStackTrace();
         }
 
+        Boolean delete = true;
         if (Integer.parseInt(post_params.get("id")) > 0) {
             // execute delete in server
+            delete = _execute(
+                    Server.URL + "supplier/delete?api-key=" + Server.API_KEY,
+                    post_params);
         }
 
-        supplier_data.remove(selected_list_supplier);
-        supplier_items.remove(selected_list_supplier);
+        if (delete) {
+            supplier_data.remove(selected_list_supplier);
+            supplier_items.remove(selected_list_supplier);
+        }
     }
 
     /**
