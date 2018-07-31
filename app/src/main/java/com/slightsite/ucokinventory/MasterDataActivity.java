@@ -8,14 +8,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -264,6 +267,33 @@ public class MasterDataActivity extends MainActivity {
         list_supplier = (ListView) findViewById(R.id.list_supplier);
         list_shipment = (ListView) findViewById(R.id.list_shipment);
         list_warehouse = (ListView) findViewById(R.id.list_warehouse);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        MenuItem action_add_master_data = (MenuItem) toolbar.getMenu().findItem(R.id.action_add_master_data);
+        action_add_master_data.setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.nav_add_product) {
+            addProduct(getWindow().getDecorView().getRootView());
+            return true;
+        } else if (id == R.id.nav_add_supplier) {
+            addSupplier(getWindow().getDecorView().getRootView());
+            return true;
+        } else if (id == R.id.nav_add_shipment) {
+            addShipment(getWindow().getDecorView().getRootView());
+            return true;
+        } else if (id == R.id.nav_add_warehouse) {
+            addWarehouse(getWindow().getDecorView().getRootView());
+            return true;
+        }
+
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -317,6 +347,7 @@ public class MasterDataActivity extends MainActivity {
                 product_items);
 
         list_product.setAdapter(productAdapter);
+        AppController.setListViewScrollable(list_product, 10);
     }
 
     /**
@@ -613,6 +644,7 @@ public class MasterDataActivity extends MainActivity {
                 supplier_items);
 
         list_supplier.setAdapter(supplierAdapter);
+        AppController.setListViewScrollable(list_supplier, 10);
     }
 
     /**
@@ -866,6 +898,7 @@ public class MasterDataActivity extends MainActivity {
                 shipment_items);
 
         list_shipment.setAdapter(shipmentAdapter);
+        AppController.setListViewScrollable(list_shipment, 10);
     }
 
     /**

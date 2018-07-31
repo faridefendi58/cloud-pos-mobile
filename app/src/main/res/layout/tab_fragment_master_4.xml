@@ -43,6 +43,7 @@
             android:onClick="addWarehouse"
             android:clickable="true"
             android:textColor="@color/colorGrey"
+            android:visibility="gone"
             />
     </GridLayout>
 

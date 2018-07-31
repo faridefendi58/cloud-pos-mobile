@@ -41,6 +41,7 @@
     <string name="home_menu_stock_report_desc">Persedian di Warehouse</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_addition">Tambah</string>
     <string name="txt_purchase_order">Pengadaan Barang</string>
     <string name="txt_receipt">Penerimaan Barang</string>
     <string name="txt_notification">Pemberitahuan</string>
@@ -85,8 +86,9 @@
     <string name="btn_add_item">Tambah Barang</string>
     <string name="btn_copy_message">Salin Pesan</string>
     <string name="btn_add_product">Tambah Produk</string>
-    <string name="btn_add_supplier">Tambah Pelanggan</string>
-    <string name="btn_add_shipment">Tambah Cara Pengiriman</string>
+    <string name="btn_add_supplier">Tambah Suplier</string>
+    <string name="btn_add_shipment">Tambah Pengiriman</string>
+    <string name="btn_add_warehouse">Tambah Warehouse</string>
 
     <string name="tab_archive">Arsip</string>
     <string name="tab_list_issue">Barang Masuk</string>
