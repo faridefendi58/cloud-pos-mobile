@@ -2,10 +2,13 @@ package com.slightsite.ucokinventory;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 import java.text.ParseException;
@@ -73,5 +76,25 @@ public class AppController extends Application {
             e.printStackTrace();
         }
         return str;
+    }
+
+    public static void setListViewScrollable(final ListView myListView, Integer add_height) {
+        ListAdapter myListAdapter = myListView.getAdapter();
+        if (myListAdapter == null) {
+            return;
+        }
+        // get listview height
+        int totalHeight = 0;
+        int adapterCount = myListAdapter.getCount();
+        for (int size = 0; size < adapterCount; size++) {
+            View listItem = myListAdapter.getView(size, null, myListView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+        // Change Height of ListView
+        ViewGroup.LayoutParams params = myListView.getLayoutParams();
+        params.height = (totalHeight
+                + (myListView.getDividerHeight() * (adapterCount))) + add_height;
+        myListView.setLayoutParams(params);
     }
 }

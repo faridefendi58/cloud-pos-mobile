@@ -44,7 +44,7 @@ import java.util.Map;
 public class MasterDataActivity extends MainActivity {
     ProgressDialog pDialog;
     int success;
-    static final int NUM_TAB_ITEMS = 3;
+    static final int NUM_TAB_ITEMS = 4;
 
     private static final String TAG = MasterDataActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
@@ -62,6 +62,10 @@ public class MasterDataActivity extends MainActivity {
     private JSONArray shipment_data;
     private ArrayList<String> shipment_items = new ArrayList<String>();
 
+    private ListView list_warehouse;
+    private JSONArray warehouse_data;
+    private ArrayList<String> warehouse_items = new ArrayList<String>();
+
     private AlertDialog dialog;
 
     // for dialog form
@@ -75,6 +79,11 @@ public class MasterDataActivity extends MainActivity {
     private EditText input_supplier_notes;
     private EditText input_shipment_title;
     private EditText input_shipment_description;
+    private EditText input_warehouse_title;
+    private EditText input_warehouse_address;
+    private EditText input_warehouse_phone;
+    private EditText input_warehouse_notes;
+    private EditText input_warehouse_group_name;
 
     private MasterDataActivity.SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -111,6 +120,7 @@ public class MasterDataActivity extends MainActivity {
                 getProductList();
                 getSupplierList();
                 getShipmentList();
+                getWarehouseList();
             }
         }, 1000);
     }
@@ -138,6 +148,9 @@ public class MasterDataActivity extends MainActivity {
                 case 2:
                     TabFragment3 tab3 = new TabFragment3();
                     return tab3;
+                case 3:
+                    TabFragment4 tab4 = new TabFragment4();
+                    return tab4;
                 default:
                     return null;
             }
@@ -170,6 +183,14 @@ public class MasterDataActivity extends MainActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.tab_fragment_master_3, container, false);
+        }
+    }
+
+    public static class TabFragment4 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_master_4, container, false);
         }
     }
 
@@ -242,6 +263,7 @@ public class MasterDataActivity extends MainActivity {
         list_product = (ListView) findViewById(R.id.list_product);
         list_supplier = (ListView) findViewById(R.id.list_supplier);
         list_shipment = (ListView) findViewById(R.id.list_shipment);
+        list_warehouse = (ListView) findViewById(R.id.list_warehouse);
     }
 
     /**
@@ -1029,6 +1051,259 @@ public class MasterDataActivity extends MainActivity {
         if (delete) {
             shipment_data.remove(selected_list_shipment);
             shipment_items.remove(selected_list_shipment);
+        }
+    }
+
+    /** start of wh management */
+    /**
+     * Geting wh data
+     */
+    private void getWarehouseList() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        //params.put("simply", "1");
+
+        warehouse_items.clear();
+
+        String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                warehouse_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < warehouse_data.length(); n++)
+                                {
+                                    JSONObject data_n = warehouse_data.getJSONObject(n);
+                                    warehouse_items.add(data_n.getString("title"));
+                                }
+
+                                reloadWarehouseList();
+                                warehouseItemListener();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Reloading listview of the wh
+     */
+    private void reloadWarehouseList() {
+        ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                MasterDataActivity.this,
+                android.R.layout.simple_list_item_activated_1,
+                warehouse_items);
+
+        list_warehouse.setAdapter(whAdapter);
+        AppController.setListViewScrollable(list_warehouse, 10);
+    }
+
+    /**
+     * Add wh dialog
+     * @param view
+     */
+    public void addWarehouse(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_add_warehouse, null);
+
+        builder.setView(mView);
+        dialog = builder.create();
+
+        input_warehouse_title = (EditText) mView.findViewById(R.id.input_warehouse_title);
+        input_warehouse_address = (EditText) mView.findViewById(R.id.input_warehouse_address);
+        input_warehouse_phone = (EditText) mView.findViewById(R.id.input_warehouse_phone);
+        input_warehouse_notes = (EditText) mView.findViewById(R.id.input_warehouse_notes);
+
+        trigger_warehouse_dialog_button(mView, false);
+
+        dialog.show();
+    }
+
+    /**
+     * Submit and delete button execution for wh dialog
+     * @param mView
+     */
+    private void trigger_warehouse_dialog_button(final View mView, final Boolean is_update) {
+        Button btn_dialog_cancel = (Button) mView.findViewById(R.id.btn_dialog_cancel);
+        Button btn_dialog_delete = (Button) mView.findViewById(R.id.btn_dialog_delete);
+
+        if (is_update) {
+            btn_dialog_cancel.setVisibility(View.GONE);
+            btn_dialog_delete.setVisibility(View.VISIBLE);
+        }
+
+        Button btn_dialog_submit = (Button) mView.findViewById(R.id.btn_dialog_submit);
+        btn_dialog_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int error = 0;
+                if (input_warehouse_title.getText().toString().length() == 0) {
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.msg_warehouse_empty_field),
+                            Toast.LENGTH_LONG).show();
+                    error = error + 1;
+                }
+
+                if (error == 0) {
+                    // submision
+                    Map<String, String> post_params = new HashMap<String, String>();
+                    post_params.put("admin_id", sharedpreferences.getString("id", null));
+                    post_params.put("title", input_warehouse_title.getText().toString());
+                    post_params.put("address", input_warehouse_address.getText().toString());
+                    post_params.put("phone", input_warehouse_phone.getText().toString());
+                    post_params.put("notes", input_warehouse_notes.getText().toString());
+
+                    if (!is_update) {
+                        warehouse_items.add(post_params.get("title"));
+                        // build the product data
+                        JSONObject additional_data = new JSONObject();
+                        try {
+                            additional_data.put("id", 0);
+                            additional_data.put("title", post_params.get("title"));
+                            additional_data.put("address", post_params.get("address"));
+                            additional_data.put("phone", post_params.get("phone"));
+                            additional_data.put("notes", post_params.get("notes"));
+
+                            warehouse_data.put(additional_data);
+                            // execute create data on server
+                            Boolean create = _execute(
+                                    Server.URL + "warehouse/create?api-key=" + Server.API_KEY,
+                                    post_params);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        warehouse_items.set(selected_list_warehouse, post_params.get("title"));
+                        try {
+                            warehouse_data.getJSONObject(selected_list_warehouse).put("title", post_params.get("title"));
+                            warehouse_data.getJSONObject(selected_list_warehouse).put("address", post_params.get("address"));
+                            warehouse_data.getJSONObject(selected_list_warehouse).put("phone", post_params.get("phone"));
+                            warehouse_data.getJSONObject(selected_list_warehouse).put("notes", post_params.get("notes"));
+                            if (warehouse_data.getJSONObject(selected_list_warehouse).getInt("id") > 0) {
+                                post_params.put("id", warehouse_data.getJSONObject(selected_list_warehouse).getString("id"));
+                                // execute update on server
+                                Boolean update = _execute(
+                                        Server.URL + "warehouse/update?api-key=" + Server.API_KEY,
+                                        post_params);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    reloadWarehouseList();
+
+                    dialog.hide();
+                }
+            }
+        });
+
+        btn_dialog_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+                AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                        MasterDataActivity.this);
+                quitDialog.setTitle(getResources().getString(R.string.dialog_remove_confirm));
+                quitDialog.setPositiveButton(getResources().getString(R.string.btn_remove), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            executingDeleteWarehouse();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        reloadWarehouseList();
+                    }
+                });
+
+                quitDialog.setNegativeButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface mdialog, int which) {
+                        dialog.show();
+                    }
+                });
+                quitDialog.show();
+            }
+        });
+    }
+
+    private int selected_list_warehouse;
+
+    /**
+     * Onclick wh items
+     */
+    private void warehouseItemListener() {
+        list_warehouse.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MasterDataActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_add_warehouse, null);
+
+                selected_list_warehouse = i;
+
+                builder.setView(mView);
+                dialog = builder.create();
+
+                input_warehouse_title = (EditText) mView.findViewById(R.id.input_warehouse_title);
+                input_warehouse_address = (EditText) mView.findViewById(R.id.input_warehouse_address);
+                input_warehouse_phone = (EditText) mView.findViewById(R.id.input_warehouse_phone);
+                input_warehouse_notes = (EditText) mView.findViewById(R.id.input_warehouse_notes);
+
+                TextView dialog_title = (TextView) mView.findViewById(R.id.dialog_title);
+
+                dialog_title.setText(getResources().getString(R.string.dialog_update_warehouse));
+                try {
+                    JSONObject warehouse_detail = warehouse_data.getJSONObject(i);
+                    input_warehouse_title.setText(warehouse_detail.getString("title"));
+                    input_warehouse_address.setText(warehouse_detail.getString("address"));
+                    input_warehouse_phone.setText(warehouse_detail.getString("phone"));
+                    input_warehouse_notes.setText(warehouse_detail.getString("notes"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                trigger_warehouse_dialog_button(mView, true);
+
+                dialog.show();
+            }
+        });
+    }
+
+    /**
+     * Delete wh execution
+     */
+    private void executingDeleteWarehouse() {
+        Map<String, String> post_params = new HashMap<String, String>();
+        post_params.put("admin_id", sharedpreferences.getString("id", null));
+        try {
+            post_params.put("id", warehouse_data.getJSONObject(selected_list_warehouse).getString("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Boolean delete = true;
+        if (Integer.parseInt(post_params.get("id")) > 0) {
+            // execute delete in server
+            delete = _execute(
+                    Server.URL + "warehouse/delete?api-key=" + Server.API_KEY,
+                    post_params);
+        }
+
+        if (delete) {
+            warehouse_data.remove(selected_list_warehouse);
+            warehouse_items.remove(selected_list_warehouse);
         }
     }
 }

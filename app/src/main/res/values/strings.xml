@@ -66,6 +66,7 @@
     <string name="txt_header_list_product">Daftar Produk :</string>
     <string name="txt_header_list_supplier">Daftar Suplier :</string>
     <string name="txt_header_list_shipment">Daftar Metode Pengiriman :</string>
+    <string name="txt_header_list_warehouse">Daftar Warehouse :</string>
 
     <string name="po_number">Nomor PO</string>
     <string name="supplier_name">Nama Suplier</string>
@@ -112,6 +113,8 @@
     <string name="dialog_add_shipment">Tambah Cara Pengiriman</string>
     <string name="dialog_update_shipment">Ubah Cara Pengiriman</string>
     <string name="dialog_remove_confirm">Anda yakin ingin menghapus item ini?</string>
+    <string name="dialog_add_warehouse">Tambah Warehouse</string>
+    <string name="dialog_update_warehouse">Ubah Data Warehouse</string>
 
     <string name="label_product_name">Nama Barang :</string>
     <string name="label_item_quantity">Jumlah Barang :</string>
@@ -133,6 +136,11 @@
     <string name="label_notes">Catatan :</string>
     <string name="label_shipment_title">Nama Pengiriman :</string>
     <string name="label_shipment_description">Deskripsi :</string>
+    <string name="label_warehouse_title">Nama :</string>
+    <string name="label_warehouse_address">Alamat :</string>
+    <string name="label_warehouse_phone">Telepon :</string>
+    <string name="label_warehouse_notes">Catatan :</string>
+    <string name="label_warehouse_group">Group :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
     <string name="msg_password_different">Ulangi password baru dengan benar.</string>
@@ -141,4 +149,5 @@
     <string name="msg_product_empty_field">Nama, kode, dan unit produk tidak boleh dikosongi.</string>
     <string name="msg_supplier_empty_field">Nama, alamat, dan telepon tidak boleh dikosongi.</string>
     <string name="msg_shipment_empty_field">Nama cara pengiriman tidak boleh dikosongi.</string>
+    <string name="msg_warehouse_empty_field">Nama, alamat, dan telepon tidak boleh dikosongi.</string>
 </resources>

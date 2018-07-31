@@ -457,7 +457,7 @@ public class PurchaseReportActivity extends MainActivity {
         params.put("simply", "1");
 
         final ArrayList<String> items = new ArrayList<String>();
-        items.add("-");
+        //items.add("-");
 
         String wh_url = Server.URL + "shipment/list?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, wh_url, params, false,
