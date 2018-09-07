@@ -10,6 +10,15 @@
             android:title="@string/left_menu_home" />
     </group>
 
+    <item android:title="@string/left_menu_inventory_request" android:id="@+id/nav_inv_request_container">
+        <menu>
+            <item
+                android:id="@+id/nav_inv_request"
+                android:icon="@drawable/ic_attach_money_black_24dp"
+                android:title="@string/left_menu_purchase_order" />
+        </menu>
+    </item>
+
     <item android:title="@string/left_menu_stok_in" android:id="@+id/nav_stock_in_container">
         <menu>
             <item

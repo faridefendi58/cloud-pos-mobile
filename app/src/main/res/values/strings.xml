@@ -24,6 +24,8 @@
     <string name="left_menu_logout">Logout</string>
     <string name="left_menu_master">Master Data</string>
     <string name="left_menu_manage_master_data">Kelola Master Data</string>
+    <string name="left_menu_inventory_request">Pengadaan Barang</string>
+    <string name="left_menu_purchase_order">Purchase Order</string>
 
     <string name="home_menu_receipt">Receipt</string>
     <string name="home_menu_receipt_desc">Penerimaan Barang</string>
@@ -39,6 +41,8 @@
     <string name="home_menu_delivery_order_desc">Pengiriman Barang</string>
     <string name="home_menu_stock_report">Laporan Stock</string>
     <string name="home_menu_stock_report_desc">Persedian di Warehouse</string>
+    <string name="home_menu_git">Good In Transit</string>
+    <string name="home_menu_git_desc">Gudang Berjalan</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_addition">Tambah</string>
