@@ -100,6 +100,10 @@
     <string name="tab_po_detail">Rincian PO</string>
     <string name="tab_po_history">Riwayat</string>
     <string name="tab_po_update">Ubah PO</string>
+    <string name="tab_po_create">PO Baru</string>
+    <string name="tab_po_archive">Arsip</string>
+    <string name="tab_po_pending">Pending</string>
+    <string name="tab_po_onprocess">Diproses</string>
     <string name="tab_profile_detail">Ubah Profil</string>
     <string name="tab_change_password">Ubah Password</string>
     <string name="tab_product">Produk</string>

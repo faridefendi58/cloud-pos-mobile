@@ -82,6 +82,7 @@ public class PurchaseActivity extends MainActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    static final int NUM_TAB_ITEMS = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class PurchaseActivity extends MainActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(NUM_TAB_ITEMS);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -111,6 +113,8 @@ public class PurchaseActivity extends MainActivity {
                 // delay build the form after tabs fully finished
                 buildTheForm(ini);
                 buildTheList(null);
+                buildThePendingList(null);
+                buildTheOnprocessList(null);
             }
         }, 1000);
     }
@@ -440,9 +444,6 @@ public class PurchaseActivity extends MainActivity {
                         txt_price_select_str.setText(list_price_str);
                     }
 
-                    //Log.e(TAG, "Price stack : " + price_stack_str);
-                    //Log.e(TAG, "List price : " + list_price_str);
-
                     Button btn_submit = (Button) findViewById(R.id.btn_submit);
                     btn_submit.setVisibility(View.VISIBLE);
                     btn_submit_trigger(btn_submit, ini);
@@ -771,11 +772,17 @@ public class PurchaseActivity extends MainActivity {
             // getItem is called to instantiate the fragment for the given page.
             switch (position) {
                 case 0:
-                    TabFragment1 tab1 = new TabFragment1();
-                    return tab1;
-                case 1:
                     TabFragment2 tab2 = new TabFragment2();
                     return tab2;
+                case 1:
+                    TabFragment3 tab3 = new TabFragment3();
+                    return tab3;
+                case 2:
+                    TabFragment4 tab4 = new TabFragment4();
+                    return tab4;
+                case 3:
+                    TabFragment1 tab1 = new TabFragment1();
+                    return tab1;
                 default:
                     return null;
             }
@@ -783,8 +790,7 @@ public class PurchaseActivity extends MainActivity {
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            return NUM_TAB_ITEMS;
         }
     }
 
@@ -801,6 +807,22 @@ public class PurchaseActivity extends MainActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.tab_fragment_purchase_2, container, false);
+        }
+    }
+
+    public static class TabFragment3 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_purchase_3, container, false);
+        }
+    }
+
+    public static class TabFragment4 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_purchase_4, container, false);
         }
     }
 
@@ -881,11 +903,11 @@ public class PurchaseActivity extends MainActivity {
     private void buildTheList(final String i_number)
     {
         Map<String, String> params = new HashMap<String, String>();
-        //params.put("status", "onprocess");
+        params.put("status", "completed");
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         params.put("admin_id", admin_id);
         //params.put("already_received", "0");
-        params.put("all_status", "1");
+        //params.put("all_status", "1");
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(
@@ -932,7 +954,7 @@ public class PurchaseActivity extends MainActivity {
                                 list_available_issue.setAdapter(adapter2);
                                 //DeliveryActivity.updateListViewHeight(list_available_issue, 100);
                                 // begin the trigger event
-                                itemListener(list_available_issue);
+                                itemListener(list_available_issue, null);
                             }
 
                         } catch (JSONException e) {
@@ -942,14 +964,160 @@ public class PurchaseActivity extends MainActivity {
                 });
     }
 
-    private void itemListener(final ListView list) {
+    private void itemListener(final ListView list, final String status) {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getApplicationContext(), PurchaseReportActivity.class);
-                intent.putExtra("issue_number", list_issues.get(i));
+                if (status.equals("pending")) {
+                    intent.putExtra("issue_number", list_issues_pending.get(i));
+                } else if (status.equals("onprocess")) {
+                    intent.putExtra("issue_number", list_issues_onprocess.get(i));
+                } else {
+                    intent.putExtra("issue_number", list_issues.get(i));
+                }
                 startActivity(intent);
             }
         });
+    }
+
+    final ArrayList<String> list_ids_pending = new ArrayList<String>();
+    final ArrayList<String> list_issues_pending = new ArrayList<String>();
+    final Map<String, String> issue_origins_pending = new HashMap<String, String>();
+
+    private void buildThePendingList(final String i_number)
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("status", "pending");
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "purchase/list?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = jObj.getJSONObject("origin");
+                                JSONObject destinations = jObj.getJSONObject("destination");
+                                JSONArray details = jObj.getJSONArray("detail");
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject detail_n = new JSONObject(details.getString(n));
+                                    String created_at = AppController.parseDate(detail_n.getString("created_at"),"d/MMM/yyyy");
+                                    if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
+                                        if (data.getString(n).equals(i_number)) {
+                                            list_ids_pending.add(created_at);
+                                            list_issues_pending.add(data.getString(n));
+                                            issue_origins_pending.put(data.getString(n), origins.getString(data.getString(n)));
+                                            descs.add("Menunggu proses dari " + origins.getString(data.getString(n)) + " untuk dikirim ke " + destinations.getString(data.getString(n)));
+                                        }
+                                    } else {
+                                        list_ids_pending.add(created_at);
+                                        list_issues_pending.add(data.getString(n));
+                                        issue_origins_pending.put(data.getString(n), origins.getString(data.getString(n)));
+                                        descs.add("Menunggu proses dari " + origins.getString(data.getString(n)) + " untuk dikirim ke " + destinations.getString(data.getString(n)));
+                                    }
+                                }
+
+                                CustomListAdapter adapter2 = new CustomListAdapter(
+                                        PurchaseActivity.this,
+                                        list_ids_pending,
+                                        list_issues_pending,
+                                        descs,
+                                        R.layout.list_view_purchase
+                                );
+
+                                ListView list_available_issue = (ListView) findViewById(R.id.list_pending_po);
+                                list_available_issue.setAdapter(adapter2);
+                                // begin the trigger event
+                                itemListener(list_available_issue, "pending");
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    final ArrayList<String> list_ids_onprocess = new ArrayList<String>();
+    final ArrayList<String> list_issues_onprocess = new ArrayList<String>();
+    final Map<String, String> issue_origins_onprocess = new HashMap<String, String>();
+
+    private void buildTheOnprocessList(final String i_number)
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("status", "onprocess");
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        final ArrayList<String> descs = new ArrayList<String>();
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "purchase/list?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                JSONObject origins = jObj.getJSONObject("origin");
+                                JSONObject destinations = jObj.getJSONObject("destination");
+                                JSONArray details = jObj.getJSONArray("detail");
+
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject detail_n = new JSONObject(details.getString(n));
+                                    String created_at = AppController.parseDate(detail_n.getString("created_at"),"d/MMM/yyyy");
+                                    if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
+                                        if (data.getString(n).equals(i_number)) {
+                                            list_ids_onprocess.add(created_at);
+                                            list_issues_onprocess.add(data.getString(n));
+                                            issue_origins_onprocess.put(data.getString(n), origins.getString(data.getString(n)));
+                                            descs.add("Dalam proses pengiriman dari " + origins.getString(data.getString(n)) + " Tujuan " + destinations.getString(data.getString(n)));
+                                        }
+                                    } else {
+                                        list_ids_onprocess.add(created_at);
+                                        list_issues_onprocess.add(data.getString(n));
+                                        issue_origins_onprocess.put(data.getString(n), origins.getString(data.getString(n)));
+                                        descs.add("Dalam proses pengiriman dari " + origins.getString(data.getString(n)) + " Tujuan " + destinations.getString(data.getString(n)));
+                                    }
+                                }
+
+                                CustomListAdapter adapter2 = new CustomListAdapter(
+                                        PurchaseActivity.this,
+                                        list_ids_onprocess,
+                                        list_issues_onprocess,
+                                        descs,
+                                        R.layout.list_view_purchase
+                                );
+
+                                ListView list_available_issue = (ListView) findViewById(R.id.list_onprocess_po);
+                                list_available_issue.setAdapter(adapter2);
+                                // begin the trigger event
+                                itemListener(list_available_issue, "onprocess");
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
