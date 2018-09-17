@@ -19,6 +19,19 @@
         </menu>
     </item>
 
+    <item android:title="@string/left_menu_delivery" android:id="@+id/nav_delivery_container">
+        <menu>
+            <item
+                android:id="@+id/nav_delivery_order"
+                android:icon="@drawable/ic_delivery_order_24dp"
+                android:title="@string/left_menu_delivery_order" />
+            <item
+                android:id="@+id/nav_good_in_transit"
+                android:icon="@drawable/ic_shipping_24dp"
+                android:title="@string/left_menu_good_in_transit" />
+        </menu>
+    </item>
+
     <item android:title="@string/left_menu_stok_in" android:id="@+id/nav_stock_in_container">
         <menu>
             <item

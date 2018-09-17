@@ -326,7 +326,6 @@ public class DeliveryActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        //Log.e(TAG, "Response of delivery: " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -342,8 +341,8 @@ public class DeliveryActivity extends MainActivity {
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     list_do_items.add(data.getString(n));
-                                    list_do_ids.add(data.getString(n));
                                     JSONObject detail_n = new JSONObject(details.getString(data.getString(n)));
+                                    list_do_ids.add(detail_n.getString("status"));
 
                                     String desc = "Nomor PO "+ detail_n.getString("po_number") +", Dari " + origins.getString(data.getString(n)) +
                                             " Tujuan " + destinations.getString(data.getString(n));
@@ -351,12 +350,7 @@ public class DeliveryActivity extends MainActivity {
                                     list_do_details.put(data.getString(n), details.getString(data.getString(n)));
                                 }
 
-                                //Log.e(TAG, "List do items: " + list_do_items.toString());
-                                //Log.e(TAG, "List do ids: " + list_do_ids.toString());
-                                //Log.e(TAG, "List do descs: " + list_do_descs.toString());
-                                //Log.e(TAG, "List do details: " + list_do_details.toString());
-
-                                CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_notification);
+                                CustomListAdapter adapter3 = new CustomListAdapter(DeliveryActivity.this, list_do_ids, list_do_items, list_do_descs, R.layout.list_view_delivery_order);
 
                                 ListView list_do_status = (ListView) findViewById(R.id.list_do_status);
                                 list_do_status.setAdapter(adapter3);

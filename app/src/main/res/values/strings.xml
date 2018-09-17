@@ -26,6 +26,9 @@
     <string name="left_menu_manage_master_data">Kelola Master Data</string>
     <string name="left_menu_inventory_request">Pengadaan Barang</string>
     <string name="left_menu_purchase_order">Purchase Order</string>
+    <string name="left_menu_delivery">Pengiriman Barang</string>
+    <string name="left_menu_delivery_order">Delivery Order</string>
+    <string name="left_menu_good_in_transit">Good In Transit</string>
 
     <string name="home_menu_receipt">Receipt</string>
     <string name="home_menu_receipt_desc">Penerimaan Barang</string>
@@ -66,6 +69,7 @@
     <string name="txt_reason">Alasan dan tujuan</string>
     <string name="txt_profile">Profil</string>
     <string name="txt_master_data">Master Data</string>
+    <string name="txt_git_data">Good In Transit</string>
     <string name="txt_profile_setup">Ubah Data Profil</string>
     <string name="txt_form_requirement">Silakan lengkapi beberapa isian berikut :</string>
     <string name="txt_header_list_product">Daftar Produk :</string>
@@ -110,6 +114,8 @@
     <string name="tab_shipment">Pengiriman</string>
     <string name="tab_supplier">Suplier</string>
     <string name="tab_warehouse">Warehouse</string>
+    <string name="tab_git_summary">Ringkasan</string>
+    <string name="tab_git_history">History</string>
 
     <string name="input_find_product">Cari Produk</string>
 

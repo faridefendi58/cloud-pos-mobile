@@ -93,6 +93,11 @@
             android:label="@string/txt_master_data"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".GoodInTransitActivity"
+            android:label="@string/txt_git_data"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
