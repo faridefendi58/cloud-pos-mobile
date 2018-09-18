@@ -207,7 +207,7 @@ public class DeliveryActivity extends MainActivity {
         params.put("admin_id", admin_id);
         params.put("status", "pending");
         params.put("is_pre_order", "1");
-        Log.e(TAG, "Params of pending PO : " + params.toString());
+        //Log.e(TAG, "Params of pending PO : " + params.toString());
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(
@@ -218,7 +218,7 @@ public class DeliveryActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of list pending PO : " + result.toString());
+                        //Log.e(TAG, "Response of list pending PO : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -766,7 +766,8 @@ public class DeliveryActivity extends MainActivity {
     {
         Spinner shipment = (Spinner) findViewById(R.id.txt_shipment_name);
 
-        ArrayAdapter<String> shAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, get_list_shipment());
+        ArrayList list_shipments = get_list_shipment();
+        ArrayAdapter<String> shAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, list_shipments);
         shipment.setAdapter(shAdapter);
     }
 
@@ -786,14 +787,13 @@ public class DeliveryActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response of shipment request : " + result.toString());
+                        //Log.e(TAG, "Response of shipment request : " + result.toString());
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
-                                Log.e(TAG, "Shipment List : " + data.toString());
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     JSONObject data_n = data.getJSONObject(n);

@@ -28,13 +28,13 @@
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Daftar Order" />
+                android:text="@string/tab_delivery_order_list" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Status Pengiriman" />
+                android:text="@string/tab_delivery_status_list" />
 
         </android.support.design.widget.TabLayout>
 
