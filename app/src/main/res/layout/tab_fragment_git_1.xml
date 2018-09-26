@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/layout_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="visible">
+
+            <ListView
+                android:id="@+id/list_do_status"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:scrollbars="vertical">
+            </ListView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_2_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/activity_vertical_margin"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingBottom="5dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/textlines">
+                <TextView
+                    android:id="@+id/detail_title_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:text="PO-000001"
+                    android:textSize="16dip"
+                    android:textStyle="bold"/>
+            </FrameLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:stretchColumns="1">
+
+                <TableRow> <!-- row po number -->
+                    <TextView
+                        android:text="Nomor PO :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_po_number"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row origin -->
+                    <TextView
+                        android:text="Dikirimkan Dari :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_origin"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row destination -->
+                    <TextView
+                        android:text="Tujuan :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_destination"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row shipping date -->
+                    <TextView
+                        android:text="Tanggal Pengiriman :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_shipping_date"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow android:visibility="gone"> <!-- row shipping method -->
+                    <TextView
+                        android:text="Cara Pengiriman :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_shipment_name_status"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row shipping code -->
+                    <TextView
+                        android:text="Nomor Resi :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_resi_number_status"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row sender -->
+                    <TextView
+                        android:text="Nama Pengirim :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_sender"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row status -->
+                    <TextView
+                        android:text="Status Pengiriman :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_status"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row detail items label -->
+                    <TextView
+                        android:layout_span="2"
+                        android:text="Detail Barang Terkirim :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row detail items value -->
+                    <ListView
+                        android:id="@+id/list_po_item_status"
+                        android:layout_span="2"
+                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent">
+                    </ListView>
+                </TableRow>
+
+                <TableRow> <!-- row notes label -->
+                    <TextView
+                        android:layout_span="2"
+                        android:text="Catatan :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow> <!-- row notes value -->
+                    <TextView
+                        android:id="@+id/txt_notes"
+                        android:layout_span="2"
+                        android:text=""
+                        android:padding="3dip"
+                        android:singleLine="false"
+                        android:maxLines="3"
+                        android:scrollbars="vertical"/>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/receiver_container"
+                    android:visibility="gone"> <!-- row receiver -->
+                    <TextView
+                        android:text="Diterima Oleh :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_receiver"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/received_date_container"
+                    android:visibility="gone"> <!-- row receive date -->
+                    <TextView
+                        android:text="Tanggal Penerimaan :"
+                        android:textStyle="bold"
+                        android:padding="3dip" />
+                    <TextView
+                        android:id="@+id/txt_received_date"
+                        android:text=""
+                        android:gravity="right"
+                        android:padding="3dip" />
+                </TableRow>
+            </TableLayout>
+
+            <FrameLayout
+                android:id="@+id/btns_container_status"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/btn_status_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:text="Kembali Ke Daftar"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/colorGrey"
+                    android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+                    />
+
+                <Button
+                    android:id="@+id/btn_status_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:textAllCaps="false"
+                    android:text="Terima Barang"
+                    android:background="@color/colorPrimary"
+                    android:textColor="#fff"
+                    android:paddingVertical="0dp"
+                    android:paddingHorizontal="20dp"
+                    android:visibility="visible"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -116,6 +116,7 @@
     <string name="tab_warehouse">Warehouse</string>
     <string name="tab_git_summary">Ringkasan</string>
     <string name="tab_git_history">History</string>
+    <string name="tab_git_incoming_good">Barang Datang</string>
     <string name="tab_delivery_order_list">Daftar Order</string>
     <string name="tab_delivery_status_list">Status Pengiriman</string>
 
