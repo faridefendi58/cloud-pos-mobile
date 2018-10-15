@@ -116,6 +116,7 @@
     <string name="tab_warehouse">Warehouse</string>
     <string name="tab_git_summary">Ringkasan</string>
     <string name="tab_git_history">History</string>
+    <string name="tab_git_stock">Stok Barang</string>
     <string name="tab_git_incoming_good">Barang Datang</string>
     <string name="tab_delivery_order_list">Daftar Order</string>
     <string name="tab_delivery_status_list">Status Pengiriman</string>
@@ -134,6 +135,7 @@
     <string name="dialog_remove_confirm">Anda yakin ingin menghapus item ini?</string>
     <string name="dialog_add_warehouse">Tambah Warehouse</string>
     <string name="dialog_update_warehouse">Ubah Data Warehouse</string>
+    <string name="dialog_confirm_title">Konfirmasi Penerimaan</string>
 
     <string name="label_product_name">Nama Barang :</string>
     <string name="label_item_quantity">Jumlah Barang :</string>
@@ -169,4 +171,6 @@
     <string name="msg_supplier_empty_field">Nama, alamat, dan telepon tidak boleh dikosongi.</string>
     <string name="msg_shipment_empty_field">Nama cara pengiriman tidak boleh dikosongi.</string>
     <string name="msg_warehouse_empty_field">Nama, alamat, dan telepon tidak boleh dikosongi.</string>
+    <string name="msg_no_item_found">Item tidak ditemukan.</string>
+    <string name="msg_loading">Sedang memuat..</string>
 </resources>

@@ -3,17 +3,24 @@ package com.slightsite.ucokinventory;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,6 +28,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -335,7 +343,7 @@ public class GoodInTransitActivity extends MainActivity {
                 LinearLayout layout_2_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
                 layout_2_detail.setVisibility(View.VISIBLE);
 
-                triggerReceiptBtn(id.getText().toString());
+                triggerReceiptBtn(title.getText().toString());
             }
         });
 
@@ -358,9 +366,16 @@ public class GoodInTransitActivity extends MainActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(GoodInTransitActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_receipt, null);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_confirm_receipt_do, null);
                 builder.setView(mView);
+
                 final AlertDialog dialog = builder.create();
+
+                try {
+                    setDODetail(do_number, mView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 // submit, cancel button trigger
                 trigger_dialog_receipt(mView, dialog, do_number);
@@ -397,6 +412,23 @@ public class GoodInTransitActivity extends MainActivity {
                     params.put("admin_id", admin_id);
                     params.put("notes", txt_notes.getText().toString());
                     params.put("do_number", do_number);
+
+                    JSONArray detail_items = do_detail_items.get(do_number);
+                    String the_items = "";
+                    for(int n = 0; n < detail_items.length(); n++) {
+                        try {
+                            JSONObject item = detail_items.getJSONObject(n);
+                            String str = item.getString("id")+","+item.getString("quantity");
+                            if (n > 0) {
+                                the_items += "-" + str;
+                            } else {
+                                the_items += str;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    params.put("items", the_items);
                     _string_request(
                             Request.Method.POST,
                             Server.URL + "delivery/confirm-receipt?api-key=" + Server.API_KEY,
@@ -510,5 +542,119 @@ public class GoodInTransitActivity extends MainActivity {
                         }
                     }
                 });
+    }
+
+    final Map<String, Object> do_detail_data = new HashMap<String, Object>();
+    final Map<String, JSONArray> do_detail_items = new HashMap<String, JSONArray>(); //po items
+
+    /**
+     * Geting the Delivery order detail data
+     * @param issue_number
+     * @param mView
+     */
+    private void setDODetail(final String issue_number, final View mView) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("issue_number", issue_number);
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "delivery/detail?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONObject data = jObj.getJSONObject("data");
+                                do_detail_data.put(issue_number, data);
+                                do_detail_items.put(issue_number, jObj.getJSONArray("po_item_data"));
+
+                                buildThePOItemTable(issue_number, mView);
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Show the DO items on receipt confirm popup
+     * @param issue_number
+     * @param mView
+     */
+    private void buildThePOItemTable(final String issue_number, final View mView)
+    {
+        JSONArray detail_items = do_detail_items.get(issue_number);
+
+        TableLayout table_layout = (TableLayout) mView.findViewById(R.id.table_layout);
+        TableRow row = new TableRow(GoodInTransitActivity.this);
+
+        for(int n = 0; n < detail_items.length(); n++)
+        {
+            try {
+                final JSONObject item = detail_items.getJSONObject(n);
+                TextView wh = new TextView(GoodInTransitActivity.this);
+                wh.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
+
+                wh.setGravity(Gravity.LEFT);
+                wh.setPadding(5, 15, 0, 15);
+
+                wh.setText(item.getString("title"));
+
+                row.addView(wh);
+
+                EditText tv2 = new EditText(GoodInTransitActivity.this);
+                tv2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
+
+                tv2.setGravity(Gravity.CENTER_HORIZONTAL);
+                tv2.setPadding(5, 15, 0, 15);
+                tv2.setText(item.getString("quantity"));
+                tv2.setInputType(InputType.TYPE_CLASS_NUMBER);
+                tv2.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                tv2.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        System.out.println("afterTextChanged " + new String(editable.toString()));
+                        String new_value = new String(editable.toString());
+                        if (new_value.length() > 0) {
+                            try {
+                                item.put("quantity", new_value);
+                                System.out.println("item " + item.toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+                row.addView(tv2);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        table_layout.addView(row);
+
+        if (detail_items.length() > 0) {
+            TableRow no_data = (TableRow) mView.findViewById(R.id.no_data);
+            no_data.setVisibility(View.GONE);
+        }
     }
 }

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_confirm_title"
+        android:paddingLeft="0dp"
+        android:textSize="16dip"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/textlines"
+        />
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:background="#ffffff"
+        android:layout_weight="1">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+
+            <TextView
+                android:id="@+id/TextView042"
+                android:text="@string/txt_product_name"
+                android:layout_weight="1"
+                android:background="#dcdcdc"
+                android:textColor="#000000"
+                android:padding="10dip" android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/TextView043"
+                android:text="@string/txt_product_quantity"
+                android:layout_weight="1"
+                android:background="#dcdcdc"
+                android:textColor="#000000"
+                android:padding="10dip" android:gravity="center"/>
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/no_data"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="@string/msg_loading"
+                android:textStyle="italic"
+                android:layout_span="2"
+                android:padding="10dip"
+                android:gravity="center"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <EditText
+        android:id="@+id/txt_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="0dp"
+        android:hint="Berikan catatan barang yang diterima. Contoh: Diterima 5 koli."
+        android:inputType="textMultiLine"
+        android:text=""
+        android:textSize="15dp"/>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <Button
+            android:id="@+id/btn_dialog_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Simpan"
+            android:background="@color/green"
+            android:textColor="#fff"
+            android:layout_gravity="left"
+            android:visibility="visible"/>
+
+        <Button
+            android:id="@+id/btn_dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Batal"
+            android:background="@color/yellow"
+            android:textColor="#fff"
+            android:layout_gravity="left"
+            android:layout_marginLeft="100dp"
+            android:visibility="visible"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/stack_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:visibility="gone"
+        />
+
+</LinearLayout>
