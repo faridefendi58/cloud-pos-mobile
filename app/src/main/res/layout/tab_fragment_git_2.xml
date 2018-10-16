@@ -8,24 +8,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/layout_history"
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/stock_table"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="false"
-            android:orientation="vertical"
-            android:padding="@dimen/activity_vertical_margin"
-            android:visibility="visible">
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            android:background="#ffffff"
+            android:layout_weight="1">
 
-            <ListView
-                android:id="@+id/list_hst"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:scrollbars="vertical">
-            </ListView>
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/th1"
+                    android:text="@string/txt_product_name"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip" android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/th2"
+                    android:text="@string/txt_product_quantity"
+                    android:layout_weight="1"
+                    android:background="#dcdcdc"
+                    android:textColor="#000000"
+                    android:padding="10dip" android:gravity="center"/>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/no_data"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="@string/msg_loading"
+                    android:textStyle="italic"
+                    android:layout_span="2"
+                    android:padding="10dip"
+                    android:gravity="center"/>
+
+            </TableRow>
+
+        </TableLayout>
 
     </RelativeLayout>
 

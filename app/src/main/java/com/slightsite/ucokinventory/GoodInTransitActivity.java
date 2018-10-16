@@ -3,6 +3,7 @@ package com.slightsite.ucokinventory;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -99,6 +100,7 @@ public class GoodInTransitActivity extends MainActivity {
         }
 
         buildTheDeliveryOrderList();
+        buildTheStockList();
     }
 
     /**
@@ -355,6 +357,8 @@ public class GoodInTransitActivity extends MainActivity {
                 layout_2.setVisibility(View.VISIBLE);
                 LinearLayout layout_2_detail = (LinearLayout) findViewById(R.id.layout_2_detail);
                 layout_2_detail.setVisibility(View.GONE);
+                /*Intent intent = new Intent(getApplicationContext(), GoodInTransitActivity.class);
+                startActivity(intent);*/
             }
         });
     }
@@ -595,11 +599,11 @@ public class GoodInTransitActivity extends MainActivity {
         JSONArray detail_items = do_detail_items.get(issue_number);
 
         TableLayout table_layout = (TableLayout) mView.findViewById(R.id.table_layout);
-        TableRow row = new TableRow(GoodInTransitActivity.this);
 
         for(int n = 0; n < detail_items.length(); n++)
         {
             try {
+                TableRow row = new TableRow(GoodInTransitActivity.this);
                 final JSONObject item = detail_items.getJSONObject(n);
                 TextView wh = new TextView(GoodInTransitActivity.this);
                 wh.setLayoutParams(new TableRow.LayoutParams(
@@ -645,16 +649,80 @@ public class GoodInTransitActivity extends MainActivity {
                     }
                 });
                 row.addView(tv2);
+                table_layout.addView(row);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        table_layout.addView(row);
-
         if (detail_items.length() > 0) {
             TableRow no_data = (TableRow) mView.findViewById(R.id.no_data);
             no_data.setVisibility(View.GONE);
         }
+    }
+
+    public void buildTheStockList()
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.GET,
+                Server.URL + "delivery/stock?api-key=" + Server.API_KEY,
+                params,
+                false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+
+                                TableLayout table_layout = (TableLayout) findViewById(R.id.stock_table);
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    try {
+                                        TableRow row = new TableRow(GoodInTransitActivity.this);
+                                        final JSONObject item = data.getJSONObject(n);
+                                        TextView wh = new TextView(GoodInTransitActivity.this);
+                                        wh.setLayoutParams(new TableRow.LayoutParams(
+                                                TableRow.LayoutParams.WRAP_CONTENT,
+                                                TableRow.LayoutParams.WRAP_CONTENT));
+
+                                        wh.setGravity(Gravity.LEFT);
+                                        wh.setPadding(5, 15, 0, 15);
+
+                                        wh.setText(item.getString("title"));
+
+                                        row.addView(wh);
+
+                                        TextView tv2 = new TextView(GoodInTransitActivity.this);
+                                        tv2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT));
+
+                                        tv2.setGravity(Gravity.CENTER_HORIZONTAL);
+                                        tv2.setPadding(5, 15, 0, 15);
+                                        tv2.setText(item.getString("qty"));
+                                        row.addView(tv2);
+
+                                        table_layout.addView(row);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if (data.length() > 0) {
+                                    TableRow no_data = (TableRow) findViewById(R.id.no_data);
+                                    no_data.setVisibility(View.GONE);
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
