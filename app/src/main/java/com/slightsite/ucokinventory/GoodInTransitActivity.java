@@ -71,7 +71,7 @@ public class GoodInTransitActivity extends MainActivity {
      */
     private ViewPager mViewPager;
 
-    static final int NUM_TAB_ITEMS = 2;
+    static final int NUM_TAB_ITEMS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +123,9 @@ public class GoodInTransitActivity extends MainActivity {
                 case 1:
                     TabFragment2 tab2 = new TabFragment2();
                     return tab2;
+                case 2:
+                    TabFragment3 tab3 = new TabFragment3();
+                    return tab3;
                 default:
                     return null;
             }
@@ -147,6 +150,14 @@ public class GoodInTransitActivity extends MainActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.tab_fragment_git_2, container, false);
+        }
+    }
+
+    public static class TabFragment3 extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.tab_fragment_git_3, container, false);
         }
     }
 
@@ -225,10 +236,11 @@ public class GoodInTransitActivity extends MainActivity {
                 Request.Method.GET,
                 Server.URL + "delivery/list?api-key=" + Server.API_KEY,
                 params,
-                false,
+                true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
+                        hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);

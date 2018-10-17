@@ -116,8 +116,9 @@
     <string name="tab_warehouse">Warehouse</string>
     <string name="tab_git_summary">Ringkasan</string>
     <string name="tab_git_history">History</string>
-    <string name="tab_git_stock">Stok Barang</string>
+    <string name="tab_git_stock">Stok Terkini</string>
     <string name="tab_git_incoming_good">Barang Datang</string>
+    <string name="tab_git_outgoing_good">Barang Keluar</string>
     <string name="tab_delivery_order_list">Daftar Order</string>
     <string name="tab_delivery_status_list">Status Pengiriman</string>
 
@@ -162,6 +163,8 @@
     <string name="label_warehouse_phone">Telepon :</string>
     <string name="label_warehouse_notes">Catatan :</string>
     <string name="label_warehouse_group">Group :</string>
+    <string name="label_transfer_destination">Tujuan Pengiriman :</string>
+    <string name="label_transfer_date">Tanggal Pengeluaran :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
     <string name="msg_password_different">Ulangi password baru dengan benar.</string>
