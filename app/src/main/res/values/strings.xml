@@ -88,6 +88,7 @@
     <string name="btn_cancel">Batal</string>
     <string name="btn_remove">Hapus</string>
     <string name="btn_update">Ubah</string>
+    <string name="btn_add">Tambahkan</string>
     <string name="btn_back_to_list">Kembali Ke Daftar</string>
     <string name="btn_save">Simpan</string>
     <string name="btn_submit">Kirim</string>
@@ -97,6 +98,7 @@
     <string name="btn_add_supplier">Tambah Suplier</string>
     <string name="btn_add_shipment">Tambah Pengiriman</string>
     <string name="btn_add_warehouse">Tambah Warehouse</string>
+    <string name="btn_add_product_item">Tambah Item Barang</string>
 
     <string name="tab_archive">Arsip</string>
     <string name="tab_list_issue">Barang Masuk</string>
@@ -137,6 +139,7 @@
     <string name="dialog_add_warehouse">Tambah Warehouse</string>
     <string name="dialog_update_warehouse">Ubah Data Warehouse</string>
     <string name="dialog_confirm_title">Konfirmasi Penerimaan</string>
+    <string name="dialog_transfer_title">Jumlah Pengeluaran Barang</string>
 
     <string name="label_product_name">Nama Barang :</string>
     <string name="label_item_quantity">Jumlah Barang :</string>
@@ -165,6 +168,8 @@
     <string name="label_warehouse_group">Group :</string>
     <string name="label_transfer_destination">Tujuan Pengiriman :</string>
     <string name="label_transfer_date">Tanggal Pengeluaran :</string>
+    <string name="label_choose_item">Pilih Item Produk :</string>
+    <string name="label_number_of_transfer">Jumlah Pengeluaran :</string>
 
     <string name="msg_unable_remove_po">Hanya PO yang masih berstatus PENDING yang dapat dihapus.</string>
     <string name="msg_password_different">Ulangi password baru dengan benar.</string>
@@ -176,4 +181,7 @@
     <string name="msg_warehouse_empty_field">Nama, alamat, dan telepon tidak boleh dikosongi.</string>
     <string name="msg_no_item_found">Item tidak ditemukan.</string>
     <string name="msg_loading">Sedang memuat..</string>
+
+    <string name="hint_insert_item_price">Masukkan harga per item</string>
+    <string name="hint_insert_item_quantity">Masukkan jumlah barang</string>
 </resources>

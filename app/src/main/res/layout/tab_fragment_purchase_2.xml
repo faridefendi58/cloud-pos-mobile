@@ -176,7 +176,7 @@
                 android:visibility="gone">
                 <Button
                     android:id="@+id/btn_add"
-                    android:text="Tambah Item Barang"
+                    android:text="@string/btn_add_product_item"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"

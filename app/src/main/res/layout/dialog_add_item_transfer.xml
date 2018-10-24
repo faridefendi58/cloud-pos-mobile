@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Jumlah Pengeluaran Barang"
+        android:text="@string/dialog_transfer_title"
         android:paddingLeft="0dp"
         android:textSize="16dip"
         android:textStyle="bold"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:textSize="16dip"
-        android:text="Pilih Item Produk :"
+        android:text="@string/label_choose_item"
         android:textStyle="bold"
         />
 
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:textSize="16dip"
-        android:text="Jumlah Pengeluaran :"
+        android:text="@string/label_number_of_transfer"
         android:textStyle="bold"
         />
 
@@ -54,7 +54,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="0dp"
-        android:hint="Masukkan jumlah barang"
+        android:hint="@string/hint_insert_item_quantity"
         android:text=""
         android:inputType="number"/>
 
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:textSize="16dip"
-        android:text="Harga Pembelian :"
+        android:text="@string/label_purchase_price"
         android:textStyle="bold"
         android:visibility="gone"
         />
@@ -76,28 +76,29 @@
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="0dp"
-        android:hint="Masukkan harga per item"
+        android:hint="@string/hint_insert_item_price"
         android:text=""
         android:visibility="gone"
         android:inputType="number"
         />
 
     <FrameLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:weightSum="1">
+
         <Button
             android:id="@+id/btn_dialog_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="Simpan"
+            android:paddingVertical="5dp"
+            android:paddingHorizontal="10dp"
+            android:text="@string/btn_save"
             android:background="@color/green"
             android:textColor="#fff"
             android:layout_gravity="left"
+            android:layout_weight="0.5"
             android:visibility="visible"/>
 
         <Button
@@ -105,11 +106,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Batal"
+            android:text="@string/btn_cancel"
             android:background="@color/yellow"
             android:textColor="#fff"
-            android:layout_gravity="left"
-            android:layout_marginLeft="100dp"
+            android:layout_gravity="right"
+            android:layout_weight="0.5"
             android:visibility="visible"/>
 
         <Button
@@ -117,11 +118,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Hapus"
+            android:text="@string/btn_remove"
             android:background="@color/colorAccent"
             android:textColor="#fff"
-            android:layout_gravity="left"
-            android:layout_marginLeft="100dp"
+            android:layout_gravity="right"
+            android:layout_weight="0.5"
             android:visibility="gone"/>
     </FrameLayout>
 
