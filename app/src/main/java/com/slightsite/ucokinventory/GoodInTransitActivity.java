@@ -714,6 +714,12 @@ public class GoodInTransitActivity extends MainActivity {
                                     try {
                                         TableRow row = new TableRow(GoodInTransitActivity.this);
                                         final JSONObject item = data.getJSONObject(n);
+                                        //Log.e(TAG, "item : "+ item.toString());
+
+                                        list_product_items_out.add(item.getString("title"));
+                                        product_names_out.put(item.getString("title"), item.getString("product_id"));
+                                        product_units_out.put(item.getString("title"), item.getString("unit"));
+
                                         TextView wh = new TextView(GoodInTransitActivity.this);
                                         wh.setLayoutParams(new TableRow.LayoutParams(
                                                 TableRow.LayoutParams.WRAP_CONTENT,
@@ -816,7 +822,9 @@ public class GoodInTransitActivity extends MainActivity {
         });
 
         // define the product list
-        list_products_out = get_list_product();
+        if (list_product_items_out.size() <= 0) {
+            list_products_out = get_list_product();
+        }
         btn_add_trigger();
     }
 
