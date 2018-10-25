@@ -193,6 +193,7 @@ public class ReceiptActivity extends MainActivity {
     public ArrayList set_auto_complete() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("status", "onprocess");
+        params.put("just_transfer_issue", "1");
 
         final ArrayList<String> items = new ArrayList<String>();
 
@@ -553,6 +554,11 @@ public class ReceiptActivity extends MainActivity {
         return items;
     }
 
+    /**
+     * Final submission of the received item
+     * @param btn
+     * @param ini
+     */
     private void btn_confirm_receipt_trigger(Button btn, Context ini) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -577,7 +583,6 @@ public class ReceiptActivity extends MainActivity {
                         new VolleyCallback() {
                             @Override
                             public void onSuccess(String result) {
-                                Log.e(TAG, "Response: " + result.toString());
                                 hideDialog();
                                 try {
                                     JSONObject jObj = new JSONObject(result);
@@ -654,7 +659,6 @@ public class ReceiptActivity extends MainActivity {
                 txt_item_container.setVisibility(View.GONE);
                 TextView show_items = (TextView) findViewById(R.id.show_items);
                 show_items.setVisibility(View.VISIBLE);*/
-                Log.e(TAG, "list_product_items : "+ list_product_items.toString());
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ini);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_add_item_receipt, null);
@@ -738,7 +742,6 @@ public class ReceiptActivity extends MainActivity {
                     Integer i = 0;
                     String product_stack_str = "";
                     String list_item_str = "";
-                    Log.e(TAG, "Product ids : " + product_ids.toString());
                     while(iterator.hasNext())
                     {
                         Map.Entry<String, String> pair = iterator.next();
@@ -834,7 +837,6 @@ public class ReceiptActivity extends MainActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String title = list.getItemAtPosition(i).toString();
-                Log.e(TAG, "Product stack : " + product_stack.toString());
                 Iterator<Map.Entry<String, String>> iterator = product_stack.entrySet().iterator();
                 Integer j = 0;
                 Integer k = 0;
@@ -904,12 +906,12 @@ public class ReceiptActivity extends MainActivity {
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         params.put("admin_id", admin_id);
         params.put("already_received", "1");
+        params.put("just_transfer_issue", "1");
 
         _string_request(Request.Method.GET, issue_list_url, params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        //Log.e(TAG, "Response of list issue : " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -922,18 +924,23 @@ public class ReceiptActivity extends MainActivity {
 
                                 for(int n = 0; n < data.length(); n++)
                                 {
+                                    String origin = origins.getString(data.getString(n));
+                                    if (TextUtils.isEmpty(origin) || origin == "null") {
+                                        origin = "Good In Transit";
+                                    }
+
                                     if (!TextUtils.isEmpty(i_number) && data.toString().contains(i_number)) {
                                         if (data.getString(n).equals(i_number)) {
                                             list_ids.add(""+ n);
                                             list_issues.add(data.getString(n));
-                                            issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
-                                            descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
+                                            issue_origins.put(data.getString(n), origin);
+                                            descs.add("Dari " + origin + ", Tujuan " + destinations.getString(data.getString(n)));
                                         }
                                     } else {
                                         list_ids.add(""+ n);
                                         list_issues.add(data.getString(n));
-                                        issue_origins.put(data.getString(n), origins.getString(data.getString(n)));
-                                        descs.add("Dari : " + origins.getString(data.getString(n)) + ", Tujuan : " + destinations.getString(data.getString(n)));
+                                        issue_origins.put(data.getString(n), origin);
+                                        descs.add("Dari " + origin + ", Tujuan " + destinations.getString(data.getString(n)));
                                     }
                                 }
                                 fetchTheIssues();
@@ -968,7 +975,6 @@ public class ReceiptActivity extends MainActivity {
 
         final View parent = (View) view.getParent();
         TextView issue_number = (TextView) parent.findViewById(R.id.list_title);
-        Log.e(TAG, "Choosen : " + issue_number.getText().toString());
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("issue_number", issue_number.getText().toString());
@@ -977,7 +983,6 @@ public class ReceiptActivity extends MainActivity {
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "Response: " + result.toString());
                         hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
@@ -987,8 +992,6 @@ public class ReceiptActivity extends MainActivity {
                                 JSONObject data = jObj.getJSONObject("data");
                                 String data_status = data.getString("status");
                                 String data_type = data.getString("type");
-
-                                Log.e("Successfully Request!", data.toString());
 
                                 LinearLayout step1 = (LinearLayout) findViewById(R.id.step1_1);
                                 step1.setVisibility(View.GONE);
@@ -1007,6 +1010,9 @@ public class ReceiptActivity extends MainActivity {
                                     } else if (data_type.equals("transfer_issue")) {
                                         fin_issue_number = data.getString("ti_number");
                                         fin_from = data.getString("warehouse_from_name");
+                                        if (TextUtils.isEmpty(fin_from) || fin_from == "null") {
+                                            fin_from = "Good In Transit";
+                                        }
                                         txt_receipt_notes.setVisibility(View.GONE);
                                         txt_step2_label1.setVisibility(View.GONE);
                                         Button btn_confirm = (Button) findViewById(R.id.btn_confirm);
